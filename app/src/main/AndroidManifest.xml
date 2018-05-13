@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.eletac.tronwallet">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:name=".TronWalletApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".wallet.CreateWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".wallet.ImportWalletActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".wallet.AccountActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".wallet.SendReceiveActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_send_receive"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".wallet.VoteActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".CaptureActivityPortrait"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".wallet.cold.SignedTransactionActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_signed_transaction"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.ActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".wallet.SignTransactionActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/title_activity_sign_transaction"
+            android:parentActivityName=".wallet.SendReceiveActivity"
+            android:theme="@style/AppTheme.ActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.wallet.SendReceiveActivity" />
+        </activity>
+        <activity
+            android:name=".settings.SettingConnectionActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".wallet.AboutActivity"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".wallet.ParticipateAssetActivity"
+            android:label="@string/title_activity_participate_asset"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.ActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+    </application>
+
+</manifest>

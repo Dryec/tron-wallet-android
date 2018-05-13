@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:diagonal="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".wallet.WalletFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+
+        <com.github.florent37.diagonallayout.DiagonalLayout
+            android:id="@+id/diagonalLayout"
+            android:layout_width="match_parent"
+            android:layout_height="140dp"
+            android:elevation="0dp"
+            diagonal:diagonal_angle="10"
+            diagonal:diagonal_direction="left"
+            diagonal:diagonal_position="bottom"
+            diagonal:layout_constraintEnd_toEndOf="parent"
+            diagonal:layout_constraintStart_toStartOf="parent"
+            diagonal:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:scaleType="centerCrop"
+                android:src="@color/colorAccent"
+                tools:layout_editor_absoluteX="1dp"
+                tools:layout_editor_absoluteY="379dp" />
+
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/Wallet_trx_price_usd_textView"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="118dp"
+                    android:text="$0.00"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body2"
+                    android:textColor="@android:color/white"
+                    diagonal:layout_constraintBottom_toBottomOf="parent"
+                    diagonal:layout_constraintStart_toStartOf="parent"
+                    diagonal:layout_constraintTop_toTopOf="parent"
+                    diagonal:layout_constraintVertical_bias="0.619" />
+
+                <TextView
+                    android:id="@+id/Wallet_trx_price_usd_change_textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="19dp"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif"
+                    android:paddingTop="3dp"
+                    android:text="0%"
+                    android:textAppearance="@android:style/TextAppearance.Material.Body2"
+                    android:textColor="@android:color/white"
+                    android:textSize="11sp"
+                    diagonal:layout_constraintBottom_toBottomOf="parent"
+                    diagonal:layout_constraintStart_toEndOf="@+id/Wallet_trx_price_usd_textView"
+                    diagonal:layout_constraintTop_toTopOf="parent"
+                    diagonal:layout_constraintVertical_bias="0.619" />
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="193dp"
+                    android:layout_height="103dp"
+                    android:layout_marginStart="108dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/tron_text"
+                    diagonal:layout_constraintStart_toStartOf="parent"
+                    diagonal:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="116dp"
+                    android:layout_height="114dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="8dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/tron_symbol"
+                    diagonal:layout_constraintStart_toStartOf="parent"
+                    diagonal:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+
+
+        </com.github.florent37.diagonallayout.DiagonalLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/frameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="174dp"
+            diagonal:layout_constraintEnd_toEndOf="parent"
+            diagonal:layout_constraintHorizontal_bias="0.0"
+            diagonal:layout_constraintStart_toStartOf="parent"
+            diagonal:layout_constraintTop_toBottomOf="@+id/diagonalLayout">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/Wallet_vote_floatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:src="@drawable/ic_election_white_24px"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/Wallet_trx_address_textView"
+                app:layout_constraintEnd_toStartOf="@+id/Wallet_trx_balance_textView"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/Wallet_trx_balance_textView"
+                app:layout_constraintVertical_bias="0.7"
+                android:focusable="true" />
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/Wallet_send_receive_floatingActionButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:clickable="true"
+                android:src="@drawable/ic_swap_horiz_white_24px"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/Wallet_vote_floatingActionButton"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toEndOf="@+id/Wallet_trx_balance_textView"
+                app:layout_constraintTop_toTopOf="@+id/Wallet_vote_floatingActionButton"
+                diagonal:layout_constraintEnd_toEndOf="parent"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/Wallet_trx_balance_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginBottom="45dp"
+                android:gravity="center"
+                android:text="2,999,979.94"
+                android:textAppearance="@android:style/TextAppearance.Material.Body2"
+                android:textColor="@android:color/white"
+                android:textSize="36sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                diagonal:layout_constraintEnd_toEndOf="parent"
+                diagonal:layout_constraintHorizontal_bias="0.501"
+                diagonal:layout_constraintStart_toStartOf="parent"
+                diagonal:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/Wallet_TRX_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/trx_symbol"
+                android:textAppearance="@android:style/TextAppearance.Material.Body2"
+                android:textColor="@android:color/white"
+                app:layout_constraintHorizontal_bias="0.501"
+                app:layout_constraintTop_toBottomOf="@+id/Wallet_trx_balance_textView"
+                diagonal:layout_constraintEnd_toEndOf="parent"
+                diagonal:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:id="@+id/Wallet_trx_address_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:clickable="true"
+                android:fontFamily="sans-serif"
+                android:text="27ayJoT1c1vDAsGmBpzZzpHVadZJpcPBV9p"
+                android:textAppearance="@android:style/TextAppearance.Material.Body2"
+                android:textColor="@android:color/white"
+                android:visibility="visible"
+                diagonal:layout_constraintBottom_toBottomOf="parent"
+                diagonal:layout_constraintEnd_toEndOf="parent"
+                diagonal:layout_constraintStart_toStartOf="parent"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/Wallet_frozen_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:text="5,841 Frozen"
+                android:textAlignment="center"
+                app:layout_constraintTop_toBottomOf="@+id/Wallet_TRX_textView"
+                diagonal:layout_constraintEnd_toEndOf="parent"
+                diagonal:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardView255"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/frameLayout">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/balance"
+                    android:textAlignment="textEnd"
+                    android:textAppearance="@android:style/TextAppearance.Material.Headline"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/token"
+                    android:textAppearance="@android:style/TextAppearance.Material.Headline"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/Wallet_tokens_recyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cardView255" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>
