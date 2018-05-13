@@ -2,6 +2,10 @@
 
 Tron Wallet is a multifunctional android wallet for the TRON network.
 
+It gives you the possibility to interact quickly and easily with your account or to keep your TRX and other account data safe in a cold wallet setup.
+
+This app offers you one of the safest ways to protect your private data.
+
 # Features
   - **Create Wallet**
     - encrypts private information with a password
