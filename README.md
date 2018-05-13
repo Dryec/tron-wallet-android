@@ -49,3 +49,7 @@ This app offers you one of the safest ways to protect your private data.
     - owns public and private key
     - never connects to the internet (to be completly secure you should never connect your device to the internet)
     - signs transactions (from watch only setup)
+
+# Goal
+
+The goal in the future is to connect the users even better and easier with the TRON network and thus form a basis for all in the TRON community to strengthen them and offer extended possibilities.
