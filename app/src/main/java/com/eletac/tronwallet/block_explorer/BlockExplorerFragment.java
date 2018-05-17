@@ -26,10 +26,6 @@ import java.util.Map;
 
 public class BlockExplorerFragment extends Fragment {
 
-    private static final long BLOCKCHAIN_UPDATE_INTERVAL = Long.MAX_VALUE; // not used - using singleShots only
-    private static final long NETWORK_UPDATE_INTERVAL = Long.MAX_VALUE; // not used - using singleShots only
-    private static final long TOKENS_UPDATE_INTERVAL = Long.MAX_VALUE; // not used - using singleShots only
-    private static final long ACCOUNTS_UPDATE_INTERVAL = Long.MAX_VALUE; // not used - using singleShots only
 
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
@@ -56,13 +52,6 @@ public class BlockExplorerFragment extends Fragment {
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
 
-        Map<UpdateTask, Long> updaterIntervals = new HashMap<>();
-        updaterIntervals.put(UpdateTask.Blockchain, BLOCKCHAIN_UPDATE_INTERVAL);
-        updaterIntervals.put(UpdateTask.Nodes, NETWORK_UPDATE_INTERVAL);
-        updaterIntervals.put(UpdateTask.Witnesses, NETWORK_UPDATE_INTERVAL);
-        updaterIntervals.put(UpdateTask.Tokens, TOKENS_UPDATE_INTERVAL);
-        updaterIntervals.put(UpdateTask.Accounts, ACCOUNTS_UPDATE_INTERVAL);
-        BlockExplorerUpdater.init(getContext(), updaterIntervals);
         BlockExplorerUpdater.singleShot(UpdateTask.Blockchain, true);
     }
 

@@ -187,9 +187,11 @@ public class NodesFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private void updateFilteredNodes() {
         mNodesFiltered.clear();
         for(GrpcAPI.Node node : mNodes) {
-            if(checkFilterConditions(node)) {
-                mNodesFiltered.add(node);
-            }
+            try {
+                if (checkFilterConditions(node)) {
+                    mNodesFiltered.add(node);
+                }
+            }  catch (NullPointerException ignore) {}
         }
         mTitle_TextView.setText(String.format(Locale.US, "%s (%d)", getContext().getString(R.string.tab_title_nodes), mNodesItemListAdapter.isShowFiltered() ? mNodesFiltered.size() : mNodes.size()));
         mNodesItemListAdapter.notifyDataSetChanged();

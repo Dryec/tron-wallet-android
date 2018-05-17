@@ -142,10 +142,12 @@ public class OwnVotesFragment extends Fragment implements SwipeRefreshLayout.OnR
         mVotedWitnesses.clear();
         for(Protocol.Account.Vote vote : mAccount.getVotesList()) {
             for(Protocol.Witness witness : mWitnesses) {
-                if(Arrays.equals(vote.getVoteAddress().toByteArray(), witness.getAddress().toByteArray())) {
-                    mVotedWitnesses.add(witness);
-                    break;
-                }
+                try {
+                    if (Arrays.equals(vote.getVoteAddress().toByteArray(), witness.getAddress().toByteArray())) {
+                        mVotedWitnesses.add(witness);
+                        break;
+                    }
+                }  catch (NullPointerException ignore) {}
             }
         }
 

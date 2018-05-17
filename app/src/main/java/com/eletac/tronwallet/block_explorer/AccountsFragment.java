@@ -188,9 +188,11 @@ public class AccountsFragment extends Fragment implements SwipeRefreshLayout.OnR
     private void updateFilteredAccounts() {
         mAccountsFiltered.clear();
         for(Protocol.Account account : mAccounts) {
-            if(checkFilterConditions(account)) {
-                mAccountsFiltered.add(account);
-            }
+            try {
+                if (checkFilterConditions(account)) {
+                    mAccountsFiltered.add(account);
+                }
+            }  catch (NullPointerException ignore) {}
         }
         mTitle_TextView.setText(String.format(Locale.US, "%s (%d)", getContext().getString(R.string.tab_title_accounts), mAccountItemListAdapter.isShowFiltered() ? mAccountsFiltered.size() : mAccounts.size()));
         mAccountItemListAdapter.notifyDataSetChanged();

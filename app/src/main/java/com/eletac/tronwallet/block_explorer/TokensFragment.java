@@ -183,9 +183,11 @@ public class TokensFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private void updateFilteredTokens() {
         mTokensFiltered.clear();
         for(Contract.AssetIssueContract asset : mTokens) {
-            if(checkFilterConditions(asset)) {
-                mTokensFiltered.add(asset);
-            }
+            try {
+                if (checkFilterConditions(asset)) {
+                    mTokensFiltered.add(asset);
+                }
+            }  catch (NullPointerException ignore) {}
         }
         mTitle_TextView.setText(String.format(Locale.US, "%s (%d)", getContext().getString(R.string.tab_title_tokens), mTokenItemListAdapter.isShowFiltered() ? mTokensFiltered.size() : mTokens.size()));
         mTokenItemListAdapter.notifyDataSetChanged();

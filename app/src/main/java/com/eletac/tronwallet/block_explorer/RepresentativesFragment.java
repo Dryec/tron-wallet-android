@@ -186,9 +186,11 @@ public class RepresentativesFragment extends Fragment implements SwipeRefreshLay
     private void updateFilteredWitnesses() {
         mWitnessesFiltered.clear();
         for(Protocol.Witness witness : mWitnesses) {
-            if(checkFilterConditions(witness)) {
-                mWitnessesFiltered.add(witness);
-            }
+            try {
+                if (checkFilterConditions(witness)) {
+                    mWitnessesFiltered.add(witness);
+                }
+            } catch (NullPointerException ignore) {}
         }
         mTitle_TextView.setText(String.format(Locale.US, "%s (%d)", getContext().getString(R.string.tab_title_candidates), mWitnessItemListAdapter.isShowFiltered() ? mWitnessesFiltered.size() : mWitnesses.size()));
         mWitnessItemListAdapter.notifyDataSetChanged();

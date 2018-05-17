@@ -39,10 +39,6 @@ import java.util.Map;
 
 public class WalletFragment extends Fragment {
 
-    private static final long ACCOUNT_UPDATE_FOREGROUND_INTERVAL = 2000;
-    private static final long ACCOUNT_UPDATE_BACKGROUND_INTERVAL = 15000;
-    private static final long PRICE_UPDATE_INTERVAL = 15000;
-
     private static final long SWITCH_BALANCE_ANIM_INTERVAL = 200;
     private static final long COPY_ADDRESS_ANIM_INTERVAL = 100;
 
@@ -92,8 +88,6 @@ public class WalletFragment extends Fragment {
 
         publicAddress = Utils.getPublicAddress(getContext());
 
-        AccountUpdater.init(getContext(), ACCOUNT_UPDATE_FOREGROUND_INTERVAL);
-        PriceUpdater.init(getContext(), PRICE_UPDATE_INTERVAL);
 
         // Account Updater starts in OnResume();
         PriceUpdater.start();
@@ -114,7 +108,7 @@ public class WalletFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        AccountUpdater.setInterval(ACCOUNT_UPDATE_BACKGROUND_INTERVAL, false);
+        AccountUpdater.setInterval(TronWalletApplication.ACCOUNT_UPDATE_BACKGROUND_INTERVAL, false);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mAccountUpdatedBroadcastReceiver);
         LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(mPricesUpdatedBroadcastReceiver);
     }
@@ -122,7 +116,7 @@ public class WalletFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        AccountUpdater.setInterval(ACCOUNT_UPDATE_FOREGROUND_INTERVAL, true);
+        AccountUpdater.setInterval(TronWalletApplication.ACCOUNT_UPDATE_FOREGROUND_INTERVAL, true);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mAccountUpdatedBroadcastReceiver, new IntentFilter(AccountUpdater.ACCOUNT_UPDATED));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mPricesUpdatedBroadcastReceiver, new IntentFilter(PriceUpdater.PRICES_UPDATED));
     }
