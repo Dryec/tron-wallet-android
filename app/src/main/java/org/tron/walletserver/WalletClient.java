@@ -7,8 +7,7 @@ import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.TronWalletApplication;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,6 @@ import org.tron.common.crypto.ECKey;
 import org.tron.common.crypto.Hash;
 import org.tron.common.crypto.SymmEncoder;
 import org.tron.common.utils.*;
-import org.tron.core.config.Configuration;
 import org.tron.core.config.Parameter.CommonConstant;
 import org.tron.protos.Contract;
 import org.tron.protos.Contract.AssetIssueContract;
