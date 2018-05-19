@@ -294,7 +294,7 @@ public class WalletFragment extends Fragment {
                 frozenTotal += frozen.getFrozenBalance();
             }
             mTRX_frozen_TextView
-                    .setText(String.format("%s %s", numberFormat.format(frozenTotal/1000000), getString(R.string.frozen)));
+                    .setText(String.format("%s %s", numberFormat.format(frozenTotal/1000000), getString(R.string.tron_power_short)));
 
             mTRX_frozen_TextView.setVisibility(frozenTotal == 0 ? View.INVISIBLE : View.VISIBLE);
         }
