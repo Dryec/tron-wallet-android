@@ -194,7 +194,7 @@
     <string name="port_key">port</string>
     <string name="tron_wallet_description">Tron Wallet is a multifunctional wallet for the Tron network.</string>
     <string name="copyright">© 2018 Marius Gill All Rights Reserved</string>
-    <string name="app_version">v1.0.0.2</string>
+    <string name="app_version">v1.0.0.3</string>
     <string name="title_activity_participate_asset">Participate</string>
     <string name="confirm_spending">Confirm Spending</string>
     <string name="spending_failed">Spending failed</string>
