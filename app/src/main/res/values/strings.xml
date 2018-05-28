@@ -162,7 +162,7 @@
     <string name="inv_recovery_phrase_dialog_message">Please enter all 24 words of your recovery phrase.</string>
     <string name="could_not_create_transaction">Could\'t create transaction.\n\nCheck balance and internet connection</string>
     <string name="tab_title_freeze">Freeze</string>
-    <string name="freeze_info_long">TRX can be frozen to gain Tron Power(TP).\nFor every TP you get a vote for super delegates and 3,000,000 entropy.\nYour TRX will be frozen for 3 days, after which they can be unfrozen.\nUnfreezing removes TP\'s, but your remaining entropy remains and is increased on the next freeze.</string>
+    <string name="freeze_info_long">TRX can be frozen to gain Tron Power(TP).\nFor every TP you get a vote for super delegates and 3,000,000 bandwidth.\nYour TRX will be frozen for 3 days, after which they can be unfrozen.\nUnfreezing removes TP\'s and your bandwidth.</string>
     <string name="create_time_key">create_time_key</string>
     <string name="address_key">address_key</string>
     <string name="frozen_key">frozen_key</string>
