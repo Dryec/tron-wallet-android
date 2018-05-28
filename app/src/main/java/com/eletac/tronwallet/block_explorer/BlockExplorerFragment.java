@@ -110,7 +110,7 @@ public class BlockExplorerFragment extends Fragment {
 
         @Override
         public int getCount() {
-            return 5;
+            return 4;
         }
 
         @Nullable
