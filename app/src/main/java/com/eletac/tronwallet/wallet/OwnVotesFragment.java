@@ -140,7 +140,7 @@ public class OwnVotesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private void loadVotedWitnesses() {
         mVotedWitnesses.clear();
-        for(Protocol.Account.Vote vote : mAccount.getVotesList()) {
+        for(Protocol.Vote vote : mAccount.getVotesList()) {
             for(Protocol.Witness witness : mWitnesses) {
                 try {
                     if (Arrays.equals(vote.getVoteAddress().toByteArray(), witness.getAddress().toByteArray())) {

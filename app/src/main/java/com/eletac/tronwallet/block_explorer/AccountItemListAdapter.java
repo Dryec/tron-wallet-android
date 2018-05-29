@@ -91,7 +91,7 @@ public class AccountItemListAdapter extends RecyclerView.Adapter<AccountItemList
             mAssets_TextView.setText(numberFormat.format(account.getAssetCount()));
 
             long totalVotes = 0;
-            for(Protocol.Account.Vote vote : account.getVotesList()) {
+            for(Protocol.Vote vote : account.getVotesList()) {
                 totalVotes += vote.getVoteCount();
             }
             mVotes_TextView.setText(totalVotes > 0 ? String.format(mContext.getString(R.string.account_item_votes_text), numberFormat.format(totalVotes), numberFormat.format(account.getVotesCount())) : mContext.getString(R.string.none));

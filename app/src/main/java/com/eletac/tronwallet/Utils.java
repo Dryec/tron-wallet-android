@@ -68,9 +68,9 @@ public class Utils {
             editor.putLong(context.getString(R.string.balance_key), account.getBalance());
             editor.putString(context.getString(R.string.assets_key), new Gson().toJson(account.getAssetMap()));
 
-            List<Protocol.Account.Vote> votesList = account.getVotesList();
+            List<Protocol.Vote> votesList = account.getVotesList();
             Map<String, Long> votesMap = new HashMap<>();
-            for (Protocol.Account.Vote vote : votesList) {
+            for (Protocol.Vote vote : votesList) {
                 String voteAddress = WalletClient.encode58Check(vote.getVoteAddress().toByteArray());
                 if(!voteAddress.equals(""))
                     votesMap.put(voteAddress, vote.getVoteCount());
@@ -88,7 +88,7 @@ public class Utils {
             }
             editor.putString(context.getString(R.string.frozen_key), new Gson().toJson(frozenMap));
 
-            editor.putLong(context.getString(R.string.bandwidth_key), account.getBandwidth());
+            editor.putLong(context.getString(R.string.bandwidth_key), account.getNetUsage());
             editor.putLong(context.getString(R.string.create_time_key), account.getCreateTime());
             editor.putLong(context.getString(R.string.latest_operation_time_key), account.getLatestOprationTime());
             editor.apply();
@@ -110,7 +110,7 @@ public class Utils {
                                     sharedPreferences.getString(context.getString(R.string.assets_key), ""),
                                     new TypeToken<Map<String, Long>>(){}.getType());
 
-            List<Protocol.Account.Vote> votes = new ArrayList<>();
+            List<Protocol.Vote> votes = new ArrayList<>();
             Map<String, Long> votesMap =
                     new Gson()
                             .fromJson(
@@ -121,7 +121,7 @@ public class Utils {
                 for (Map.Entry<String, Long> entry : votesMap.entrySet()) {
                     byte[] voteAddress = WalletClient.decodeFromBase58Check(entry.getKey());
                     if(voteAddress != null) {
-                        Protocol.Account.Vote.Builder voteBuilder = Protocol.Account.Vote.newBuilder();
+                        Protocol.Vote.Builder voteBuilder = Protocol.Vote.newBuilder();
                         voteBuilder.setVoteAddress(ByteString.copyFrom(voteAddress));
                         voteBuilder.setVoteCount(entry.getValue());
                         votes.add(voteBuilder.build());
@@ -160,7 +160,7 @@ public class Utils {
                 builder.putAllAsset(assets);
             builder.addAllVotes(votes);
             builder.addAllFrozen(frozen);
-            builder.setBandwidth(bandwidth);
+            builder.setNetUsage(bandwidth);
             builder.setCreateTime(createTime);
             builder.setLatestOprationTime(latestOperationTime);
             return builder.build();

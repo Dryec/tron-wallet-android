@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,12 +115,20 @@ public class TokenItemListAdapter extends RecyclerView.Adapter<TokenItemListAdap
             mSupply_TextView.setText(NumberFormat.getInstance(Locale.US).format(asset.getTotalSupply()));
             mIssuer_TextView.setText(WalletClient.encode58Check(asset.getOwnerAddress().toByteArray()));
             mStart_TextView.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(asset.getStartTime())));
-            mEnd_TextView.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(asset.getEndTime())));
+            mEnd_TextView.setText(
+                    new StringBuilder()
+                            .append(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(asset.getEndTime())))
+                            .append(" ")
+                            .append(DateUtils.getRelativeTimeSpanString(asset.getEndTime() - asset.getStartTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS))
+                            .toString()
+
+            );
 
             long currentTimeMillis = System.currentTimeMillis();
             boolean isRunning = currentTimeMillis >= asset.getStartTime() && currentTimeMillis <= asset.getEndTime();
+            boolean isParticiple = isRunning;
 
-            mParticipate_Button.setVisibility(isRunning ? View.VISIBLE : View.GONE);
+            mParticipate_Button.setVisibility(isParticiple ? View.VISIBLE : View.GONE);
         }
     }
 

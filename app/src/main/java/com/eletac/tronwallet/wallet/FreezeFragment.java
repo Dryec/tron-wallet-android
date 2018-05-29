@@ -381,7 +381,7 @@ public class FreezeFragment extends Fragment {
 
         mFrozenNow_TextView.setText(numberFormat.format(freezed/1000000));
         mVotesNow_TextView.setText(numberFormat.format(freezed/1000000));
-        mBandwidthNow_TextView.setText(numberFormat.format(mAccount.getBandwidth()));
+        mBandwidthNow_TextView.setText(numberFormat.format(mAccount.getNetUsage()));
         mExpires_TextView.setText(expire == 0 ? "-" : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(expire)));
         mUnfreeze_Button.setText(String.format(Locale.US,"%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
 
@@ -390,7 +390,7 @@ public class FreezeFragment extends Fragment {
         long newFreeze = freezed + freeze;
         mFrozenNew_TextView.setText(numberFormat.format(newFreeze/1000000));
         mVotesNew_TextView.setText(numberFormat.format(newFreeze/1000000));
-        mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getBandwidth() + freeze));
+        mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getNetUsage() + freeze));
     }
 
     private class AccountUpdatedBroadcastReceiver extends BroadcastReceiver {

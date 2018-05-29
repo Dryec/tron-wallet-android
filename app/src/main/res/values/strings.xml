@@ -1,6 +1,8 @@
 <resources>
     <string name="fullnode_ip">47.254.16.55</string>
     <string name="fullnode_port">50051</string>
+    <string name="soliditynode_ip">47.254.16.55</string>
+    <string name="soliditynode_port">50051</string>
 
     <string name="app_name">Tron Wallet</string>
     <string name="title_wallet">Wallet</string>
@@ -190,8 +192,6 @@
     <string name="account_no_access_info">An address only wallet cannot access these information</string>
     <string name="password_needed">Password</string>
     <string name="access_denied">Access denied</string>
-    <string name="ip_key">ip</string>
-    <string name="port_key">port</string>
     <string name="tron_wallet_description">Tron Wallet is a multifunctional wallet for the Tron network.</string>
     <string name="copyright">© 2018 Marius Gill All Rights Reserved</string>
     <string name="app_version">v1.0.0.3</string>
@@ -202,4 +202,9 @@
     <string name="spend">Spend</string>
     <string name="spending_successfully">Spending successfully</string>
     <string name="tron_power_short">TP</string>
+
+    <string name="ip_key">ip</string>
+    <string name="port_key">port</string>
+    <string name="ip_sol_key">ip_sol</string>
+    <string name="port_sol_key">port_sol</string>
 </resources>

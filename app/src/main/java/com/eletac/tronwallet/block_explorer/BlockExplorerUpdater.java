@@ -338,7 +338,7 @@ public class BlockExplorerUpdater {
                 public void doOnBackground() {
                     if(mContext != null) {
                         // Load accounts
-                        try {
+                        /*try {
                             GrpcAPI.AccountList result = WalletClient.listAccounts();
                             if(result != null) {
                                 mAccounts.clear();
@@ -347,7 +347,7 @@ public class BlockExplorerUpdater {
                         }
                         catch (Exception e) {
                             e.printStackTrace();
-                        }
+                        }*/
                     }
 
                     AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {

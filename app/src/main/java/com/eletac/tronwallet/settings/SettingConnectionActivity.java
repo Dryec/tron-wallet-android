@@ -21,6 +21,11 @@ public class SettingConnectionActivity extends AppCompatActivity {
     private Button mReset_Button;
     private Button mSave_Button;
 
+    private EditText mIP_Solidty_EditText;
+    private EditText mPort_Solidty_EditText;
+    private Button mReset_Solidty_Button;
+    private Button mSave_Solidty_Button;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +40,12 @@ public class SettingConnectionActivity extends AppCompatActivity {
         mReset_Button= findViewById(R.id.SettingConnection_reset_button);
         mSave_Button= findViewById(R.id.SettingConnection_save_button);
 
-        loadNode();
+        mIP_Solidty_EditText = findViewById(R.id.SettingConnection_node_sol_ip_editText);
+        mPort_Solidty_EditText= findViewById(R.id.SettingConnection_node_sol_port_editText);
+        mReset_Solidty_Button= findViewById(R.id.SettingConnection_reset_sol_button);
+        mSave_Solidty_Button= findViewById(R.id.SettingConnection_save_sol_button);
+
+        loadNodes();
 
         mSave_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,7 +64,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
 
                     editor.commit();
 
-                    loadNode();
+                    loadNodes();
 
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
@@ -84,7 +94,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
 
                 editor.commit();
 
-                loadNode();
+                loadNodes();
 
                 new LovelyInfoDialog(SettingConnectionActivity.this)
                         .setTopColorRes(R.color.colorPrimary)
@@ -95,15 +105,82 @@ public class SettingConnectionActivity extends AppCompatActivity {
                 WalletClient.init();
             }
         });
+
+        // --------
+
+        mSave_Solidty_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ip = mIP_Solidty_EditText.getText().toString();
+                String portStr = mPort_Solidty_EditText.getText().toString();
+
+                if(!portStr.isEmpty() && isIP(ip)) {
+                    int port = Integer.parseInt(portStr);
+
+                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    editor.putString(getString(R.string.ip_sol_key), ip);
+                    editor.putInt(getString(R.string.port_sol_key), port);
+
+                    editor.commit();
+
+                    loadNodes();
+
+                    new LovelyInfoDialog(SettingConnectionActivity.this)
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setIcon(R.drawable.ic_info_white_24px)
+                            .setTitle("Saved new solidity node connection")
+                            .show();
+
+                    WalletClient.init();
+                } else {
+                    new LovelyInfoDialog(SettingConnectionActivity.this)
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setIcon(R.drawable.ic_error_white_24px)
+                            .setTitle("Invalid IP or Port")
+                            .show();
+                }
+            }
+        });
+
+        mReset_Solidty_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                editor.remove(getString(R.string.ip_sol_key));
+                editor.remove(getString(R.string.port_sol_key));
+
+                editor.commit();
+
+                loadNodes();
+
+                new LovelyInfoDialog(SettingConnectionActivity.this)
+                        .setTopColorRes(R.color.colorPrimary)
+                        .setIcon(R.drawable.ic_info_white_24px)
+                        .setTitle("Solidity node connection reset to default")
+                        .show();
+
+                WalletClient.init();
+            }
+        });
     }
 
-    private void loadNode() {
+    private void loadNodes() {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         String ip = sharedPreferences.getString(getString(R.string.ip_key), getString(R.string.fullnode_ip));
         int port = sharedPreferences.getInt(getString(R.string.port_key), Integer.parseInt(getString(R.string.fullnode_port)));
 
+        String ip_sol = sharedPreferences.getString(getString(R.string.ip_sol_key), getString(R.string.soliditynode_ip));
+        int port_sol = sharedPreferences.getInt(getString(R.string.port_sol_key), Integer.parseInt(getString(R.string.soliditynode_port)));
+
         mIP_EditText.setText(ip);
         mPort_EditText.setText(String.valueOf(port));
+
+        mIP_Solidty_EditText.setText(ip_sol);
+        mPort_Solidty_EditText.setText(String.valueOf(port_sol));
     }
 
     private boolean isIP(String input) {

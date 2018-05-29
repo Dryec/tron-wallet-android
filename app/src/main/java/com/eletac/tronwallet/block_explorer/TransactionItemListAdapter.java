@@ -4,6 +4,7 @@ import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -59,6 +60,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
 
         private TextView mTransactionFrom_TextView;
         private TextView mTransactionTo_TextView;
+        private TextView mTransactionTimestamp_TextView;
         private TextView mTransactionAmount_TextView;
         private TextView mTransactionAsset_TextView;
 
@@ -68,6 +70,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
 
             mTransactionFrom_TextView = itemView.findViewById(R.id.Transaction_from_textView);
             mTransactionTo_TextView = itemView.findViewById(R.id.Transaction_to_textView);
+            mTransactionTimestamp_TextView = itemView.findViewById(R.id.Transaction_timestamp_textView);
             mTransactionAmount_TextView = itemView.findViewById(R.id.Transaction_amount_textView);
             mTransactionAsset_TextView = itemView.findViewById(R.id.Transaction_asset_textView);
         }
@@ -200,6 +203,10 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                             amount = -1;
                             contract_desc = "withdraw balance";
                             break;
+                        case UnfreezeAssetContract:
+                            break;
+                        case UpdateAssetContract:
+                            break;
                         case CustomContract:
                             Log.i("TRANSACTIONS", "CustomContract");
                             //Contract.CustomContract customContract = TransactionUtils.unpackContract(contract, Contract.CustomContract.class);
@@ -223,6 +230,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
 
                 mTransactionFrom_TextView.setText(from);
                 mTransactionTo_TextView.setText(to);
+                mTransactionTimestamp_TextView.setText(java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT,java.text.DateFormat.SHORT).format(new Date(transaction.getRawData().getTimestamp())));
                 mTransactionAmount_TextView.setText(amount != -1 ? numberFormat.format(amount) : "");
                 mTransactionAsset_TextView.setText(contract_desc);
             }

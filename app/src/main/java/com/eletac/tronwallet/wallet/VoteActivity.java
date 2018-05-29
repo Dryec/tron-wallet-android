@@ -255,7 +255,7 @@ public class VoteActivity extends AppCompatActivity {
 
     private void loadVotes() {
         mLoadVotesOnNextAccountUpdate = false;
-        for(Protocol.Account.Vote vote : mAccount.getVotesList()) {
+        for(Protocol.Vote vote : mAccount.getVotesList()) {
             mVoteWitnesses.put(WalletClient.encode58Check(vote.getVoteAddress().toByteArray()), String.valueOf(vote.getVoteCount()));
         }
         Intent updatedIntent = new Intent(VOTES_UPDATED);
