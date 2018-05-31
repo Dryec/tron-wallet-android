@@ -1,10 +1,11 @@
 <resources>
     <string name="fullnode_ip">47.254.16.55</string>
     <string name="fullnode_port">50051</string>
-    <string name="soliditynode_ip">47.254.16.55</string>
-    <string name="soliditynode_port">50051</string>
+    <string name="soliditynode_ip"></string>
+    <string name="soliditynode_port"></string>
 
     <string name="app_name">Tron Wallet</string>
+    <string name="app_version">v1.0.1.1</string>
     <string name="title_wallet">Wallet</string>
     <string name="title_activity_import_wallet">Import Wallet</string>
     <string name="title_block_explorer">Block Explorer</string>
@@ -164,7 +165,7 @@
     <string name="inv_recovery_phrase_dialog_message">Please enter all 24 words of your recovery phrase.</string>
     <string name="could_not_create_transaction">Could\'t create transaction.\n\nCheck balance and internet connection</string>
     <string name="tab_title_freeze">Freeze</string>
-    <string name="freeze_info_long">TRX can be frozen to gain Tron Power(TP).\nFor every TP you get a vote for super delegates and 3,000,000 bandwidth.\nYour TRX will be frozen for 3 days, after which they can be unfrozen.\nUnfreezing removes TP\'s and your bandwidth.</string>
+    <string name="freeze_info_long">TRX can be frozen to gain Tron Power(TP).\nFor every TP you get a vote for super delegates and bandwidth based on the ratio to the total frozen amount on the network and yours.\nYour TRX will be frozen for 3 days, after which they can be unfrozen.\nUnfreezing removes TP\'s and your bandwidth.\nYou have 1000 free bandwidth per day.</string>
     <string name="create_time_key">create_time_key</string>
     <string name="address_key">address_key</string>
     <string name="frozen_key">frozen_key</string>
@@ -194,7 +195,6 @@
     <string name="access_denied">Access denied</string>
     <string name="tron_wallet_description">Tron Wallet is a multifunctional wallet for the Tron network.</string>
     <string name="copyright">© 2018 Marius Gill All Rights Reserved</string>
-    <string name="app_version">v1.0.0.3</string>
     <string name="title_activity_participate_asset">Participate</string>
     <string name="confirm_spending">Confirm Spending</string>
     <string name="spending_failed">Spending failed</string>
@@ -207,4 +207,11 @@
     <string name="port_key">port</string>
     <string name="ip_sol_key">ip_sol</string>
     <string name="port_sol_key">port_sol</string>
+    <string name="net_limit_key">net_limit_key</string>
+    <string name="net_used_key">net_used_key</string>
+    <string name="net_free_limit_key">net_free_limit_key</string>
+    <string name="net_free_used_key">net_free_used_key</string>
+    <string name="not_enough_bandwidth">Not enough bandwidth</string>
+    <string name="transactions_failed_bandwidth">Transactions failed, not enough bandwidth!</string>
+    <string name="bandwidth">Bandwidth</string>
 </resources>

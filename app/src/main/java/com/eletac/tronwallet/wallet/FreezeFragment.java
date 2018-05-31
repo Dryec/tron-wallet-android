@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.icu.text.SimpleDateFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,6 +27,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -41,6 +43,8 @@ import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
+import org.tron.api.GrpcAPI;
+import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
@@ -64,6 +68,7 @@ public class FreezeFragment extends Fragment {
     private TextView mBandwidthNew_TextView;
     private TextView mExpires_TextView;
     private EditText mFreezeAmount_EditText;
+    private SeekBar mFreezeAmount_SeekBar;
     private Button mFreeze_Button;
     private Button mUnfreeze_Button;
 
@@ -72,6 +77,9 @@ public class FreezeFragment extends Fragment {
     private String mAddress;
 
     private AccountUpdatedBroadcastReceiver mAccountUpdatedBroadcastReceiver;
+
+    private long mFreezeAmount = 0;
+    private boolean mUpdatingUI = false;
 
     public FreezeFragment() {
         // Required empty public constructor
@@ -114,6 +122,7 @@ public class FreezeFragment extends Fragment {
         mBandwidthNew_TextView = view.findViewById(R.id.Freeze_bandwidth_new_textView);
         mExpires_TextView = view.findViewById(R.id.Freeze_expire_textView);
         mFreezeAmount_EditText = view.findViewById(R.id.Freeze_amount_editText);
+        mFreezeAmount_SeekBar = view.findViewById(R.id.Freeze_amount_seekBar);
         mFreeze_Button = view.findViewById(R.id.Freeze_button);
         mUnfreeze_Button= view.findViewById(R.id.Freeze_un_button);
 
@@ -125,7 +134,16 @@ public class FreezeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updateUI();
+                if(!mUpdatingUI) {
+                    mUpdatingUI = true;
+                    mFreezeAmount = mFreezeAmount_EditText.getText().length() > 0 ? Long.valueOf(mFreezeAmount_EditText.getText().toString()) : 0L;
+                    if(Build.VERSION.SDK_INT >= 24) {
+                        mFreezeAmount_SeekBar.setProgress((int) mFreezeAmount, true);
+                    } else {
+                        mFreezeAmount_SeekBar.setProgress((int) mFreezeAmount);
+                    }
+                    updateUI();
+                }
             }
 
             @Override
@@ -133,11 +151,32 @@ public class FreezeFragment extends Fragment {
 
             }
         });
+        mFreezeAmount_SeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if(!mUpdatingUI) {
+                    mUpdatingUI = true;
+                    mFreezeAmount = progress;
+                    mFreezeAmount_EditText.setText(String.valueOf(mFreezeAmount));
+                    updateUI();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         mFreeze_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mFreezeAmount_EditText.getText().length() > 0) {
-                    long amount = Long.parseLong(mFreezeAmount_EditText.getText().toString())*1000000;
+                    long amount = mFreezeAmount*1000000;
                     if (mIsPublicAddressOnly) {
                         new LovelyStandardDialog(getActivity())
                                 .setTopColorRes(R.color.colorPrimary)
@@ -199,14 +238,32 @@ public class FreezeFragment extends Fragment {
                                             AsyncJob.doInBackground(() -> {
                                                 WalletClient walletClient = WalletClient.GetWalletByStorage(text);
                                                 if (walletClient != null) {
-                                                    boolean sent = false;
+                                                    boolean sent = false, enoughBandwidth = false;
                                                     try {
-                                                        sent = walletClient.freezeBalance(amount, 3);
+                                                        GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
+
+                                                        Protocol.Transaction transaction = WalletClient.createFreezeBalanceTransaction(WalletClient.decodeFromBase58Check(mAddress), amount, 3);
+
+                                                        transaction = TransactionUtils.setTimestamp(transaction);
+                                                        transaction = TransactionUtils.sign(transaction, walletClient.getEcKey());
+
+                                                        long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
+                                                        long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
+                                                        if(transaction.getSerializedSize() <= bandwidth-bandwidthUsed)  {
+                                                            enoughBandwidth = true;
+                                                        }
+
+                                                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                                        transaction.writeTo(outputStream);
+                                                        outputStream.flush();
+
+                                                        sent = WalletClient.broadcastTransaction(outputStream.toByteArray());
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
 
                                                     boolean finalSent = sent;
+                                                    boolean finalEnoughBandwidth = enoughBandwidth;
                                                     AsyncJob.doOnMainThread(() -> {
                                                         progressDialog.dismiss();
 
@@ -217,7 +274,7 @@ public class FreezeFragment extends Fragment {
                                                             infoDialog.setTitle(R.string.freezed_succesfully);
                                                         } else {
                                                             infoDialog.setTitle(R.string.freezing_failed);
-                                                            infoDialog.setMessage(R.string.try_later);
+                                                            infoDialog.setMessage(finalEnoughBandwidth ? R.string.try_later : R.string.not_enough_bandwidth);
                                                         }
                                                         infoDialog.show();
                                                         AccountUpdater.singleShot(3000);
@@ -362,8 +419,11 @@ public class FreezeFragment extends Fragment {
     }
 
     private void updateUI() {
-
+        mUpdatingUI = true;
         mFreezeAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, mAccount.getBalance()/1000000)});
+        mFreezeAmount_SeekBar.setMax((int)mAccount.getBalance()/1000000);
+
+        GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
 
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
@@ -379,18 +439,27 @@ public class FreezeFragment extends Fragment {
             }
         }
 
+        long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
+        long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
+
         mFrozenNow_TextView.setText(numberFormat.format(freezed/1000000));
         mVotesNow_TextView.setText(numberFormat.format(freezed/1000000));
-        mBandwidthNow_TextView.setText(numberFormat.format(mAccount.getNetUsage()));
+        mBandwidthNow_TextView.setText(
+                        numberFormat.format(bandwidthUsed)
+                        + " / " +
+                        numberFormat.format(bandwidth)
+                        + " ➡ " +
+                        numberFormat.format(bandwidth-bandwidthUsed)
+                        );
         mExpires_TextView.setText(expire == 0 ? "-" : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(expire)));
         mUnfreeze_Button.setText(String.format(Locale.US,"%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
 
-        String newFreezeStr = mFreezeAmount_EditText.getText().toString();
-        long freeze = newFreezeStr.equals("") ? 0 : Long.parseLong(newFreezeStr)*1000000;
-        long newFreeze = freezed + freeze;
-        mFrozenNew_TextView.setText(numberFormat.format(newFreeze/1000000));
-        mVotesNew_TextView.setText(numberFormat.format(newFreeze/1000000));
-        mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getNetUsage() + freeze));
+        long newFreeze = freezed + mFreezeAmount;
+        mFrozenNew_TextView.setText(numberFormat.format(newFreeze));
+        mVotesNew_TextView.setText(numberFormat.format(newFreeze));
+        mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getNetUsage() + mFreezeAmount)); // not visible anymore
+
+        mUpdatingUI = false;
     }
 
     private class AccountUpdatedBroadcastReceiver extends BroadcastReceiver {

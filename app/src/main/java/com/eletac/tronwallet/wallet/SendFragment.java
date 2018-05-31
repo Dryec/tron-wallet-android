@@ -14,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,8 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.spongycastle.util.encoders.Hex;
+import org.tron.api.GrpcAPI;
+import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
@@ -226,6 +229,7 @@ public class SendFragment extends Fragment {
                                         } else {
                                             transaction = WalletClient.createTransferAssetTransaction(toRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
                                         }
+
                                         if (transaction == null || transaction.getRawData().getContractCount() == 0) {
                                             new LovelyInfoDialog(getContext())
                                                     .setTopColorRes(R.color.colorPrimary)
@@ -275,18 +279,39 @@ public class SendFragment extends Fragment {
                                         AsyncJob.doInBackground(() -> {
                                             WalletClient walletClient = WalletClient.GetWalletByStorage(text);
                                             if (walletClient != null) {
-                                                boolean sent = false;
+                                                boolean sent = false, enoughBandwidth = false;
                                                 try {
-                                                    if (isTrxCoin) {
-                                                        sent = walletClient.sendCoin(toRaw, (long) (amount * 1000000.0d));
+                                                    GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
+
+                                                    Protocol.Transaction transaction;
+                                                    if(isTrxCoin) {
+                                                        Contract.TransferContract contract = WalletClient.createTransferContract(toRaw, WalletClient.decodeFromBase58Check(mAddress), (long) (amount * 1000000.0d));
+                                                        transaction = WalletClient.createTransaction4Transfer(contract);
                                                     } else {
-                                                        sent = walletClient.transferAsset(toRaw, asset.getBytes(), (long) amount);
+                                                        transaction = WalletClient.createTransferAssetTransaction(toRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
                                                     }
+
+                                                    transaction = TransactionUtils.setTimestamp(transaction);
+                                                    transaction = TransactionUtils.sign(transaction, walletClient.getEcKey());
+
+                                                    long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
+                                                    long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
+                                                    if(transaction.getSerializedSize() <= bandwidth-bandwidthUsed)  {
+                                                        enoughBandwidth = true;
+                                                    }
+
+                                                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                                    transaction.writeTo(outputStream);
+                                                    outputStream.flush();
+
+                                                    sent = WalletClient.broadcastTransaction(outputStream.toByteArray());
                                                 } catch (Exception e) {
                                                     e.printStackTrace();
                                                 }
 
+
                                                 boolean finalSent = sent;
+                                                boolean finalEnoughBandwidth = enoughBandwidth;
                                                 AsyncJob.doOnMainThread(() -> {
                                                     progressDialog.dismiss();
 
@@ -297,7 +322,7 @@ public class SendFragment extends Fragment {
                                                         infoDialog.setTitle(R.string.sent_successfully);
                                                     } else {
                                                         infoDialog.setTitle(R.string.sending_failed);
-                                                        infoDialog.setMessage(R.string.try_later);
+                                                        infoDialog.setMessage(finalEnoughBandwidth ? R.string.try_later : R.string.not_enough_bandwidth);
                                                     }
                                                     infoDialog.show();
                                                     AccountUpdater.singleShot(3000);

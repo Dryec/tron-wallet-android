@@ -28,6 +28,7 @@ import com.eletac.tronwallet.Token;
 import com.eletac.tronwallet.TronWalletApplication;
 import com.eletac.tronwallet.Utils;
 
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 
@@ -49,6 +50,7 @@ public class WalletFragment extends Fragment {
     private TextView mTRX_address_TextView;
     private TextView mTRX_TextView;
     private TextView mTRX_frozen_TextView;
+    private TextView mBandwidth_TextView;
     private FloatingActionButton mSendReceive_Button;
     private FloatingActionButton mVote_Button;
 
@@ -131,7 +133,8 @@ public class WalletFragment extends Fragment {
         mTRX_balance_TextView = view.findViewById(R.id.Wallet_trx_balance_textView);
         mTRX_address_TextView = view.findViewById(R.id.Wallet_trx_address_textView);
         mTRX_TextView = view.findViewById(R.id.Wallet_TRX_textView);
-        mTRX_frozen_TextView = view.findViewById(R.id.Wallet_frozen_textView);
+        mTRX_frozen_TextView = view.findViewById(R.id.Wallet_tp_textView);
+        mBandwidth_TextView = view.findViewById(R.id.Wallet_bandwidth_textView);
         mSendReceive_Button = view.findViewById(R.id.Wallet_send_receive_floatingActionButton);
         mVote_Button = view.findViewById(R.id.Wallet_vote_floatingActionButton);
 
@@ -272,6 +275,7 @@ public class WalletFragment extends Fragment {
         if(mLatestAccountData != null) {
 
             NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
 
             double balance = (mLatestAccountData.getBalance() / 1000000.0d);
             mTRX_balance_TextView
@@ -293,10 +297,18 @@ public class WalletFragment extends Fragment {
             for(Protocol.Account.Frozen frozen : mLatestAccountData.getFrozenList()) {
                 frozenTotal += frozen.getFrozenBalance();
             }
-            mTRX_frozen_TextView
-                    .setText(String.format("%s %s", numberFormat.format(frozenTotal/1000000), getString(R.string.tron_power_short)));
+            //mTRX_frozen_TextView.setText(String.format("%s %s", numberFormat.format(frozenTotal/1000000), getString(R.string.tron_power_short)));
+            mTRX_frozen_TextView.setText(numberFormat.format(frozenTotal/1000000));
 
-            mTRX_frozen_TextView.setVisibility(frozenTotal == 0 ? View.INVISIBLE : View.VISIBLE);
+            //mTRX_frozen_TextView.setVisibility(frozenTotal == 0 ? View.GONE : View.VISIBLE);
+
+            long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
+            long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
+            long bandwidthLeft = bandwidth - bandwidthUsed;
+
+            //mBandwidth_TextView.setVisibility(bandwidthLeft == 0 ? View.GONE : View.VISIBLE);
+            //mBandwidth_TextView.setText(String.format("645,435,43%s %s", numberFormat.format(bandwidthLeft), getString(R.string.bandwidth)));
+            mBandwidth_TextView.setText(numberFormat.format(bandwidthLeft));
         }
 
     }

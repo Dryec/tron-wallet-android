@@ -96,7 +96,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="174dp"
+            android:layout_height="200dp"
             diagonal:layout_constraintEnd_toEndOf="parent"
             diagonal:layout_constraintHorizontal_bias="0.0"
             diagonal:layout_constraintStart_toStartOf="parent"
@@ -110,6 +110,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:clickable="true"
+                android:focusable="true"
                 android:src="@drawable/ic_election_white_24px"
                 android:visibility="visible"
                 app:layout_constraintBottom_toTopOf="@+id/Wallet_trx_address_textView"
@@ -117,8 +118,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/Wallet_trx_balance_textView"
-                app:layout_constraintVertical_bias="0.7"
-                android:focusable="true" />
+                app:layout_constraintVertical_bias="0.7" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/Wallet_send_receive_floatingActionButton"
@@ -126,26 +126,27 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:clickable="true"
+                android:focusable="true"
                 android:src="@drawable/ic_swap_horiz_white_24px"
                 android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/Wallet_vote_floatingActionButton"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/Wallet_trx_balance_textView"
                 app:layout_constraintTop_toTopOf="@+id/Wallet_vote_floatingActionButton"
-                diagonal:layout_constraintEnd_toEndOf="parent"
-                android:focusable="true" />
+                diagonal:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
                 android:id="@+id/Wallet_trx_balance_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
-                android:layout_marginBottom="45dp"
+                android:layout_marginBottom="100dp"
                 android:gravity="center"
                 android:text="2,999,979.94"
                 android:textAppearance="@android:style/TextAppearance.Material.Body2"
                 android:textColor="@android:color/white"
                 android:textSize="36sp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.13"
                 diagonal:layout_constraintEnd_toEndOf="parent"
                 diagonal:layout_constraintHorizontal_bias="0.501"
                 diagonal:layout_constraintStart_toStartOf="parent"
@@ -169,6 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:clickable="true"
+                android:focusable="true"
                 android:fontFamily="sans-serif"
                 android:text="27ayJoT1c1vDAsGmBpzZzpHVadZJpcPBV9p"
                 android:textAppearance="@android:style/TextAppearance.Material.Body2"
@@ -176,21 +178,91 @@
                 android:visibility="visible"
                 diagonal:layout_constraintBottom_toBottomOf="parent"
                 diagonal:layout_constraintEnd_toEndOf="parent"
-                diagonal:layout_constraintStart_toStartOf="parent"
-                android:focusable="true" />
+                diagonal:layout_constraintStart_toStartOf="parent" />
 
             <TextView
-                android:id="@+id/Wallet_frozen_textView"
+                android:id="@+id/Wallet_tp_title_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="5,841 Frozen"
+                android:text="Tron Power"
                 android:textAlignment="center"
-                app:layout_constraintTop_toBottomOf="@+id/Wallet_TRX_textView"
-                diagonal:layout_constraintEnd_toEndOf="parent"
-                diagonal:layout_constraintStart_toStartOf="parent" />
+                android:textColor="@android:color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/divider"
+                app:layout_constraintEnd_toStartOf="@+id/divider2"
+                app:layout_constraintStart_toStartOf="@+id/divider" />
+
+            <TextView
+                android:id="@+id/Wallet_bandwidth_title_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:gravity="center"
+                android:text="Bandwidth"
+                android:textAlignment="center"
+                android:textColor="@android:color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/divider"
+                app:layout_constraintEnd_toEndOf="@+id/divider"
+                app:layout_constraintStart_toEndOf="@+id/divider2" />
+
+            <View
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="25dp"
+                android:background="@color/colorAccent"
+                app:layout_constraintEnd_toStartOf="@+id/Wallet_send_receive_floatingActionButton"
+                app:layout_constraintStart_toEndOf="@+id/Wallet_vote_floatingActionButton"
+                app:layout_constraintTop_toTopOf="@+id/divider2" />
+
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="1dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@color/colorAccent"
+                app:layout_constraintBottom_toTopOf="@+id/Wallet_trx_address_textView"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/Wallet_TRX_textView" />
+
+            <TextView
+                android:id="@+id/Wallet_tp_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="53,546,246"
+                app:layout_constraintBottom_toBottomOf="@+id/divider2"
+                app:layout_constraintEnd_toStartOf="@+id/divider2"
+                app:layout_constraintStart_toStartOf="@+id/divider"
+                app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+            <TextView
+                android:id="@+id/Wallet_bandwidth_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="89,348,923,432"
+                app:layout_constraintBottom_toBottomOf="@+id/divider2"
+                app:layout_constraintEnd_toEndOf="@+id/divider"
+                app:layout_constraintStart_toEndOf="@+id/divider2"
+                app:layout_constraintTop_toBottomOf="@+id/divider" />
 
         </android.support.constraint.ConstraintLayout>
 

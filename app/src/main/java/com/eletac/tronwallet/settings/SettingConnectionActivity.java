@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.eletac.tronwallet.R;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
+import org.apache.commons.lang3.StringUtils;
 import org.tron.walletserver.WalletClient;
 
 public class SettingConnectionActivity extends AppCompatActivity {
@@ -170,17 +171,25 @@ public class SettingConnectionActivity extends AppCompatActivity {
 
     private void loadNodes() {
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        String ip = sharedPreferences.getString(getString(R.string.ip_key), getString(R.string.fullnode_ip));
-        int port = sharedPreferences.getInt(getString(R.string.port_key), Integer.parseInt(getString(R.string.fullnode_port)));
 
-        String ip_sol = sharedPreferences.getString(getString(R.string.ip_sol_key), getString(R.string.soliditynode_ip));
-        int port_sol = sharedPreferences.getInt(getString(R.string.port_sol_key), Integer.parseInt(getString(R.string.soliditynode_port)));
+        String ip = "", ip_sol = "";
+        int port = 0, port_sol = 0;
 
+        try {
+             ip = sharedPreferences.getString(getString(R.string.ip_key), getString(R.string.fullnode_ip));
+             port = sharedPreferences.getInt(getString(R.string.port_key), Integer.parseInt(getString(R.string.fullnode_port)));
+
+             ip_sol = sharedPreferences.getString(getString(R.string.ip_sol_key), getString(R.string.soliditynode_ip));
+             port_sol = sharedPreferences.getInt(getString(R.string.port_sol_key), Integer.parseInt(getString(R.string.soliditynode_port)));
+
+        } catch(NumberFormatException e) {
+            e.printStackTrace();
+        }
         mIP_EditText.setText(ip);
-        mPort_EditText.setText(String.valueOf(port));
+        mPort_EditText.setText(!StringUtils.isEmpty(ip) ? String.valueOf(port) : "");
 
         mIP_Solidty_EditText.setText(ip_sol);
-        mPort_Solidty_EditText.setText(String.valueOf(port_sol));
+        mPort_Solidty_EditText.setText(!StringUtils.isEmpty(ip_sol) ? String.valueOf(port_sol) : "");
     }
 
     private boolean isIP(String input) {

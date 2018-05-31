@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
@@ -77,6 +78,8 @@ public class TokenItemListAdapter extends RecyclerView.Adapter<TokenItemListAdap
         private TextView mIssuer_TextView;
         private TextView mStart_TextView;
         private TextView mEnd_TextView;
+        private TextView mLeft_TextView;
+        private ProgressBar mLeft_ProgressBar;
         private Button mParticipate_Button;
 
         private Contract.AssetIssueContract mAsset;
@@ -92,6 +95,8 @@ public class TokenItemListAdapter extends RecyclerView.Adapter<TokenItemListAdap
             mIssuer_TextView = itemView.findViewById(R.id.TokenBE_issuer_textView);
             mStart_TextView = itemView.findViewById(R.id.TokenBE_start_textView);
             mEnd_TextView = itemView.findViewById(R.id.TokenBE_end_textView);
+            mLeft_TextView = itemView.findViewById(R.id.TokenBE_left_textView);
+            mLeft_ProgressBar = itemView.findViewById(R.id.TokenBE_left_progressBar);
             mParticipate_Button = itemView.findViewById(R.id.TokenBE_participate_button);
 
             mParticipate_Button.setOnClickListener(new View.OnClickListener() {
@@ -110,24 +115,24 @@ public class TokenItemListAdapter extends RecyclerView.Adapter<TokenItemListAdap
 
             mAsset = asset;
 
+            NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+            DateFormat dateTimeInstance = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US);
+
             mName_TextView.setText(asset.getName().toStringUtf8());
             mDescription_TextView.setText(asset.getDescription().toStringUtf8());
-            mSupply_TextView.setText(NumberFormat.getInstance(Locale.US).format(asset.getTotalSupply()));
+            mSupply_TextView.setText(numberFormat.format(asset.getTotalSupply()));
             mIssuer_TextView.setText(WalletClient.encode58Check(asset.getOwnerAddress().toByteArray()));
-            mStart_TextView.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(asset.getStartTime())));
-            mEnd_TextView.setText(
-                    new StringBuilder()
-                            .append(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(asset.getEndTime())))
-                            .append(" ")
-                            .append(DateUtils.getRelativeTimeSpanString(asset.getEndTime() - asset.getStartTime(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS))
-                            .toString()
+            mStart_TextView.setText(dateTimeInstance.format(new Date(asset.getStartTime())));
+            mEnd_TextView.setText(dateTimeInstance.format(new Date(asset.getEndTime())));
 
-            );
+            //mLeft_TextView.setText(numberFormat.format(asset.getVoteScore()) + " / " + numberFormat.format(asset.getTotalSupply()));
 
             long currentTimeMillis = System.currentTimeMillis();
             boolean isRunning = currentTimeMillis >= asset.getStartTime() && currentTimeMillis <= asset.getEndTime();
             boolean isParticiple = isRunning;
 
+            //mLeft_TextView.setVisibility(isParticiple ? View.VISIBLE : View.GONE);
+            //mLeft_ProgressBar.setVisibility(isParticiple ? View.VISIBLE : View.GONE);
             mParticipate_Button.setVisibility(isParticiple ? View.VISIBLE : View.GONE);
         }
     }

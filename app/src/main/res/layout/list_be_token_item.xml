@@ -160,7 +160,7 @@
             <Button
                 android:id="@+id/TokenBE_participate_button"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="52dp"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
@@ -168,8 +168,38 @@
                 android:text="Participate"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/TokenBE_end_textView" />
+                app:layout_constraintTop_toBottomOf="@+id/TokenBE_end_textView"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/TokenBE_left_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="TextView"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/TokenBE_left_progressBar"
+                app:layout_constraintStart_toStartOf="@+id/TokenBE_left_progressBar"
+                app:layout_constraintTop_toBottomOf="@+id/TokenBE_end_textView"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <ProgressBar
+                android:id="@+id/TokenBE_left_progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/TokenBE_participate_button"
+                app:layout_constraintStart_toStartOf="@+id/TokenBE_participate_button"
+                tools:layout_editor_absoluteY="222dp" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 

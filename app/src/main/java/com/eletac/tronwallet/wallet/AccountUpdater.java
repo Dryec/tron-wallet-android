@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.Utils;
 
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
 
@@ -90,8 +91,13 @@ public class AccountUpdater {
                 public void doOnBackground() {
                     if(mContext != null) {
                         try {
-                            Protocol.Account account = WalletClient.queryAccount(WalletClient.decodeFromBase58Check(Utils.getPublicAddress(mContext)));
+                            byte[] address = WalletClient.decodeFromBase58Check(Utils.getPublicAddress(mContext));
+
+                            Protocol.Account account = WalletClient.queryAccount(address);
+                            GrpcAPI.AccountNetMessage accountNetMessage = WalletClient.getAccountNet(address);
+
                             Utils.saveAccount(mContext, account);
+                            Utils.saveAccountNet(mContext, accountNetMessage);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

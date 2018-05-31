@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +42,8 @@ import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
+import org.tron.api.GrpcAPI;
+import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
@@ -64,6 +68,7 @@ public class ParticipateAssetActivity extends AppCompatActivity {
     private TextView mPrice_TextView;
 
     private EditText mAmount_EditText;
+    private SeekBar mAmount_SeekBar;
     private TextView mCost_TextView;
     private Button mSpend_Button;
 
@@ -72,6 +77,9 @@ public class ParticipateAssetActivity extends AppCompatActivity {
     private boolean mIsPublicAddressOnly;
     private String mAddress;
     private double mTokenPrice;
+
+    private boolean mUpdatingAmount = false;
+    private long mAmount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +95,7 @@ public class ParticipateAssetActivity extends AppCompatActivity {
         mPrice_TextView = findViewById(R.id.ParticipateAsset_price_textView);
 
         mAmount_EditText = findViewById(R.id.ParticipateAsset_amount_editText);
+        mAmount_SeekBar = findViewById(R.id.ParticipateAsset_amount_seekBar);
         mCost_TextView = findViewById(R.id.ParticipateAsset_cost_textView);
         mSpend_Button = findViewById(R.id.ParticipateAsset_spend_button);
 
@@ -138,20 +147,51 @@ public class ParticipateAssetActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mUpdatingAmount = true;
                     if(mAmount_EditText.getText().length() > 0) {
+                        mAmount = Long.valueOf(mAmount_EditText.getText().toString());
                         NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
                         numberFormat.setMaximumFractionDigits(6);
-                        double cost = (Long.parseLong(mAmount_EditText.getText().toString()) * mTokenPrice/1000000D);
+
+                        double cost = (mAmount * mTokenPrice/1000000D);
+
                         mCost_TextView.setText(numberFormat.format(cost));
                         mSpend_Button.setEnabled(true);
                     } else {
+                        mAmount = 0;
                         mCost_TextView.setText("0");
                         mSpend_Button.setEnabled(false);
                     }
+                    if(Build.VERSION.SDK_INT >= 24) {
+                        mAmount_SeekBar.setProgress((int) mAmount, true);
+                    } else {
+                        mAmount_SeekBar.setProgress((int) mAmount);
+                    }
+                    mUpdatingAmount = false;
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            mAmount_SeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    mUpdatingAmount = true;
+                    mAmount = progress;
+                    mAmount_EditText.setText(String.valueOf(mAmount));
+                    mUpdatingAmount = false;
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
 
                 }
             });
@@ -226,17 +266,34 @@ public class ParticipateAssetActivity extends AppCompatActivity {
                                             AsyncJob.doInBackground(() -> {
                                                 WalletClient walletClient = WalletClient.GetWalletByStorage(text);
                                                 if (walletClient != null) {
-                                                    boolean sent = false;
+                                                    boolean sent = false, enoughBandwidth = false;
                                                     try {
-                                                        sent = walletClient.participateAssetIssue(
-                                                                mAsset.getOwnerAddress().toByteArray(),
-                                                                mAsset.getName().toByteArray(),
-                                                                finalAmount);
+                                                        GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(ParticipateAssetActivity.this);
+
+                                                        Protocol.Transaction transaction = WalletClient.participateAssetIssueTransaction(
+                                                                mAsset.getOwnerAddress().toByteArray(), mAsset.getName().toByteArray(), WalletClient.decodeFromBase58Check(mAddress), finalAmount);
+
+
+                                                        transaction = TransactionUtils.setTimestamp(transaction);
+                                                        transaction = TransactionUtils.sign(transaction, walletClient.getEcKey());
+
+                                                        long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
+                                                        long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
+                                                        if(transaction.getSerializedSize() <= bandwidth-bandwidthUsed)  {
+                                                            enoughBandwidth = true;
+                                                        }
+
+                                                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                                                        transaction.writeTo(outputStream);
+                                                        outputStream.flush();
+
+                                                        sent = WalletClient.broadcastTransaction(outputStream.toByteArray());
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
 
                                                     boolean finalSent = sent;
+                                                    boolean finalEnoughBandwidth = enoughBandwidth;
                                                     AsyncJob.doOnMainThread(() -> {
                                                         progressDialog.dismiss();
 
@@ -247,7 +304,7 @@ public class ParticipateAssetActivity extends AppCompatActivity {
                                                             infoDialog.setTitle(R.string.spending_successfully);
                                                         } else {
                                                             infoDialog.setTitle(R.string.spending_failed);
-                                                            infoDialog.setMessage(R.string.try_later);
+                                                            infoDialog.setMessage(finalEnoughBandwidth ? R.string.try_later : R.string.not_enough_bandwidth);
                                                         }
                                                         infoDialog.show();
                                                         AccountUpdater.singleShot(3000);

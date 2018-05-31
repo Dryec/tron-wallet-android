@@ -19,7 +19,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
+import org.tron.walletserver.GrpcClient;
 import org.tron.walletserver.WalletClient;
 
 import java.util.ArrayList;
@@ -93,6 +95,37 @@ public class Utils {
             editor.putLong(context.getString(R.string.latest_operation_time_key), account.getLatestOprationTime());
             editor.apply();
         }
+    }
+
+    public static void saveAccountNet(Context context, GrpcAPI.AccountNetMessage accountNet) {
+        if (context != null && accountNet != null) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_account_file_key), Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putLong(context.getString(R.string.net_limit_key), accountNet.getNetLimit());
+            editor.putLong(context.getString(R.string.net_used_key), accountNet.getNetUsed());
+            editor.putLong(context.getString(R.string.net_free_limit_key), accountNet.getFreeNetLimit());
+            editor.putLong(context.getString(R.string.net_free_used_key), accountNet.getFreeNetUsed());
+            // TODO asset net usage
+
+            editor.apply();
+        }
+    }
+
+    public static GrpcAPI.AccountNetMessage getAccountNet(Context context) {
+        if(context != null) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_account_file_key), Context.MODE_PRIVATE);
+
+            GrpcAPI.AccountNetMessage.Builder accountNetMessage = GrpcAPI.AccountNetMessage.newBuilder();
+
+            accountNetMessage.setNetLimit(sharedPreferences.getLong(context.getString(R.string.net_limit_key), 0));
+            accountNetMessage.setNetUsed(sharedPreferences.getLong(context.getString(R.string.net_used_key), 0));
+            accountNetMessage.setFreeNetLimit(sharedPreferences.getLong(context.getString(R.string.net_free_limit_key), 0));
+            accountNetMessage.setFreeNetUsed(sharedPreferences.getLong(context.getString(R.string.net_free_used_key), 0));
+
+            return accountNetMessage.build();
+        }
+        return GrpcAPI.AccountNetMessage.getDefaultInstance();
     }
 
     public static Protocol.Account getAccount(Context context) {

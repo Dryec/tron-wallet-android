@@ -82,15 +82,23 @@ public class WalletClient {
     Context context = TronWalletApplication.getAppContext();
     SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-    String ip = sharedPreferences.getString(context.getString(R.string.ip_key), context.getString(R.string.fullnode_ip));
-    int port = sharedPreferences.getInt(context.getString(R.string.port_key), Integer.parseInt(context.getString(R.string.fullnode_port)));
+    String ip = "", ip_sol = "";
+    int port = 0, port_sol = 0;
 
-    String ip_sol = sharedPreferences.getString(context.getString(R.string.ip_sol_key), context.getString(R.string.soliditynode_ip));
-    int port_sol = sharedPreferences.getInt(context.getString(R.string.port_sol_key), Integer.parseInt(context.getString(R.string.soliditynode_port)));
+    try {
 
+      ip = sharedPreferences.getString(context.getString(R.string.ip_key), context.getString(R.string.fullnode_ip));
+      port =  sharedPreferences.getInt(context.getString(R.string.port_key), Integer.parseInt(context.getString(R.string.fullnode_port)));
+
+      ip_sol = sharedPreferences.getString(context.getString(R.string.ip_sol_key), context.getString(R.string.soliditynode_ip));
+      port_sol = sharedPreferences.getInt(context.getString(R.string.port_sol_key), Integer.parseInt(context.getString(R.string.soliditynode_port)));
+
+    } catch(NumberFormatException e) {
+      e.printStackTrace();
+    }
     rpcCli = new GrpcClient(
-            String.format(Locale.US, "%s:%d", ip, port),
-            String.format(Locale.US, "%s:%d", ip_sol, port_sol));
+            !ip.equals("") ? String.format(Locale.US, "%s:%d", ip, port) : "",
+            !ip_sol.equals("") ? String.format(Locale.US, "%s:%d", ip_sol, port_sol) : "");
   }
 
   /**

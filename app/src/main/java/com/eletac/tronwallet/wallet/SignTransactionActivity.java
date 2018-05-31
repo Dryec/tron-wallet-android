@@ -24,6 +24,7 @@ import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
 
@@ -58,18 +59,29 @@ public class SignTransactionActivity extends AppCompatActivity {
                 AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
                     @Override
                     public void doOnBackground() {
-                        boolean sent = false;
+                        boolean sent = false, enoughBandwidth = false;
                         try {
-                            sent = WalletClient.broadcastTransaction(Hex.decode(result.getContents()));
+                            byte[] transaction_bytes = Hex.decode(result.getContents());
+
+                            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(SignTransactionActivity.this);
+                            long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
+                            long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
+
+                            enoughBandwidth = transaction_bytes.length <= (bandwidth-bandwidthUsed);
+
+                            sent = WalletClient.broadcastTransaction(transaction_bytes);
                         } catch (Exception ignored) { }
 
                         final boolean sentTransaction = sent;
 
+                        boolean finalEnoughBandwidth = enoughBandwidth;
                         AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
                             @Override
                             public void doInUIThread() {
                                 progressDialog.dismiss();
-                                Toast.makeText(SignTransactionActivity.this, sentTransaction ? R.string.transaction_successfully_sent : R.string.transaction_sending_failed, Toast.LENGTH_LONG).show();
+                                Toast.makeText(SignTransactionActivity.this, sentTransaction ? R.string.transaction_successfully_sent :
+                                        finalEnoughBandwidth ? R.string.transaction_sending_failed : R.string.transactions_failed_bandwidth,
+                                        Toast.LENGTH_LONG).show();
                                 finish();
                             }
                         });
