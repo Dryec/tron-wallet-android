@@ -138,6 +138,7 @@ public class ParticipateAssetActivity extends AppCompatActivity {
             mPrice_TextView.setText(numberFormat.format(mTokenPrice/1000000D));
 
             mAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, mAccount.getBalance()/mTokenPrice)});
+            mAmount_SeekBar.setMax((int)(mAccount.getBalance()/mTokenPrice));
 
             mAmount_EditText.addTextChangedListener(new TextWatcher() {
                 @Override
@@ -147,27 +148,24 @@ public class ParticipateAssetActivity extends AppCompatActivity {
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    mUpdatingAmount = true;
-                    if(mAmount_EditText.getText().length() > 0) {
-                        mAmount = Long.valueOf(mAmount_EditText.getText().toString());
-                        NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
-                        numberFormat.setMaximumFractionDigits(6);
-
-                        double cost = (mAmount * mTokenPrice/1000000D);
-
-                        mCost_TextView.setText(numberFormat.format(cost));
-                        mSpend_Button.setEnabled(true);
-                    } else {
-                        mAmount = 0;
-                        mCost_TextView.setText("0");
-                        mSpend_Button.setEnabled(false);
+                    if(!mUpdatingAmount) {
+                        mUpdatingAmount = true;
+                        if(mAmount_EditText.getText().length() > 0) {
+                            mAmount = Long.valueOf(mAmount_EditText.getText().toString());
+                            updateCost();
+                            mSpend_Button.setEnabled(true);
+                        } else {
+                            mAmount = 0;
+                            mCost_TextView.setText("0");
+                            mSpend_Button.setEnabled(false);
+                        }
+                        if(Build.VERSION.SDK_INT >= 24) {
+                            mAmount_SeekBar.setProgress((int) mAmount, true);
+                        } else {
+                            mAmount_SeekBar.setProgress((int) mAmount);
+                        }
+                        mUpdatingAmount = false;
                     }
-                    if(Build.VERSION.SDK_INT >= 24) {
-                        mAmount_SeekBar.setProgress((int) mAmount, true);
-                    } else {
-                        mAmount_SeekBar.setProgress((int) mAmount);
-                    }
-                    mUpdatingAmount = false;
                 }
 
                 @Override
@@ -179,10 +177,14 @@ public class ParticipateAssetActivity extends AppCompatActivity {
             mAmount_SeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    mUpdatingAmount = true;
-                    mAmount = progress;
-                    mAmount_EditText.setText(String.valueOf(mAmount));
-                    mUpdatingAmount = false;
+                    if(!mUpdatingAmount) {
+                        mUpdatingAmount = true;
+                        mAmount = progress;
+                        mAmount_EditText.setText(String.valueOf(mAmount));
+                        mSpend_Button.setEnabled(mAmount > 0);
+                        updateCost();
+                        mUpdatingAmount = false;
+                    }
                 }
 
                 @Override
@@ -199,12 +201,7 @@ public class ParticipateAssetActivity extends AppCompatActivity {
             mSpend_Button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    long amount = 0;
-                    if(mAmount_EditText.getText().length() > 0) {
-                        amount = Long.parseLong(mAmount_EditText.getText().toString());
-                    } else {
-                        return;
-                    }
+                    long amount = mAmount;
                     long finalAmount = (long) (amount*mTokenPrice);
                     if (mIsPublicAddressOnly) {
                         new LovelyStandardDialog(ParticipateAssetActivity.this)
@@ -331,5 +328,12 @@ public class ParticipateAssetActivity extends AppCompatActivity {
         } else {
             finish();
         }
+    }
+
+    private void updateCost() {
+        NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
+        numberFormat.setMaximumFractionDigits(6);
+        double cost = (mAmount * mTokenPrice/1000000D);
+        mCost_TextView.setText(numberFormat.format(cost));
     }
 }

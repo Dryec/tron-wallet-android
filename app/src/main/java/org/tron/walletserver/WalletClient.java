@@ -667,11 +667,11 @@ public class WalletClient {
       logger.warn("Warning: Address is empty !!");
       return null;
     }
-    if (addressBase58.length() != CommonConstant.BASE58CHECK_ADDRESS_SIZE) {
+    /*if (addressBase58.length() != CommonConstant.BASE58CHECK_ADDRESS_SIZE) {
       logger.warn("Warning: Base58 address length need " + CommonConstant.BASE58CHECK_ADDRESS_SIZE
           + " but " + addressBase58.length() + " !!");
       return null;
-    }
+    }*/
     byte[] address = decode58Check(addressBase58);
     if (!addressValid(address)) {
       return null;

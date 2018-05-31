@@ -421,9 +421,10 @@ public class FreezeFragment extends Fragment {
     private void updateUI() {
         mUpdatingUI = true;
         mFreezeAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, mAccount.getBalance()/1000000)});
-        mFreezeAmount_SeekBar.setMax((int)mAccount.getBalance()/1000000);
+        mFreezeAmount_SeekBar.setMax((int)(mAccount.getBalance()/1000000L));
 
         GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
+        Log.i("TEEEEST", String.valueOf(accountNetMessage.getFreeNetLimit()-accountNetMessage.getFreeNetUsed()));
 
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
@@ -454,7 +455,7 @@ public class FreezeFragment extends Fragment {
         mExpires_TextView.setText(expire == 0 ? "-" : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(expire)));
         mUnfreeze_Button.setText(String.format(Locale.US,"%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
 
-        long newFreeze = freezed + mFreezeAmount;
+        long newFreeze = (freezed/1000000L) + mFreezeAmount;
         mFrozenNew_TextView.setText(numberFormat.format(newFreeze));
         mVotesNew_TextView.setText(numberFormat.format(newFreeze));
         mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getNetUsage() + mFreezeAmount)); // not visible anymore
