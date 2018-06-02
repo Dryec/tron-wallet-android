@@ -37,19 +37,19 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".wallet.SendReceiveActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_send_receive"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eletac.tronwallet.MainActivity" />
         </activity>
         <activity
             android:name=".wallet.VoteActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eletac.tronwallet.MainActivity" />
@@ -62,9 +62,9 @@
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".wallet.cold.SignedTransactionActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_signed_transaction"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.ActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -72,9 +72,9 @@
         </activity>
         <activity
             android:name=".wallet.SignTransactionActivity"
-            android:screenOrientation="portrait"
             android:label="@string/title_activity_sign_transaction"
             android:parentActivityName=".wallet.SendReceiveActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.ActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -82,18 +82,18 @@
         </activity>
         <activity
             android:name=".settings.SettingConnectionActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eletac.tronwallet.MainActivity" />
         </activity>
         <activity
             android:name=".wallet.AboutActivity"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eletac.tronwallet.MainActivity" />
@@ -101,13 +101,20 @@
         <activity
             android:name=".wallet.ParticipateAssetActivity"
             android:label="@string/title_activity_participate_asset"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.ActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".wallet.ConfirmTransactionActivity"
+            android:launchMode="singleTop"
+            android:label="@string/title_activity_confirm_transaction"
+            android:screenOrientation="portrait">
+
         </activity>
     </application>
 

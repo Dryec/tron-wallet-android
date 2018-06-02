@@ -214,4 +214,5 @@
     <string name="not_enough_bandwidth">Not enough bandwidth</string>
     <string name="transactions_failed_bandwidth">Transactions failed, not enough bandwidth!</string>
     <string name="bandwidth">Bandwidth</string>
+    <string name="title_activity_confirm_transaction">Confirm Transaction</string>
 </resources>
