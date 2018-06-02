@@ -24,18 +24,19 @@ public class BlockItemListAdapter extends RecyclerView.Adapter<BlockItemListAdap
     private List<Protocol.Block> mBlocks;
     private Handler mUpdateElapsedTimeHandler;
     private List<BlockItemViewHolder> mViewHolders;
-    Runnable mUpdateElapsedTimeRunnable = new Runnable() {
+    private Runnable mUpdateElapsedTimeRunnable = new Runnable() {
         public void run() {
-            List<BlockItemViewHolder> viewHoldersToRemove = new ArrayList<>();
+            List<BlockItemViewHolder> viewHolders = new ArrayList<>();
+
             for (BlockItemViewHolder viewHolder : mViewHolders) {
                 if(viewHolder != null)
-                    viewHolder.updateElapsedTime();
-                else
-                    viewHoldersToRemove.add(viewHolder);
+                    viewHolders.add(viewHolder);
             }
 
-            for (BlockItemViewHolder viewHolder : viewHoldersToRemove) {
-                mViewHolders.remove(viewHolder);
+            mViewHolders = viewHolders;
+
+            for (BlockItemViewHolder viewHolder : mViewHolders) {
+                viewHolder.updateElapsedTime();
             }
 
             mUpdateElapsedTimeHandler.postDelayed(mUpdateElapsedTimeRunnable, 1010);
