@@ -311,11 +311,15 @@ public class WalletClient {
     return rpcCli.createTransaction(contract);
   }
 
+  public static boolean broadcastTransaction(Transaction transaction) {
+    return TransactionUtils.validTransaction(transaction)
+            && rpcCli.broadcastTransaction(transaction);
+  }
+
   public static boolean broadcastTransaction(byte[] transactionBytes)
       throws InvalidProtocolBufferException {
     Transaction transaction = Transaction.parseFrom(transactionBytes);
-    return TransactionUtils.validTransaction(transaction)
-        && rpcCli.broadcastTransaction(transaction);
+    return broadcastTransaction(transaction);
   }
 
   public boolean createAssetIssue(Contract.AssetIssueContract contract) {

@@ -32,6 +32,7 @@ import com.eletac.tronwallet.InputFilterMinMax;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.block_explorer.BlockExplorerUpdater;
+import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -203,7 +204,32 @@ public class ParticipateAssetActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     long amount = mAmount;
                     long finalAmount = (long) (amount*mTokenPrice);
-                    if (mIsPublicAddressOnly) {
+
+                    mSpend_Button.setEnabled(false);
+                    AsyncJob.doInBackground(() -> {
+                        Protocol.Transaction transaction = null;
+                        try {
+                            transaction = WalletClient.participateAssetIssueTransaction(
+                                mAsset.getOwnerAddress().toByteArray(), mAsset.getName().toByteArray(), WalletClient.decodeFromBase58Check(mAddress), finalAmount);
+
+                        } catch (Exception ignored) { }
+
+                        Protocol.Transaction finalTransaction = transaction;
+                        AsyncJob.doOnMainThread(() -> {
+                            mSpend_Button.setEnabled(true);
+                            if(finalTransaction != null)
+                                ConfirmTransactionActivity.start(ParticipateAssetActivity.this, finalTransaction, mAsset.toByteArray());
+                            else
+                                new LovelyInfoDialog(ParticipateAssetActivity.this)
+                                        .setTopColorRes(R.color.colorPrimary)
+                                        .setIcon(R.drawable.ic_error_white_24px)
+                                        .setTitle(R.string.failed)
+                                        .setMessage(R.string.could_not_create_transaction)
+                                        .show();
+                        });
+                    });
+
+                    /*if (mIsPublicAddressOnly) {
                         new LovelyStandardDialog(ParticipateAssetActivity.this)
                                 .setTopColorRes(R.color.colorPrimary)
                                 .setIcon(R.drawable.ic_info_white_24px)
@@ -321,7 +347,7 @@ public class ParticipateAssetActivity extends AppCompatActivity {
                                 .setNegativeButtonColor(Color.WHITE)
                                 .setNegativeButton(R.string.cancel, null)
                                 .show();
-                    }
+                    }*/
                 }
             });
 

@@ -38,7 +38,7 @@ public class WitnessItemListAdapter extends RecyclerView.Adapter<WitnessItemList
 
     private HashMap<String, String> mVotes;
 
-    private boolean showFiltered;
+    private boolean showFiltered = false;
 
     public WitnessItemListAdapter(Context context, List<Protocol.Witness> witnesses, List<Protocol.Witness> witnessesFiltered) {
         mContext = context;

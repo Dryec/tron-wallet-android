@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -17,7 +16,6 @@ import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.CaptureActivityPortrait;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
@@ -28,12 +26,13 @@ import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 public class SignTransactionActivity extends AppCompatActivity {
 
     public static final String TRANSACTION_DATA_EXTRA = "transaction_data_extra";
+    public static final String TRANSACTION_SIGNED_EXTRA = "transaction_data_extra";
+    public static final int TRANSACTION_SIGN_REQUEST_CODE = 54;
 
     private ImageView mUnsignedTransactionQR_ImageView;
     private Switch mSignedTransaction_Switch;
@@ -49,47 +48,20 @@ public class SignTransactionActivity extends AppCompatActivity {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() != null) {
+                    byte[] transaction_bytes = null;
+                    try {
+                        transaction_bytes = Hex.decode(result.getContents());
+                    } catch (Exception ignored) { }
 
-                LovelyProgressDialog progressDialog = new LovelyProgressDialog(this)
-                        .setIcon(R.drawable.ic_send_white_24px)
-                        .setTitle(R.string.sending)
-                        .setTopColorRes(R.color.colorPrimary);
-                progressDialog.show();
+                    Intent intent = new Intent();
+                    intent.putExtra(TRANSACTION_SIGNED_EXTRA, transaction_bytes);
 
-                AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
-                    @Override
-                    public void doOnBackground() {
-                        boolean sent = false, enoughBandwidth = false;
-                        try {
-                            byte[] transaction_bytes = Hex.decode(result.getContents());
-
-                            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(SignTransactionActivity.this);
-                            long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
-                            long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
-
-                            enoughBandwidth = transaction_bytes.length <= (bandwidth-bandwidthUsed);
-
-                            sent = WalletClient.broadcastTransaction(transaction_bytes);
-                        } catch (Exception ignored) { }
-
-                        final boolean sentTransaction = sent;
-
-                        boolean finalEnoughBandwidth = enoughBandwidth;
-                        AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
-                            @Override
-                            public void doInUIThread() {
-                                progressDialog.dismiss();
-                                Toast.makeText(SignTransactionActivity.this, sentTransaction ? R.string.transaction_successfully_sent :
-                                        finalEnoughBandwidth ? R.string.transaction_sending_failed : R.string.transactions_failed_bandwidth,
-                                        Toast.LENGTH_LONG).show();
-                                finish();
-                            }
-                        });
-                    }
-                });
+                    setResult(TRANSACTION_SIGN_REQUEST_CODE, intent);
+                    finish();
+                }
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
+            else {
+                super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

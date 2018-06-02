@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.eletac.tronwallet.R;
 
@@ -42,6 +43,24 @@ public class SendReceiveActivity extends AppCompatActivity {
         if(extras != null) {
             mViewPager.setCurrentItem(extras.getInt("page", 0));
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AccountUpdater.singleShot(0);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if ( id == android.R.id.home ) {
+            finish();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

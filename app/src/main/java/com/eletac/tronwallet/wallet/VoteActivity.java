@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -18,8 +17,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,20 +24,13 @@ import android.widget.TextView;
 import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
+import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
-import org.spongycastle.util.encoders.Hex;
-import org.tron.api.GrpcAPI;
-import org.tron.common.utils.TransactionUtils;
-import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -120,123 +110,29 @@ public class VoteActivity extends AppCompatActivity {
         mSubmit_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mIsPublicAddressOnly) {
-                    new LovelyStandardDialog(VoteActivity.this)
-                            .setTopColorRes(R.color.colorPrimary)
-                            .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle(R.string.confirm_votes)
-                            .setPositiveButton(R.string.sign_to_submit, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    try {
-                                        Protocol.Transaction transaction = WalletClient.createVoteWitnessTransaction(WalletClient.decodeFromBase58Check(Utils.getPublicAddress(VoteActivity.this)), mVoteWitnesses);
+                mSubmit_Button.setEnabled(false);
+                AsyncJob.doInBackground(() -> {
+                    Protocol.Transaction transaction = null;
+                    try {
+                        transaction = WalletClient.createVoteWitnessTransaction(
+                                WalletClient.decodeFromBase58Check(Utils.getPublicAddress(VoteActivity.this)),
+                                mVoteWitnesses);
+                    } catch (Exception ignored) { }
 
-                                        if (transaction == null || transaction.getRawData().getContractCount() == 0) {
-                                            new LovelyInfoDialog(VoteActivity.this)
-                                                    .setTopColorRes(R.color.colorPrimary)
-                                                    .setIcon(R.drawable.ic_error_white_24px)
-                                                    .setTitle(R.string.submitting_failed)
-                                                    .setMessage(R.string.could_not_create_transaction)
-                                                    .show();
-                                        } else {
-                                            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-                                            transaction.writeTo(outputStream);
-                                            outputStream.flush();
-
-                                            Intent intent = new Intent(VoteActivity.this, SignTransactionActivity.class);
-                                            intent.putExtra(SignTransactionActivity.TRANSACTION_DATA_EXTRA, outputStream.toByteArray());
-                                            startActivity(intent);
-                                        }
-                                    } catch(Exception e){
-                                        e.printStackTrace();
-                                    }
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, null)
-                            .show();
-                } else {
-                    new LovelyTextInputDialog(VoteActivity.this, R.style.EditTextTintTheme)
-                            .setTopColorRes(R.color.colorPrimary)
-                            .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle(R.string.confirm_votes)
-                            .setHint(R.string.password)
-                            .setInputType(InputType.TYPE_CLASS_TEXT |
-                                    InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                            .setConfirmButtonColor(Color.WHITE)
-                            .setConfirmButton(R.string.submit, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                                @Override
-                                public void onTextInputConfirmed(String text) {
-
-                                    if (WalletClient.checkPassWord(text)) {
-
-                                        LovelyProgressDialog progressDialog = new LovelyProgressDialog(VoteActivity.this)
-                                                .setIcon(R.drawable.ic_send_white_24px)
-                                                .setTitle(R.string.sending)
-                                                .setTopColorRes(R.color.colorPrimary);
-                                        progressDialog.show();
-
-                                        AsyncJob.doInBackground(() -> {
-                                            WalletClient walletClient = WalletClient.GetWalletByStorage(text);
-                                            if (walletClient != null) {
-                                                boolean sent = false, enoughBandwidth = false;
-                                                try {
-                                                    GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(VoteActivity.this);
-
-                                                    Protocol.Transaction transaction = WalletClient.createVoteWitnessTransaction(WalletClient.decodeFromBase58Check(Utils.getPublicAddress(VoteActivity.this)), mVoteWitnesses);
-
-                                                    transaction = TransactionUtils.setTimestamp(transaction);
-                                                    transaction = TransactionUtils.sign(transaction, walletClient.getEcKey());
-
-                                                    long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
-                                                    long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
-                                                    if(transaction.getSerializedSize() <= bandwidth-bandwidthUsed)  {
-                                                        enoughBandwidth = true;
-                                                    }
-
-                                                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                                                    transaction.writeTo(outputStream);
-                                                    outputStream.flush();
-
-                                                    sent = WalletClient.broadcastTransaction(outputStream.toByteArray());
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-
-                                                boolean finalSent = sent;
-                                                boolean finalEnoughBandwidth = enoughBandwidth;
-                                                AsyncJob.doOnMainThread(() -> {
-                                                    progressDialog.dismiss();
-
-                                                    LovelyInfoDialog infoDialog = new LovelyInfoDialog(VoteActivity.this)
-                                                            .setTopColorRes(R.color.colorPrimary)
-                                                            .setIcon(R.drawable.ic_send_white_24px);
-                                                    if (finalSent) {
-                                                        infoDialog.setTitle(R.string.votes_submitted_successfully);
-                                                        AccountUpdater.singleShot(3000);
-                                                        mLoadVotesOnNextAccountUpdate = true;
-                                                    } else {
-                                                        infoDialog.setTitle(R.string.submitting_failed);
-                                                        infoDialog.setMessage(finalEnoughBandwidth ? R.string.try_later : R.string.not_enough_bandwidth);
-                                                    }
-                                                    infoDialog.show();
-                                                });
-                                            }
-                                        });
-                                    } else {
-                                        new LovelyInfoDialog(VoteActivity.this)
-                                                .setTopColorRes(R.color.colorPrimary)
-                                                .setIcon(R.drawable.ic_error_white_24px)
-                                                .setTitle(R.string.submitting_failed)
-                                                .setMessage(R.string.wrong_password)
-                                                .show();
-                                    }
-                                }
-                            })
-                            .setNegativeButtonColor(Color.WHITE)
-                            .setNegativeButton(R.string.cancel, null)
-                            .show();
-                }
+                    Protocol.Transaction finalTransaction = transaction;
+                    AsyncJob.doOnMainThread(() -> {
+                        mSubmit_Button.setEnabled(true);
+                        if(finalTransaction != null)
+                            ConfirmTransactionActivity.start(VoteActivity.this, finalTransaction);
+                        else
+                            new LovelyInfoDialog(VoteActivity.this)
+                                    .setTopColorRes(R.color.colorPrimary)
+                                    .setIcon(R.drawable.ic_error_white_24px)
+                                    .setTitle(R.string.failed)
+                                    .setMessage(R.string.could_not_create_transaction)
+                                    .show();
+                    });
+                });
             }
         });
 

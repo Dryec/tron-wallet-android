@@ -33,6 +33,7 @@ import com.eletac.tronwallet.InputFilterMinMax;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.settings.SettingsFragment;
+import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
@@ -198,151 +199,32 @@ public class SendFragment extends Fragment {
                 }
                 amount = Double.parseDouble(mAmount_EditText.getText().toString());
 
-                StringBuilder messageBuilder = new StringBuilder();
-                messageBuilder
-                        .append(getString(R.string.send_message_text_asset))
-                        .append("\n\t")
-                        .append(asset)
-                        .append("\n\n")
-                        .append(getString(R.string.send_message_text_to))
-                        .append("\t")
-                        .append(to)
-                        .append("\n\n")
-                        .append(getString(R.string.send_message_text_amount))
-                        .append("\n\t")
-                        .append(amount);
+                mSend_Button.setEnabled(false);
+                AsyncJob.doInBackground(() -> {
+                    Protocol.Transaction transaction = null;
+                    try {
+                        if(isTrxCoin) {
+                            Contract.TransferContract contract = WalletClient.createTransferContract(toRaw, WalletClient.decodeFromBase58Check(mAddress), (long) (amount * 1000000.0d));
+                            transaction = WalletClient.createTransaction4Transfer(contract);
+                        } else {
+                            transaction = WalletClient.createTransferAssetTransaction(toRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
+                        }
+                    } catch (Exception ignored) { }
 
-                if(mIsPublicAddressOnly) {
-                    new LovelyStandardDialog(getActivity())
-                            .setTopColorRes(R.color.colorPrimary)
-                            .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle(R.string.confirm_transaction)
-                            .setMessage(messageBuilder.toString())
-                            .setPositiveButton(R.string.sign, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    try {
-                                        Protocol.Transaction transaction;
-                                        if(isTrxCoin) {
-                                            Contract.TransferContract contract = WalletClient.createTransferContract(toRaw, WalletClient.decodeFromBase58Check(mAddress), (long) (amount * 1000000.0d));
-                                            transaction = WalletClient.createTransaction4Transfer(contract);
-                                        } else {
-                                            transaction = WalletClient.createTransferAssetTransaction(toRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
-                                        }
-
-                                        if (transaction == null || transaction.getRawData().getContractCount() == 0) {
-                                            new LovelyInfoDialog(getContext())
-                                                    .setTopColorRes(R.color.colorPrimary)
-                                                    .setIcon(R.drawable.ic_error_white_24px)
-                                                    .setTitle(R.string.sending_failed)
-                                                    .setMessage(R.string.could_not_create_transaction)
-                                                    .show();
-                                        } else {
-                                                Intent intent = new Intent(getContext(), SignTransactionActivity.class);
-                                                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-                                                transaction.writeTo(outputStream);
-                                                outputStream.flush();
-
-                                                intent.putExtra(SignTransactionActivity.TRANSACTION_DATA_EXTRA, outputStream.toByteArray());
-                                                startActivity(intent);
-                                        }
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, null)
-                            .show();
-                } else {
-                    new LovelyTextInputDialog(getActivity(), R.style.EditTextTintTheme)
-                            .setTopColorRes(R.color.colorPrimary)
-                            .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle(R.string.confirm_transaction)
-                            .setMessage(messageBuilder.toString())
-                            .setHint(R.string.password)
-                            .setInputType(InputType.TYPE_CLASS_TEXT |
-                                    InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                            .setConfirmButtonColor(Color.WHITE)
-                            .setConfirmButton(R.string.send, new LovelyTextInputDialog.OnTextInputConfirmListener() {
-                                @Override
-                                public void onTextInputConfirmed(String text) {
-
-                                    if (WalletClient.checkPassWord(text)) {
-
-                                        LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
-                                                .setIcon(R.drawable.ic_send_white_24px)
-                                                .setTitle(R.string.sending)
-                                                .setTopColorRes(R.color.colorPrimary);
-                                        progressDialog.show();
-
-                                        AsyncJob.doInBackground(() -> {
-                                            WalletClient walletClient = WalletClient.GetWalletByStorage(text);
-                                            if (walletClient != null) {
-                                                boolean sent = false, enoughBandwidth = false;
-                                                try {
-                                                    GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
-
-                                                    Protocol.Transaction transaction;
-                                                    if(isTrxCoin) {
-                                                        Contract.TransferContract contract = WalletClient.createTransferContract(toRaw, WalletClient.decodeFromBase58Check(mAddress), (long) (amount * 1000000.0d));
-                                                        transaction = WalletClient.createTransaction4Transfer(contract);
-                                                    } else {
-                                                        transaction = WalletClient.createTransferAssetTransaction(toRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
-                                                    }
-
-                                                    transaction = TransactionUtils.setTimestamp(transaction);
-                                                    transaction = TransactionUtils.sign(transaction, walletClient.getEcKey());
-
-                                                    long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
-                                                    long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
-                                                    if(transaction.getSerializedSize() <= bandwidth-bandwidthUsed)  {
-                                                        enoughBandwidth = true;
-                                                    }
-
-                                                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                                                    transaction.writeTo(outputStream);
-                                                    outputStream.flush();
-
-                                                    sent = WalletClient.broadcastTransaction(outputStream.toByteArray());
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-
-
-                                                boolean finalSent = sent;
-                                                boolean finalEnoughBandwidth = enoughBandwidth;
-                                                AsyncJob.doOnMainThread(() -> {
-                                                    progressDialog.dismiss();
-
-                                                    LovelyInfoDialog infoDialog = new LovelyInfoDialog(getContext())
-                                                            .setTopColorRes(R.color.colorPrimary)
-                                                            .setIcon(R.drawable.ic_send_white_24px);
-                                                    if (finalSent) {
-                                                        infoDialog.setTitle(R.string.sent_successfully);
-                                                    } else {
-                                                        infoDialog.setTitle(R.string.sending_failed);
-                                                        infoDialog.setMessage(finalEnoughBandwidth ? R.string.try_later : R.string.not_enough_bandwidth);
-                                                    }
-                                                    infoDialog.show();
-                                                    AccountUpdater.singleShot(3000);
-                                                });
-                                            }
-                                        });
-                                    } else {
-                                        new LovelyInfoDialog(getContext())
-                                                .setTopColorRes(R.color.colorPrimary)
-                                                .setIcon(R.drawable.ic_error_white_24px)
-                                                .setTitle(R.string.sending_failed)
-                                                .setMessage(R.string.wrong_password)
-                                                .show();
-                                    }
-                                }
-                            })
-                            .setNegativeButtonColor(Color.WHITE)
-                            .setNegativeButton(R.string.cancel, null)
-                            .show();
-                }
+                    Protocol.Transaction finalTransaction = transaction;
+                    AsyncJob.doOnMainThread(() -> {
+                        mSend_Button.setEnabled(true);
+                        if(finalTransaction != null)
+                            ConfirmTransactionActivity.start(getContext(), finalTransaction);
+                        else
+                            new LovelyInfoDialog(getContext())
+                                    .setTopColorRes(R.color.colorPrimary)
+                                    .setIcon(R.drawable.ic_error_white_24px)
+                                    .setTitle(R.string.failed)
+                                    .setMessage(R.string.could_not_create_transaction)
+                                    .show();
+                    });
+                });
             }
         });
 

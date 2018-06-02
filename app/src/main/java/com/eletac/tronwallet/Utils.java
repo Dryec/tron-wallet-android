@@ -13,6 +13,7 @@ import com.arasthel.asyncjob.AsyncJob;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -24,6 +25,8 @@ import org.tron.protos.Protocol;
 import org.tron.walletserver.GrpcClient;
 import org.tron.walletserver.WalletClient;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +61,17 @@ public class Utils {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         return px;
+    }
+
+    public static byte[] transactionToByteArray(Protocol.Transaction transaction) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        transaction.writeTo(outputStream);
+        outputStream.flush();
+        return outputStream.toByteArray();
+    }
+
+    public static Protocol.Transaction parseTransaction(byte[] transactionBytes) throws InvalidProtocolBufferException {
+        return Protocol.Transaction.parseFrom(transactionBytes);
     }
 
     public static void saveAccount(Context context, Protocol.Account account) {

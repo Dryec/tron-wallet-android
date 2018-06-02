@@ -110,7 +110,7 @@
                 android:value="com.eletac.tronwallet.MainActivity" />
         </activity>
         <activity
-            android:name=".wallet.ConfirmTransactionActivity"
+            android:name=".wallet.confirm_transaction.ConfirmTransactionActivity"
             android:launchMode="singleTop"
             android:label="@string/title_activity_confirm_transaction"
             android:screenOrientation="portrait">

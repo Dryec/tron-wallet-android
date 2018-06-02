@@ -253,9 +253,7 @@ public class WalletFragment extends Fragment {
         mVote_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(getContext(), VoteActivity.class);
-                //startActivity(intent);
-                Intent intent = new Intent(getContext(), ConfirmTransactionActivity.class);
+                Intent intent = new Intent(getContext(), VoteActivity.class);
                 startActivity(intent);
             }
         });
