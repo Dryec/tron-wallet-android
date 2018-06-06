@@ -53,3 +53,14 @@ This app offers you one of the safest ways to protect your private data.
 # Goal
 
 The goal in the future is to connect the users even better and easier with the TRON network and thus form a basis for all in the TRON community to strengthen them and offer extended possibilities.
+
+# Modules
+The code is built up in 2 different main modules, the Wallet Module and the Block Explorer Module.
+
+The Wallet Module takes care of an account and carries out transactions in the Tron network, which are created in submodules. These submodules include sending, freezing, voting, etc.
+https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/wallet
+
+The Block Explorer module is used to display the tron network, the submodules contain the individual parts of the network, such as blocks, transactions, nodes, tokens, etc., which are interesting for display.
+https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/block_explorer
+
+Translated with www.DeepL.com/Translator
