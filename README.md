@@ -63,5 +63,7 @@ https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/e
 **The Transaction Module** receives an unsigned transaction and signs it with a manual signature using a password (Hot Wallet Setup) or starts the QR mechanism for the Cold Wallet Setup to transfer the unsigned transaction to the Cold Wallet, which will sign it and send it back. If the signed transaction exists in the module, it is transmitted to the Tron network.
 https://github.com/Dryec/tron-wallet-android/tree/readme_update/app/src/main/java/com/eletac/tronwallet/wallet/confirm_transaction
 
+![alt text](https://raw.githubusercontent.com/Dryec/tron-wallet-android/readme_update/screenshots/transaction_flow.png)
+
 **The Block Explorer Module** is used to display the tron network, the submodules contain the individual parts of the network, such as blocks, transactions, nodes, tokens, etc., which are interesting for display.
 https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/block_explorer
