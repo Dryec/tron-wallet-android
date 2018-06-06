@@ -55,12 +55,12 @@ This app offers you one of the safest ways to protect your private data.
 The goal in the future is to connect the users even better and easier with the TRON network and thus form a basis for all in the TRON community to strengthen them and offer extended possibilities.
 
 # Modules
-The code is built up in 2 different main modules, the Wallet Module and the Block Explorer Module.
+The code is built up in 3 different main modules, the Wallet Module, Transaction Module and the Block Explorer Module.
 
-The Wallet Module takes care of an account and carries out transactions in the Tron network, which are created in submodules. These submodules include sending, freezing, voting, etc.
+**The Wallet Module** takes care of an account and creates transactions from submodules and passes them to the transactions module. These submodules include sending, freezing, voting, etc.
 https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/wallet
 
-The Block Explorer module is used to display the tron network, the submodules contain the individual parts of the network, such as blocks, transactions, nodes, tokens, etc., which are interesting for display.
-https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/block_explorer
+**The Transaction Module** receives an unsigned transaction and signs it with a manual signature using a password (Hot Wallet Setup) or starts the QR mechanism for the Cold Wallet Setup to transfer the unsigned transaction to the Cold Wallet, which will sign it and send it back. If the signed transaction exists in the module, it is transmitted to the Tron network.
 
-Translated with www.DeepL.com/Translator
+**The Block Explorer Module** is used to display the tron network, the submodules contain the individual parts of the network, such as blocks, transactions, nodes, tokens, etc., which are interesting for display.
+https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/block_explorer
