@@ -53,3 +53,28 @@ This app offers you one of the safest ways to protect your private data.
 # Goal
 
 The goal in the future is to connect the users even better and easier with the TRON network and thus form a basis for all in the TRON community to strengthen them and offer extended possibilities.
+
+#
+
+# Modules
+The code is built up in 3 different main modules, the Wallet Module, Transaction Module and the Block Explorer Module.
+
+**The Wallet Module** takes care of an account and creates transactions from submodules and passes them to the transactions module. These submodules include sending, freezing, voting, etc.
+https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/wallet
+
+**The Transaction Module** receives an unsigned transaction and signs it with a manual signature using a password (Hot Wallet Setup) or starts the QR mechanism for the Cold Wallet Setup to transfer the unsigned transaction to the Cold Wallet, which will sign it and send it back. If the signed transaction exists in the module, it is transmitted to the Tron network.
+https://github.com/Dryec/tron-wallet-android/tree/readme_update/app/src/main/java/com/eletac/tronwallet/wallet/confirm_transaction
+
+![alt text](https://raw.githubusercontent.com/Dryec/tron-wallet-android/readme_update/screenshots/transaction_flow.png)
+
+**The Block Explorer Module** is used to display the tron network, the submodules contain the individual parts of the network, such as blocks, transactions, nodes, tokens, etc., which are interesting for display.
+https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/block_explorer
+
+# Private Key
+All private key operations such as generation and encryption are based on the wallet-cli by TRON Foundation and can be found here.
+https://github.com/tronprotocol/wallet-cli
+The private key is stored encrypted and safely in a private context.
+https://github.com/Dryec/tron-wallet-android/blob/readme_update/app/src/main/java/org/tron/walletserver/WalletClient.java#L172
+
+# Password
+The password is currently limited only by length(6) and whitespaces, further rules will follow.
