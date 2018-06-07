@@ -54,7 +54,7 @@ This app offers you one of the safest ways to protect your private data.
 
 The goal in the future is to connect the users even better and easier with the TRON network and thus form a basis for all in the TRON community to strengthen them and offer extended possibilities.
 
-
+#
 
 # Modules
 The code is built up in 3 different main modules, the Wallet Module, Transaction Module and the Block Explorer Module.
