@@ -67,3 +67,12 @@ https://github.com/Dryec/tron-wallet-android/tree/readme_update/app/src/main/jav
 
 **The Block Explorer Module** is used to display the tron network, the submodules contain the individual parts of the network, such as blocks, transactions, nodes, tokens, etc., which are interesting for display.
 https://github.com/Dryec/tron-wallet-android/tree/master/app/src/main/java/com/eletac/tronwallet/block_explorer
+
+# Private Key
+All private key operations such as generation and encryption are based on the wallet-cli by TRON Foundation and can be found here.
+https://github.com/tronprotocol/wallet-cli
+The private key is stored encrypted and safely in a private context.
+https://github.com/Dryec/tron-wallet-android/blob/readme_update/app/src/main/java/org/tron/walletserver/WalletClient.java#L172
+
+# Password
+The password is currently limited only by length(6) and whitespaces, further rules will follow.
