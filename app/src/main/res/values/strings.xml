@@ -163,7 +163,7 @@
     <string name="recovery_phrase_info">Your private key will be recovered using your recovery phrase.</string>
     <string name="inv_recovery_phrase_dialog_title">Invalid Recovery Phrase</string>
     <string name="inv_recovery_phrase_dialog_message">Please enter all 24 words of your recovery phrase.</string>
-    <string name="could_not_create_transaction">Couldn\'t create transaction.\nCheck internet connection</string>
+    <string name="could_not_create_transaction">Couldn\'t create transaction.\nCheck internet connection and node settings</string>
     <string name="tab_title_freeze">Freeze</string>
     <string name="freeze_info_long">TRX can be frozen to gain Tron Power(TP).\nFor every TP you get a vote for super delegates and bandwidth based on the ratio to the total frozen amount on the network and yours.\nYour TRX will be frozen for 3 days, after which they can be unfrozen.\nUnfreezing removes TP\'s and your bandwidth.\nYou have 5000 free bandwidth per day.</string>
     <string name="create_time_key">create_time_key</string>
@@ -217,6 +217,8 @@
     <string name="title_activity_confirm_transaction">Confirm Transaction</string>
     <string name="failed">Failed</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="attention">Attention</string>
+    <string name="transaction_will_cost">Transaction will cost</string>
+    <string name="loading">Loading…</string>
 </resources>

@@ -176,8 +176,10 @@ public class FreezeFragment extends Fragment {
         mFreeze_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String textBackup = mFreeze_Button.getText().toString();
 
                 mFreeze_Button.setEnabled(false);
+                mFreeze_Button.setText(R.string.loading);
                 AsyncJob.doInBackground(() -> {
                     long amount = mFreezeAmount*1000000;
                     Protocol.Transaction transaction = null;
@@ -188,15 +190,23 @@ public class FreezeFragment extends Fragment {
                     Protocol.Transaction finalTransaction = transaction;
                     AsyncJob.doOnMainThread(() -> {
                         mFreeze_Button.setEnabled(true);
-                        if(finalTransaction != null)
-                            ConfirmTransactionActivity.start(getContext(), finalTransaction);
-                        else
-                            new LovelyInfoDialog(getContext())
-                                    .setTopColorRes(R.color.colorPrimary)
-                                    .setIcon(R.drawable.ic_error_white_24px)
-                                    .setTitle(R.string.failed)
-                                    .setMessage(R.string.could_not_create_transaction)
-                                    .show();
+                        mFreeze_Button.setText(textBackup);
+                        if(finalTransaction != null) {
+                            if(getContext() != null)
+                                ConfirmTransactionActivity.start(getContext(), finalTransaction);
+                        }
+                        else {
+                            try {
+                                new LovelyInfoDialog(getContext())
+                                        .setTopColorRes(R.color.colorPrimary)
+                                        .setIcon(R.drawable.ic_error_white_24px)
+                                        .setTitle(R.string.failed)
+                                        .setMessage(R.string.could_not_create_transaction)
+                                        .show();
+                            } catch (Exception ignored) {
+                                // Cant show dialog, activity may gone while doing background work
+                            }
+                        }
                     });
                 });
             }
@@ -205,8 +215,11 @@ public class FreezeFragment extends Fragment {
         mUnfreeze_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String textBackup = mUnfreeze_Button.getText().toString();
 
                 mUnfreeze_Button.setEnabled(false);
+                mUnfreeze_Button.setText(R.string.loading);
+
                 AsyncJob.doInBackground(() -> {
                     Protocol.Transaction transaction = null;
                     try {
@@ -216,15 +229,21 @@ public class FreezeFragment extends Fragment {
                     Protocol.Transaction finalTransaction = transaction;
                     AsyncJob.doOnMainThread(() -> {
                         mUnfreeze_Button.setEnabled(true);
+                        mUnfreeze_Button.setText(textBackup);
                         if(finalTransaction != null)
                             ConfirmTransactionActivity.start(getContext(), finalTransaction);
-                        else
+                        else {
+                            try {
                             new LovelyInfoDialog(getContext())
                                     .setTopColorRes(R.color.colorPrimary)
                                     .setIcon(R.drawable.ic_error_white_24px)
                                     .setTitle(R.string.failed)
                                     .setMessage(R.string.could_not_create_transaction)
                                     .show();
+                            } catch (Exception ignored) {
+                                // Cant show dialog, activity may gone while doing background work
+                            }
+                        }
                     });
                 });
             }
@@ -251,7 +270,6 @@ public class FreezeFragment extends Fragment {
         mFreezeAmount_SeekBar.setMax((int)(mAccount.getBalance()/1000000L));
 
         GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
-        Log.i("TEEEEST", String.valueOf(accountNetMessage.getFreeNetLimit()-accountNetMessage.getFreeNetUsed()));
 
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
@@ -281,6 +299,7 @@ public class FreezeFragment extends Fragment {
                         );
         mExpires_TextView.setText(expire == 0 ? "-" : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(expire)));
         mUnfreeze_Button.setText(String.format(Locale.US,"%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
+        mUnfreeze_Button.setEnabled(unfreezable > 0);
 
         long newFreeze = (freezed/1000000L) + mFreezeAmount;
         mFrozenNew_TextView.setText(numberFormat.format(newFreeze));

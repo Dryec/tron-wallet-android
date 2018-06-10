@@ -37,6 +37,7 @@ import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.Trans
 import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.VoteWitnessContractFragment;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.spongycastle.util.encoders.DecoderException;
@@ -72,6 +73,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     private boolean mIsPublicAddressOnly;
     private byte[] mTransactionBytes;
     private byte[] mExtraBytes;
+    private double mTRX_Cost;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -142,38 +144,35 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                 String password = mPassword_EditText.getText().toString();
 
                 if(isTransactionSigned()) {
-                    // TODO Loading...
-                    mConfirm_Button.setEnabled(false);
-                    AsyncJob.doInBackground(() -> {
-                        final boolean sent = WalletClient.broadcastTransaction(mTransactionSigned);
-                        AsyncJob.doOnMainThread(() -> {
-                            AccountUpdater.singleShot(0);
-                            LovelyStandardDialog dialog = new LovelyStandardDialog(ConfirmTransactionActivity.this, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
-                                    .setTopColorRes(R.color.colorPrimary)
-                                    .setButtonsColor(Color.WHITE)
-                                    .setIcon(R.drawable.ic_info_white_24px)
-                                    .setTitle(sent ? R.string.sent_successfully : R.string.sending_failed)
-                                    .setPositiveButton(R.string.ok, new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            finish();
-                                        }
-                                    });
-                            if(!sent)
-                             dialog.setMessage(getString(R.string.try_later));
-                            dialog.show();
 
-                            mConfirm_Button.setEnabled(true);
-                            mTransactionSigned = null;
-                            updateConfirmButton();
-                            setupBandwidth();
-                        });
-                    });
+                    if(mTRX_Cost > 0) {
+
+                        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+                        numberFormat.setMaximumFractionDigits(6);
+
+                        new LovelyStandardDialog(ConfirmTransactionActivity.this, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
+                                .setTopColorRes(R.color.colorPrimary)
+                                .setButtonsColor(Color.WHITE)
+                                .setIcon(R.drawable.ic_info_white_24px)
+                                .setTitle(R.string.attention)
+                                .setMessage(String.format("%s %s %s", getString(R.string.transaction_will_cost), numberFormat.format(mTRX_Cost), getString(R.string.trx_symbol)))
+                                .setPositiveButton(R.string.ok, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        broadcastTransaction();
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, null)
+                                .show();
+                    }
+                    else {
+                        broadcastTransaction();
+                    }
                 }
                 else if(mIsPublicAddressOnly) {
                     Intent intent = new Intent(ConfirmTransactionActivity.this, SignTransactionActivity.class);
                     intent.putExtra(SignTransactionActivity.TRANSACTION_DATA_EXTRA, mTransactionBytes);
-                    startActivityForResult(intent, SignTransactionActivity.TRANSACTION_SIGN_REQUEST_CODE); // TODO TEST AND DO NOT SEND FROM SIGN ACTIVITY But HERE
+                    startActivityForResult(intent, SignTransactionActivity.TRANSACTION_SIGN_REQUEST_CODE);
                 }
                 else if(WalletClient.checkPassWord(password)) {
                         WalletClient walletClient = WalletClient.GetWalletByStorage(password);
@@ -227,6 +226,43 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void broadcastTransaction() {
+        LovelyProgressDialog progressDialog = new LovelyProgressDialog(ConfirmTransactionActivity.this)
+                .setIcon(R.drawable.ic_send_white_24px)
+                .setTitle(R.string.sending)
+                .setTopColorRes(R.color.colorPrimary);
+        progressDialog.show();
+
+        mConfirm_Button.setEnabled(false);
+        AsyncJob.doInBackground(() -> {
+            final boolean sent = WalletClient.broadcastTransaction(mTransactionSigned);
+            AsyncJob.doOnMainThread(() -> {
+                progressDialog.dismiss();
+
+                AccountUpdater.singleShot(0);
+                LovelyStandardDialog dialog = new LovelyStandardDialog(ConfirmTransactionActivity.this, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
+                        .setTopColorRes(R.color.colorPrimary)
+                        .setButtonsColor(Color.WHITE)
+                        .setIcon(R.drawable.ic_info_white_24px)
+                        .setTitle(sent ? R.string.sent_successfully : R.string.sending_failed)
+                        .setPositiveButton(R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                finish();
+                            }
+                        });
+                if(!sent)
+                    dialog.setMessage(getString(R.string.try_later));
+                dialog.show();
+
+                mConfirm_Button.setEnabled(true);
+                mTransactionSigned = null;
+                updateConfirmButton();
+                setupBandwidth();
+            });
+        });
+    }
+
     private void resetSign() {
         mPassword_EditText.setText("");
         mTransactionSigned = null;
@@ -250,15 +286,18 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
             boolean enoughBandwidth = bandwidthNormal >= bandwidthCost || bandwidthFree >= bandwidthCost;
 
             NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+            numberFormat.setMaximumFractionDigits(6);
 
             mCurrentBandwidth_TextView.setText(numberFormat.format(currentBandwidth));
             mEstBandwidthCost_TextView.setText(numberFormat.format(bandwidthCost));
             mNewBandwidth_TextView.setText(enoughBandwidth ? numberFormat.format(newBandwidth) : "-");
 
             if(!enoughBandwidth) {
+                mTRX_Cost = (double) bandwidthCost / 100000D;
                 mNotEnoughBandwidth_ConstraintLayout.setVisibility(View.VISIBLE);
-                mTRX_Cost_TextView.setText(String.format("%s %s", numberFormat.format((double) bandwidthCost / 1000D), getString(R.string.trx_symbol)));
+                mTRX_Cost_TextView.setText(String.format("%s %s", numberFormat.format(mTRX_Cost), getString(R.string.trx_symbol)));
             } else {
+                mTRX_Cost = 0D;
                 mNotEnoughBandwidth_ConstraintLayout.setVisibility(View.GONE);
             }
         } else {
@@ -395,8 +434,8 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     public static boolean start(@NonNull Context context, @NonNull Protocol.Transaction transaction, @Nullable byte[] data) {
         Intent intent = new Intent(context, ConfirmTransactionActivity.class);
 
-            intent.putExtra(ConfirmTransactionActivity.TRANSACTION_DATA_EXTRA, transaction.toByteArray());// Utils.transactionToByteArray(transaction));
-            intent.putExtra(TRANSACTION_DATA2_EXTRA, data);
+        intent.putExtra(ConfirmTransactionActivity.TRANSACTION_DATA_EXTRA, transaction.toByteArray());// Utils.transactionToByteArray(transaction));
+        intent.putExtra(TRANSACTION_DATA2_EXTRA, data);
 
         context.startActivity(intent);
         return true;
@@ -409,8 +448,8 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     public static boolean start(@NonNull Activity activity, @NonNull Protocol.Transaction transaction, @Nullable byte[] data) {
         Intent intent = new Intent(activity, ConfirmTransactionActivity.class);
 
-            intent.putExtra(ConfirmTransactionActivity.TRANSACTION_DATA_EXTRA, transaction.toByteArray());// Utils.transactionToByteArray(transaction));
-            intent.putExtra(TRANSACTION_DATA2_EXTRA, data);
+        intent.putExtra(ConfirmTransactionActivity.TRANSACTION_DATA_EXTRA, transaction.toByteArray());// Utils.transactionToByteArray(transaction));
+        intent.putExtra(TRANSACTION_DATA2_EXTRA, data);
 
         activity.startActivityForResult(intent, TRANSACTION_FINISHED);
         return true;

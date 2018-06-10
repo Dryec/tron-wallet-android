@@ -205,7 +205,13 @@ public class ImportWalletActivity extends AppCompatActivity {
     private void importPublicAddress() {
         String address = mPublicAddress_EditText.getText().toString();
 
-        if(WalletClient.addressValid(WalletClient.decodeFromBase58Check(address))) {
+        boolean addressValid = false;
+
+        try {
+            addressValid = WalletClient.addressValid(WalletClient.decodeFromBase58Check(address));
+        } catch (IllegalArgumentException ignored) { }
+
+        if(addressValid) {
             new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
                     .setTopColorRes(R.color.colorPrimary)
                     .setButtonsColor(Color.WHITE)

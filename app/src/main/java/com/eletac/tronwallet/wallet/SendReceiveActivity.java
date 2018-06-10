@@ -35,6 +35,7 @@ public class SendReceiveActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.SendReceive_container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(3);
 
         TabLayout tabLayout = findViewById(R.id.SendReceive_tabs_tabLayout);
         tabLayout.setupWithViewPager(mViewPager);

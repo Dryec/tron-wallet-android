@@ -1,6 +1,8 @@
 package org.tron.walletserver;
 
 import com.google.protobuf.ByteString;
+
+import io.grpc.ConnectivityState;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import org.apache.commons.lang3.StringUtils;
@@ -64,12 +66,12 @@ public class GrpcClient {
     }
   }
 
-  public void shutdown() throws InterruptedException {
+  public void shutdown() {
     if (channelFull != null) {
-      channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+      channelFull.shutdown();
     }
     if (channelSolidity != null) {
-      channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
+      channelSolidity.shutdown();
     }
   }
 

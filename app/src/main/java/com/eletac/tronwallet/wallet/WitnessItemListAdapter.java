@@ -129,7 +129,15 @@ public class WitnessItemListAdapter extends RecyclerView.Adapter<WitnessItemList
 
                     @Override
                     public void afterTextChanged(Editable s) {
-                        int votes = mVoteNumber_EditText.getText().length() > 0 ? Integer.parseInt(mVoteNumber_EditText.getText().toString()) : 0;
+                        int votes;
+
+                        try {
+                            votes = mVoteNumber_EditText.getText().length() > 0 ? Integer.parseInt(mVoteNumber_EditText.getText().toString()) : 0;
+                        } catch (NumberFormatException ignored) {
+                            votes = 0;
+                            mVoteNumber_EditText.setText(String.valueOf(votes));
+                        }
+
                         String witnessAddress = null;
 
                         if (mWitness != null) {

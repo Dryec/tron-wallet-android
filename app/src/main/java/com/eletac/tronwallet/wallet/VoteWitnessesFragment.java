@@ -143,7 +143,7 @@ public class VoteWitnessesFragment extends Fragment implements SwipeRefreshLayou
 
     private void updateFilteredWitnesses() {
         mWitnessesFiltered.clear();
-        for(Protocol.Witness witness : mWitnesses) {
+        for(Protocol.Witness witness : new ArrayList<>(mWitnesses)) {
             try {
                 if (checkFilterConditions(witness)) {
                     mWitnessesFiltered.add(witness);

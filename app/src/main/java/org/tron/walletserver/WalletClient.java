@@ -72,11 +72,7 @@ public class WalletClient {
 
   public static void init() {
     if(rpcCli != null) {
-      try {
         rpcCli.shutdown();
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
     }
 
     Context context = TronWalletApplication.getAppContext();

@@ -205,7 +205,10 @@ public class ParticipateAssetActivity extends AppCompatActivity {
                     long amount = mAmount;
                     long finalAmount = (long) (amount*mTokenPrice);
 
+                    String textBackup = mSpend_Button.getText().toString();
                     mSpend_Button.setEnabled(false);
+                    mSpend_Button.setText(R.string.loading);
+
                     AsyncJob.doInBackground(() -> {
                         Protocol.Transaction transaction = null;
                         try {
@@ -217,15 +220,22 @@ public class ParticipateAssetActivity extends AppCompatActivity {
                         Protocol.Transaction finalTransaction = transaction;
                         AsyncJob.doOnMainThread(() -> {
                             mSpend_Button.setEnabled(true);
-                            if(finalTransaction != null)
+                            mSpend_Button.setText(textBackup);
+                            if(finalTransaction != null) {
                                 ConfirmTransactionActivity.start(ParticipateAssetActivity.this, finalTransaction, mAsset.toByteArray());
-                            else
-                                new LovelyInfoDialog(ParticipateAssetActivity.this)
-                                        .setTopColorRes(R.color.colorPrimary)
-                                        .setIcon(R.drawable.ic_error_white_24px)
-                                        .setTitle(R.string.failed)
-                                        .setMessage(R.string.could_not_create_transaction)
-                                        .show();
+                            }
+                            else {
+                                try {
+                                    new LovelyInfoDialog(ParticipateAssetActivity.this)
+                                            .setTopColorRes(R.color.colorPrimary)
+                                            .setIcon(R.drawable.ic_error_white_24px)
+                                            .setTitle(R.string.failed)
+                                            .setMessage(R.string.could_not_create_transaction)
+                                            .show();
+                                } catch (Exception ignored) {
+                                    // Cant show dialog, activity may gone while doing background work
+                                }
+                            }
                         });
                     });
 

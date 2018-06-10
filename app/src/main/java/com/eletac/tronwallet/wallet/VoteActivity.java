@@ -18,6 +18,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -110,7 +111,11 @@ public class VoteActivity extends AppCompatActivity {
         mSubmit_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String textBackup = mSubmit_Button.getText().toString();
+
                 mSubmit_Button.setEnabled(false);
+                mSubmit_Button.setText(R.string.loading);
+
                 AsyncJob.doInBackground(() -> {
                     Protocol.Transaction transaction = null;
                     try {
@@ -122,15 +127,22 @@ public class VoteActivity extends AppCompatActivity {
                     Protocol.Transaction finalTransaction = transaction;
                     AsyncJob.doOnMainThread(() -> {
                         mSubmit_Button.setEnabled(true);
-                        if(finalTransaction != null)
+                        mSubmit_Button.setText(textBackup);
+                        if(finalTransaction != null) {
                             ConfirmTransactionActivity.start(VoteActivity.this, finalTransaction);
-                        else
-                            new LovelyInfoDialog(VoteActivity.this)
-                                    .setTopColorRes(R.color.colorPrimary)
-                                    .setIcon(R.drawable.ic_error_white_24px)
-                                    .setTitle(R.string.failed)
-                                    .setMessage(R.string.could_not_create_transaction)
-                                    .show();
+                        }
+                        else {
+                            try {
+                                new LovelyInfoDialog(VoteActivity.this)
+                                        .setTopColorRes(R.color.colorPrimary)
+                                        .setIcon(R.drawable.ic_error_white_24px)
+                                        .setTitle(R.string.failed)
+                                        .setMessage(R.string.could_not_create_transaction)
+                                        .show();
+                            } catch (Exception ignored) {
+                                // Cant show dialog, activity may gone while doing background work
+                            }
+                        }
                     });
                 });
             }

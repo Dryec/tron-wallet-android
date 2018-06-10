@@ -199,7 +199,10 @@ public class SendFragment extends Fragment {
                 }
                 amount = Double.parseDouble(mAmount_EditText.getText().toString());
 
+                String textBackup = mSend_Button.getText().toString();
                 mSend_Button.setEnabled(false);
+                mSend_Button.setText(R.string.loading);
+
                 AsyncJob.doInBackground(() -> {
                     Protocol.Transaction transaction = null;
                     try {
@@ -214,15 +217,23 @@ public class SendFragment extends Fragment {
                     Protocol.Transaction finalTransaction = transaction;
                     AsyncJob.doOnMainThread(() -> {
                         mSend_Button.setEnabled(true);
-                        if(finalTransaction != null)
-                            ConfirmTransactionActivity.start(getContext(), finalTransaction);
-                        else
-                            new LovelyInfoDialog(getContext())
-                                    .setTopColorRes(R.color.colorPrimary)
-                                    .setIcon(R.drawable.ic_error_white_24px)
-                                    .setTitle(R.string.failed)
-                                    .setMessage(R.string.could_not_create_transaction)
-                                    .show();
+                        mSend_Button.setText(textBackup);
+                        if(finalTransaction != null) {
+                            if(getContext() != null)
+                                ConfirmTransactionActivity.start(getContext(), finalTransaction);
+                        }
+                        else {
+                            try {
+                                new LovelyInfoDialog(getContext())
+                                        .setTopColorRes(R.color.colorPrimary)
+                                        .setIcon(R.drawable.ic_error_white_24px)
+                                        .setTitle(R.string.failed)
+                                        .setMessage(R.string.could_not_create_transaction)
+                                        .show();
+                            } catch (Exception ignored) {
+                                // Cant show dialog, activity may gone while doing background work
+                            }
+                        }
                     });
                 });
             }

@@ -5,30 +5,22 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.arasthel.asyncjob.AsyncJob;
 
 import org.tron.api.GrpcAPI;
-import org.tron.common.utils.ByteArray;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletClient;
 
-import java.net.InetAddress;
-import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import io.grpc.StatusRuntimeException;
 
 public class BlockExplorerUpdater {
 
@@ -157,7 +149,6 @@ public class BlockExplorerUpdater {
             AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
                     @Override
                     public void doOnBackground() {
-
                         if (mContext != null) {
 
                             // Load Blocks and transactions
@@ -175,11 +166,10 @@ public class BlockExplorerUpdater {
                                 }
 
                                 mTransactions.clear();
-                                for(Protocol.Block block : mBlocks) {
+                                for (Protocol.Block block : mBlocks) {
                                     mTransactions.addAll(block.getTransactionsList());
                                 }
-                            }
-                            catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
