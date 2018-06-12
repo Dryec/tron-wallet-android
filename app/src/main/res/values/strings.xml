@@ -221,4 +221,5 @@
     <string name="attention">Attention</string>
     <string name="transaction_will_cost">Transaction will cost</string>
     <string name="loading">Loading…</string>
+    <string name="title_activity_issue_token">Create Token</string>
 </resources>

@@ -22,6 +22,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.WrapContentLinearLayoutManager;
+import com.eletac.tronwallet.wallet.IssueTokenActivity;
 
 import org.tron.api.GrpcAPI;
 import org.tron.protos.Contract;
@@ -47,6 +49,7 @@ public class TokensFragment extends Fragment implements SwipeRefreshLayout.OnRef
     private Switch mSearch_Switch;
     private CardView mSearch_CardView;
     private EditText mSearch_EditText;
+    private Button mCreate_Button;
 
     private LinearLayoutManager mLayoutManager;
     private TokenItemListAdapter mTokenItemListAdapter;
@@ -94,6 +97,7 @@ public class TokensFragment extends Fragment implements SwipeRefreshLayout.OnRef
         mSearch_Switch = view.findViewById(R.id.Tokens_search_switch);
         mSearch_CardView = view.findViewById(R.id.Tokens_search_cardView);
         mSearch_EditText = view.findViewById(R.id.Tokens_search_editText);
+        mCreate_Button = view.findViewById(R.id.Tokens_create_button);
 
         mSwipeRefreshLayout.setOnRefreshListener(this);
 
@@ -151,6 +155,14 @@ public class TokensFragment extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+        mCreate_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), IssueTokenActivity.class);
+                startActivity(intent);
             }
         });
 
