@@ -5,7 +5,7 @@
     <string name="soliditynode_port"></string>
 
     <string name="app_name">Tron Wallet</string>
-    <string name="app_version">v1.0.1.6</string>
+    <string name="app_version">v1.0.2.0</string>
     <string name="title_wallet">Wallet</string>
     <string name="title_activity_import_wallet">Import Wallet</string>
     <string name="title_block_explorer">Block Explorer</string>
