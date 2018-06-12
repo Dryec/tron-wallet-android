@@ -302,7 +302,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Amount"
-                            android:inputType="text" />
+                            android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
@@ -320,7 +320,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Days"
-                            android:inputType="text" />
+                            android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
                 </android.support.constraint.ConstraintLayout>
