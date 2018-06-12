@@ -13,8 +13,14 @@ import android.widget.ImageButton;
 
 import com.eletac.tronwallet.CaptureActivityPortrait;
 import com.eletac.tronwallet.R;
+import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import org.spongycastle.util.encoders.DecoderException;
+import org.spongycastle.util.encoders.Hex;
+import org.tron.protos.Protocol;
 
 
 public class SignFragment extends Fragment {
@@ -30,9 +36,12 @@ public class SignFragment extends Fragment {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
             if(result.getContents() != null) {
-                Intent intent = new Intent(getContext(), SignedTransactionActivity.class);
-                intent.putExtra(SignedTransactionActivity.TRANSACTION_DATA_EXTRA, result.getContents());
-                startActivity(intent);
+                try {
+                    Protocol.Transaction transaction = Protocol.Transaction.parseFrom(Hex.decode(result.getContents()));
+                    if(getContext() != null) {
+                        ConfirmTransactionActivity.start(getContext(), transaction);
+                    }
+                } catch (InvalidProtocolBufferException | DecoderException ignored) { }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);

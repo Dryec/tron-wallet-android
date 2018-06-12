@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.wallet.AccountUpdater;
 import com.eletac.tronwallet.wallet.SendReceiveActivity;
 import com.eletac.tronwallet.wallet.SignTransactionActivity;
+import com.eletac.tronwallet.wallet.cold.SignedTransactionActivity;
 import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.FreezeContractFragment;
 import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.ParticipateAssetIssueContractFragment;
 import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.TransferAssetContractFragment;
@@ -67,10 +69,13 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     private TextInputLayout mPassword_Layout;
     private TextInputEditText mPassword_EditText;
     private Button mConfirm_Button;
+    private CardView mBandwidth_CardView;
 
     private Protocol.Transaction mTransactionUnsigned;
     private Protocol.Transaction mTransactionSigned;
     private boolean mIsPublicAddressOnly;
+    private boolean mIsColdWallet;
+
     private byte[] mTransactionBytes;
     private byte[] mExtraBytes;
     private double mTRX_Cost;
@@ -111,6 +116,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         mPassword_Layout = findViewById(R.id.ConfirmTrans_password_textInputLayout);
         mGetBandwidth_Button = findViewById(R.id.ConfirmTrans_get_bandwidth_button);
         mConfirm_Button = findViewById(R.id.ConfirmTrans_confirm_button);
+        mBandwidth_CardView = findViewById(R.id.ConfirmTrans_bandwidth_cardView);
 
         Bundle extras = getIntent().getExtras();
         try {
@@ -131,6 +137,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
+        mIsColdWallet = sharedPreferences.getBoolean(getString(R.string.is_cold_wallet_key), false);
 
         setupBandwidth();
         updateConfirmButton();
@@ -144,7 +151,6 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                 String password = mPassword_EditText.getText().toString();
 
                 if(isTransactionSigned()) {
-
                     if(mTRX_Cost > 0) {
 
                         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
@@ -175,17 +181,27 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                     startActivityForResult(intent, SignTransactionActivity.TRANSACTION_SIGN_REQUEST_CODE);
                 }
                 else if(WalletClient.checkPassWord(password)) {
-                        WalletClient walletClient = WalletClient.GetWalletByStorage(password);
-                        mTransactionSigned = TransactionUtils.setTimestamp(mTransactionUnsigned);
-                        mTransactionSigned = TransactionUtils.sign(mTransactionSigned, walletClient.getEcKey());
+                    WalletClient walletClient = WalletClient.GetWalletByStorage(password);
+                    mTransactionSigned = TransactionUtils.setTimestamp(mTransactionUnsigned);
+                    mTransactionSigned = TransactionUtils.sign(mTransactionSigned, walletClient.getEcKey());
+
+                    // Hide Keyboard
+                    View view = ConfirmTransactionActivity.this.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+
+                    if(mIsColdWallet) {
+                        Intent intent = new Intent(ConfirmTransactionActivity.this, SignedTransactionActivity.class);
+                        intent.putExtra(SignedTransactionActivity.TRANSACTION_DATA_EXTRA, mTransactionSigned.toByteArray());
+                        startActivity(intent);
+
+                        resetSign();
+                    } else {
                         updateConfirmButton();
                         setupBandwidth();
-
-                        View view = ConfirmTransactionActivity.this.getCurrentFocus();
-                        if (view != null) {
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                        }
+                    }
                 }
                 else {
                     new LovelyInfoDialog(ConfirmTransactionActivity.this)
@@ -272,6 +288,8 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
     private void setupBandwidth() {
         if(isTransactionSigned()) {
+            mBandwidth_CardView.setVisibility(mIsColdWallet ? View.GONE : View.VISIBLE);
+
             GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(this);
             long bandwidthNormal = accountNetMessage.getNetLimit()-accountNetMessage.getNetUsed();
             long bandwidthFree = accountNetMessage.getFreeNetLimit()-accountNetMessage.getFreeNetUsed();
@@ -301,6 +319,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                 mNotEnoughBandwidth_ConstraintLayout.setVisibility(View.GONE);
             }
         } else {
+            mBandwidth_CardView.setVisibility(View.GONE);
             mCurrentBandwidth_TextView.setText("-");
             mEstBandwidthCost_TextView.setText("-");
             mNewBandwidth_TextView.setText("-");
@@ -441,11 +460,11 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         return true;
     }
 
-    public static boolean start(@NonNull Activity context, @NonNull Protocol.Transaction transaction) {
+    public static boolean startForResult(@NonNull Activity context, @NonNull Protocol.Transaction transaction) {
         return start(context, transaction, null);
     }
 
-    public static boolean start(@NonNull Activity activity, @NonNull Protocol.Transaction transaction, @Nullable byte[] data) {
+    public static boolean startForResult(@NonNull Activity activity, @NonNull Protocol.Transaction transaction, @Nullable byte[] data) {
         Intent intent = new Intent(activity, ConfirmTransactionActivity.class);
 
         intent.putExtra(ConfirmTransactionActivity.TRANSACTION_DATA_EXTRA, transaction.toByteArray());// Utils.transactionToByteArray(transaction));
