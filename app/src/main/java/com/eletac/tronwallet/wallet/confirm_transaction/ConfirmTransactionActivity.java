@@ -32,6 +32,7 @@ import com.eletac.tronwallet.wallet.AccountUpdater;
 import com.eletac.tronwallet.wallet.SendReceiveActivity;
 import com.eletac.tronwallet.wallet.SignTransactionActivity;
 import com.eletac.tronwallet.wallet.cold.SignedTransactionActivity;
+import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.AssetIssueContractFragment;
 import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.FreezeContractFragment;
 import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.ParticipateAssetIssueContractFragment;
 import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.TransferAssetContractFragment;
@@ -409,6 +410,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
             case WitnessCreateContract:
                 break;
             case AssetIssueContract:
+                fragment = AssetIssueContractFragment.newInstance();
                 break;
             case DeployContract:
                 break;

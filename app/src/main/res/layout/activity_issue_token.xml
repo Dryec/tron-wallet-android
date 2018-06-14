@@ -327,6 +327,78 @@
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
+                android:id="@+id/IssueToken_bandwidth_cardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                app:cardBackgroundColor="#323232"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/IssueToken_frozen_cardView">
+
+                <android.support.constraint.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/textView54846"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Bandwidth Distribution"
+                        android:textColor="@android:color/white"
+                        android:textSize="24sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/IssueToken_total_bandwidth_textInputLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView54846">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/IssueToken_total_bandwidth_editText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Total Bandwidth"
+                            android:inputType="numberSigned" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:id="@+id/IssueToken_bandwidth_per_account_textInputLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="16dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/IssueToken_total_bandwidth_textInputLayout">
+
+                        <android.support.design.widget.TextInputEditText
+                            android:id="@+id/IssueToken_bandwidth_per_account_editText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Bandwidth per Account"
+                            android:inputType="numberSigned" />
+                    </android.support.design.widget.TextInputLayout>
+
+                </android.support.constraint.ConstraintLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
                 android:id="@+id/IssueToken_participation_cardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -337,7 +409,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/IssueToken_frozen_cardView">
+                app:layout_constraintTop_toBottomOf="@+id/IssueToken_bandwidth_cardView">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
@@ -383,7 +455,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
-                        android:text="Jun 13, 2018 9:10:06 AM"
+                        android:text="-"
+                        android:textColor="@android:color/white"
                         app:layout_constraintBottom_toBottomOf="@+id/IssueToken_set_start_button"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/IssueToken_set_start_button"
@@ -393,9 +466,13 @@
                         android:id="@+id/IssueToken_end_time_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Dec 13, 2018 9:10:06 AM"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:text="-"
+                        android:textColor="@android:color/white"
                         app:layout_constraintBottom_toBottomOf="@+id/IssueToken_set_end_button"
-                        app:layout_constraintStart_toStartOf="@+id/IssueToken_start_time_textView"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/IssueToken_set_end_button"
                         app:layout_constraintTop_toTopOf="@+id/IssueToken_set_end_button" />
 
                     <ImageView
