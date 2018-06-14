@@ -111,9 +111,21 @@
         </activity>
         <activity
             android:name=".wallet.confirm_transaction.ConfirmTransactionActivity"
-            android:launchMode="singleTop"
             android:label="@string/title_activity_confirm_transaction"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
+
+        </activity>
+        <activity
+            android:name=".wallet.IssueTokenActivity"
+            android:label="@string/title_activity_issue_token"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.ActionBar"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
 
         </activity>
     </application>

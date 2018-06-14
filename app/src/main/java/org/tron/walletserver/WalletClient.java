@@ -363,6 +363,54 @@ public class WalletClient {
     return rpcCli.voteWitnessAccount(contract);
   }
 
+  public static Contract.AssetIssueContract createAssetIssueContract(byte[] owner, String name, String abbr, long totalSupply, int trxNum, int icoNum,
+                                                                     long startTime, long endTime, int voteScore, String description, String url,
+                                                                     long freeNetLimit, long publicFreeNetLimit, List<AssetIssueContract.FrozenSupply> frozenSupply) {
+    Contract.AssetIssueContract.Builder builder = Contract.AssetIssueContract.newBuilder();
+    builder.setOwnerAddress(ByteString.copyFrom(owner));
+
+    builder.setName(ByteString.copyFrom(name.getBytes()));
+    builder.setAbbr(ByteString.copyFrom(abbr.getBytes()));
+
+    if (totalSupply <= 0) {
+      return null;
+    }
+    builder.setTotalSupply(totalSupply);
+    if (trxNum <= 0) {
+      return null;
+    }
+    builder.setTrxNum(trxNum);
+    if (icoNum <= 0) {
+      return null;
+    }
+    builder.setNum(icoNum);
+    long now = System.currentTimeMillis();
+    if (startTime <= now) {
+      return null;
+    }
+    if (endTime <= startTime) {
+      return null;
+    }
+    if (freeNetLimit < 0) {
+      return null;
+    }
+    if (publicFreeNetLimit < 0) {
+      return null;
+    }
+
+    builder.setStartTime(startTime);
+    builder.setEndTime(endTime);
+    builder.setVoteScore(voteScore);
+    builder.setDescription(ByteString.copyFrom(description.getBytes()));
+    builder.setUrl(ByteString.copyFrom(url.getBytes()));
+    builder.setFreeAssetNetLimit(freeNetLimit);
+    builder.setPublicFreeAssetNetLimit(publicFreeNetLimit);
+
+    builder.addAllFrozenSupply(frozenSupply);
+
+    return builder.build();
+  }
+
   public static Transaction createAssetIssueTransaction(Contract.AssetIssueContract contract) {
     return rpcCli.createAssetIssue(contract);
   }

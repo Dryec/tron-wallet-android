@@ -138,8 +138,10 @@ public class ParticipateAssetActivity extends AppCompatActivity {
             mTokenPrice = mAsset.getTrxNum()/(double)(mAsset.getNum());
             mPrice_TextView.setText(numberFormat.format(mTokenPrice/1000000D));
 
-            mAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, mAccount.getBalance()/mTokenPrice)});
-            mAmount_SeekBar.setMax((int)(mAccount.getBalance()/mTokenPrice));
+            long max = (long)(mAccount.getBalance()/mTokenPrice);
+            max = max > mAsset.getTotalSupply() ? mAsset.getTotalSupply() : max;
+            mAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, max)});
+            mAmount_SeekBar.setMax((int)max);
 
             mAmount_EditText.addTextChangedListener(new TextWatcher() {
                 @Override

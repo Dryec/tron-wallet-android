@@ -84,4 +84,5 @@ dependencies {
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation "android.arch.lifecycle:extensions:1.1.1"
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
+    implementation 'com.wdullaer:materialdatetimepicker:3.6.0'
 }
