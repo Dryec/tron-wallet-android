@@ -20,6 +20,7 @@ import org.tron.protos.Contract;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
@@ -100,9 +101,9 @@ public class AssetIssueContractFragment extends Fragment {
             mSupply_EditText.setText(numberFormat.format(contract.getTotalSupply()));
             mURL_EditText.setText(contract.getUrl().toStringUtf8());
             mDesc_EditText.setText(contract.getDescription().toStringUtf8());
-            mExchangeTrxAmount_EditText.setText(numberFormat.format(contract.getTrxNum()));
+            mExchangeTrxAmount_EditText.setText(numberFormat.format(contract.getTrxNum()/(double)1000000));
             mExchangeTokenAmount_EditText.setText(numberFormat.format(contract.getNum()));
-            mTokenPrice_TextView.setText(numberFormat.format(contract.getTrxNum()/(double)contract.getNum()));
+            mTokenPrice_TextView.setText(numberFormat.format((contract.getTrxNum()/(double)contract.getNum())/(double)1000000));
 
             if(contract.getFrozenSupplyCount() > 0) {
                 Contract.AssetIssueContract.FrozenSupply frozenSupply = contract.getFrozenSupply(0);
@@ -114,8 +115,11 @@ public class AssetIssueContractFragment extends Fragment {
 
 
             DateFormat dateTimeInstance = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US);
-            mStart_TextView.setText(dateTimeInstance.format(new Date(contract.getStartTime())));
-            mEnd_TextView.setText(dateTimeInstance.format(new Date(contract.getEndTime())));
+            Date start = new Date(contract.getStartTime());
+            Date end = new Date(contract.getEndTime());
+
+            mStart_TextView.setText(dateTimeInstance.format(start));
+            mEnd_TextView.setText(dateTimeInstance.format(end));
         }
     }
 

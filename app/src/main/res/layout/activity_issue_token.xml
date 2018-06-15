@@ -333,7 +333,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:cardBackgroundColor="#323232"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -370,6 +370,7 @@
                             android:id="@+id/IssueToken_total_bandwidth_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="0"
                             android:hint="Total Bandwidth"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
@@ -391,6 +392,7 @@
                             android:id="@+id/IssueToken_bandwidth_per_account_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:text="0"
                             android:hint="Bandwidth per Account"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>

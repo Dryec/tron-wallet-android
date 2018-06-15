@@ -293,8 +293,8 @@ public class IssueTokenActivity extends AppCompatActivity {
                         0,
                         desc,
                         url,
-                        bandwidthPerAccount, // Limit per account
-                        totalBandwidth, // Total limit
+                        0,//bandwidthPerAccount, // Limit per account
+                        0,//totalBandwidth, // Total limit
                         frozenSupplyList
                         );
 

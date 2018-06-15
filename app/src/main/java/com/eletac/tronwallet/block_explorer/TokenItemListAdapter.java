@@ -118,12 +118,15 @@ public class TokenItemListAdapter extends RecyclerView.Adapter<TokenItemListAdap
             NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
             DateFormat dateTimeInstance = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US);
 
+            Date start = new Date(asset.getStartTime());
+            Date end = new Date(asset.getEndTime());
+
             mName_TextView.setText(asset.getName().toStringUtf8());
             mDescription_TextView.setText(asset.getDescription().toStringUtf8());
             mSupply_TextView.setText(numberFormat.format(asset.getTotalSupply()));
             mIssuer_TextView.setText(WalletClient.encode58Check(asset.getOwnerAddress().toByteArray()));
-            mStart_TextView.setText(dateTimeInstance.format(new Date(asset.getStartTime())));
-            mEnd_TextView.setText(dateTimeInstance.format(new Date(asset.getEndTime())));
+            mStart_TextView.setText(dateTimeInstance.format(start));
+            mEnd_TextView.setText(dateTimeInstance.format(end));
 
             //mLeft_TextView.setText(numberFormat.format(asset.getVoteScore()) + " / " + numberFormat.format(asset.getTotalSupply()));
 
