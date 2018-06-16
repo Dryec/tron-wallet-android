@@ -177,8 +177,10 @@ public class SendFragment extends Fragment {
                     return;
                 }
 
-                byte[] toRaw = WalletClient.decodeFromBase58Check(to);
-                if(toRaw == null) {
+                byte[] toRaw;
+                try {
+                    toRaw = WalletClient.decodeFromBase58Check(to);
+                } catch (IllegalArgumentException ignored) {
                     new LovelyInfoDialog(getContext())
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_error_white_24px)
@@ -203,14 +205,15 @@ public class SendFragment extends Fragment {
                 mSend_Button.setEnabled(false);
                 mSend_Button.setText(R.string.loading);
 
+                byte[] finalToRaw = toRaw;
                 AsyncJob.doInBackground(() -> {
                     Protocol.Transaction transaction = null;
                     try {
                         if(isTrxCoin) {
-                            Contract.TransferContract contract = WalletClient.createTransferContract(toRaw, WalletClient.decodeFromBase58Check(mAddress), (long) (amount * 1000000.0d));
+                            Contract.TransferContract contract = WalletClient.createTransferContract(finalToRaw, WalletClient.decodeFromBase58Check(mAddress), (long) (amount * 1000000.0d));
                             transaction = WalletClient.createTransaction4Transfer(contract);
                         } else {
-                            transaction = WalletClient.createTransferAssetTransaction(toRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
+                            transaction = WalletClient.createTransferAssetTransaction(finalToRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
                         }
                     } catch (Exception ignored) { }
 
