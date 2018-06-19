@@ -79,7 +79,7 @@ public class Utils {
             SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_account_file_key), Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            editor.putString(context.getString(R.string.name_key), account.getAccountName().toString());
+            editor.putString(context.getString(R.string.name_key), account.getAccountName().toStringUtf8());
             editor.putString(context.getString(R.string.address_key), WalletClient.encode58Check(account.getAddress().toByteArray()));
             editor.putLong(context.getString(R.string.balance_key), account.getBalance());
             editor.putString(context.getString(R.string.assets_key), new Gson().toJson(account.getAssetMap()));

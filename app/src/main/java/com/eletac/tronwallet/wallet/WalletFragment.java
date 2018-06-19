@@ -19,6 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,10 +28,12 @@ import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Token;
 import com.eletac.tronwallet.TronWalletApplication;
 import com.eletac.tronwallet.Utils;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.tron.api.GrpcAPI;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
+import org.tron.walletserver.WalletClient;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -53,6 +56,8 @@ public class WalletFragment extends Fragment {
     private TextView mBandwidth_TextView;
     private FloatingActionButton mSendReceive_Button;
     private FloatingActionButton mVote_Button;
+    private TextView mName_TextView;
+    private ImageView mEditName_ImageView;
 
     private Protocol.Account mLatestAccountData;
     private List<Token> mTokens;
@@ -137,6 +142,8 @@ public class WalletFragment extends Fragment {
         mBandwidth_TextView = view.findViewById(R.id.Wallet_bandwidth_textView);
         mSendReceive_Button = view.findViewById(R.id.Wallet_send_receive_floatingActionButton);
         mVote_Button = view.findViewById(R.id.Wallet_vote_floatingActionButton);
+        mName_TextView = view.findViewById(R.id.Wallet_name_textView);
+        mEditName_ImageView = view.findViewById(R.id.Wallet_edit_name_imageView);
 
         mTRX_address_TextView.setText(publicAddress);
 
@@ -257,6 +264,26 @@ public class WalletFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        View.OnClickListener editNameClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new LovelyTextInputDialog(getContext(), R.style.EditTextTintTheme)
+                        .setTopColorRes(R.color.colorAccent)
+                        .setTitle("Edit Name")
+                        .setHint(mLatestAccountData.getAccountName().toStringUtf8())
+                        .setIcon(R.drawable.baseline_edit_white_24)
+                        .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                            @Override
+                            public void onTextInputConfirmed(String text) {
+                                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .show();
+            }
+        };
+        mName_TextView.setOnClickListener(editNameClickListener);
+        mEditName_ImageView.setOnClickListener(editNameClickListener);
 
         mTokens_RecyclerView.setHasFixedSize(true);
         mTokens_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
