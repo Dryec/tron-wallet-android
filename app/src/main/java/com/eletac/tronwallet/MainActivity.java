@@ -1,31 +1,25 @@
 package com.eletac.tronwallet;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.eletac.tronwallet.block_explorer.BlockExplorerFragment;
 import com.eletac.tronwallet.settings.SettingsFragment;
 import com.eletac.tronwallet.wallet.CreateWalletActivity;
-import com.eletac.tronwallet.wallet.ReceiveFragment;
 import com.eletac.tronwallet.wallet.cold.WalletColdFragment;
 import com.eletac.tronwallet.wallet.WalletFragment;
 import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
+import org.tron.walletserver.Wallet;
 import org.tron.walletserver.WalletClient;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private WalletClient mWalletClient;
 
     private boolean mIsColdWallet;
-    private boolean mIsPublicAddressOnly;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
         WalletClient.init();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        mWalletClient = WalletClient.GetWalletByStorageIgnorePrivKey(WalletClient.getSelectedWallet().getWalletName());
+        Wallet wallet = WalletClient.getSelectedWallet();
 
-        mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
-
-        mWalletClient = WalletClient.GetWalletByStorageIgnorPrivKey();
-
-        if(mWalletClient == null && !mIsPublicAddressOnly)
+        if(mWalletClient == null && !wallet.isWatchOnly())
         {
             Intent intent = new Intent(this, CreateWalletActivity.class);
             startActivity(intent);
@@ -70,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        mIsColdWallet = sharedPreferences.getBoolean(getString(R.string.is_cold_wallet_key), false);
-        //mIsColdWallet = true;
+        mIsColdWallet = wallet.isColdWallet();
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 

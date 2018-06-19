@@ -61,7 +61,7 @@
                     diagonal:layout_constraintStart_toStartOf="parent" />
 
                 <android.support.design.widget.TextInputLayout
-                    android:id="@+id/ImportWallet_password_textInputLayout"
+                    android:id="@+id/ImportWallet_name_textInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="20dp"
@@ -74,6 +74,27 @@
                     app:passwordToggleEnabled="true">
 
                     <android.support.design.widget.TextInputEditText
+                        android:id="@+id/CreateWallet_name_editText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="New Name"
+                        android:inputType="text" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/CreateWallet_password_textInputLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ImportWallet_name_textInputLayout"
+                    app:passwordToggleEnabled="true">
+
+                    <android.support.design.widget.TextInputEditText
                         android:id="@+id/CreateWallet_password_editText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -82,7 +103,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <TextView
-                    android:id="@+id/ImportWallet_password_info_textView"
+                    android:id="@+id/CreateWallet_password_info_textView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="40dp"
@@ -91,7 +112,7 @@
                     android:gravity="start"
                     android:text="@string/password_info"
                     android:textAlignment="textStart"
-                    app:layout_constraintTop_toBottomOf="@+id/ImportWallet_password_textInputLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/CreateWallet_password_textInputLayout"
                     diagonal:layout_constraintEnd_toEndOf="parent"
                     diagonal:layout_constraintStart_toStartOf="parent" />
 
@@ -143,7 +164,7 @@
                     android:layout_marginTop="24dp"
                     android:text="Cold Wallet Setup "
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/ImportWallet_password_info_textView" />
+                    app:layout_constraintTop_toBottomOf="@+id/CreateWallet_password_info_textView" />
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>

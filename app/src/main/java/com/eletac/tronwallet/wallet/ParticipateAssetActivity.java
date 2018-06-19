@@ -75,7 +75,6 @@ public class ParticipateAssetActivity extends AppCompatActivity {
 
     private Contract.AssetIssueContract mAsset;
     private Protocol.Account mAccount;
-    private boolean mIsPublicAddressOnly;
     private String mAddress;
     private double mTokenPrice;
 
@@ -118,11 +117,8 @@ public class ParticipateAssetActivity extends AppCompatActivity {
 
         if(mAsset != null) {
 
-            mAccount = Utils.getAccount(this);
-            mAddress = Utils.getPublicAddress(this);
-
-            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-            mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
+            mAccount = Utils.getAccount(this, WalletClient.getSelectedWallet().getWalletName());
+            mAddress = WalletClient.getSelectedWallet().computeAddress();
 
             mName_TextView.setText(mAsset.getName().toStringUtf8());
             mDescription_TextView.setText(mAsset.getDescription().toStringUtf8());

@@ -66,7 +66,6 @@ public class SendFragment extends Fragment {
     private TextView mAvailable_TextView;
     private TextView mAsset_TextView;
 
-    private boolean mIsPublicAddressOnly;
     private String mAddress;
 
     private AccountUpdatedBroadcastReceiver mAccountUpdatedBroadcastReceiver;
@@ -96,12 +95,9 @@ public class SendFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
-
         mAccountUpdatedBroadcastReceiver = new AccountUpdatedBroadcastReceiver();
 
-        mAddress = Utils.getPublicAddress(getContext());
+        mAddress = WalletClient.getSelectedWallet().computeAddress();
     }
 
     @Override
@@ -258,7 +254,7 @@ public class SendFragment extends Fragment {
     }
 
     private void updateAvailableAmount() {
-        Protocol.Account account = Utils.getAccount(getContext());
+        Protocol.Account account = Utils.getAccount(getContext(), WalletClient.getSelectedWallet().getWalletName());
 
         double assetAmount;
 
@@ -296,7 +292,7 @@ public class SendFragment extends Fragment {
         Context context = getContext();
 
         if(context != null) {
-            Protocol.Account account = Utils.getAccount(context);
+            Protocol.Account account = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
 
             Map<String, Long> assets = account.getAssetMap();
 

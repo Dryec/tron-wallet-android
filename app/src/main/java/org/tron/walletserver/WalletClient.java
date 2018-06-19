@@ -44,8 +44,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 class AccountComparator implements Comparator {
 
@@ -106,7 +108,7 @@ public class WalletClient {
     }
   }
 
-  //  Create Wallet with a pritKey
+  //  Create Wallet with a privKey
   public WalletClient(String priKey) {
     ECKey temKey = null;
     try {
@@ -118,24 +120,11 @@ public class WalletClient {
     this.ecKey = temKey;
   }
 
-  public boolean login(String password) {
-    loginState = checkPassWord(password);
-    return loginState;
-  }
-
-  public boolean isLoginState() {
-    return loginState;
-  }
-
-  public void logout() {
-    loginState = false;
-  }
-
   /**
    * Get a Wallet from storage
    */
-  public static WalletClient GetWalletByStorage(String password) {
-    String priKeyEnced = loadPriKey();
+  public static WalletClient GetWalletByStorage(String walletName, String password) {
+    String priKeyEnced = loadPriKey(walletName);
     if (priKeyEnced == null) {
       return null;
     }
@@ -153,54 +142,177 @@ public class WalletClient {
    * Creates a Wallet with an existing ECKey.
    */
 
-  public WalletClient(final ECKey ecKey) {
+    public WalletClient(final ECKey ecKey) {
     this.ecKey = ecKey;
-  }
-
-  public ECKey getEcKey() {
-    return ecKey;
-  }
-
-  public byte[] getAddress() {
-    return ecKey.getAddress();
-  }
-
-  public void store(String password) {
-    if (ecKey == null || ecKey.getPrivKey() == null) {
-      logger.warn("Warning: Store wallet failed, PrivKey is null !!");
-      return;
     }
-    byte[] pwd = getPassWord(password);
-    String pwdAsc = ByteArray.toHexString(pwd);
-    byte[] privKeyPlain = ecKey.getPrivKeyBytes();
-    System.out.println("privKey:" + ByteArray.toHexString(privKeyPlain));
-    //encrypted by password
-    byte[] aseKey = getEncKey(password);
-    byte[] privKeyEnced = SymmEncoder.AES128EcbEnc(privKeyPlain, aseKey);
-    String privKeyStr = ByteArray.toHexString(privKeyEnced);
-    byte[] pubKeyBytes = ecKey.getPubKey();
-    String pubKeyStr = ByteArray.toHexString(pubKeyBytes);
 
-    Context context = TronWalletApplication.getAppContext();
-    if(context == null)
-      return;
-    SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-    SharedPreferences.Editor editor = sharedPreferences.edit();
+    public ECKey getEcKey() {
+    return ecKey;
+    }
 
+    public byte[] getAddress() {
+    return ecKey.getAddress();
+    }
+
+    public Wallet store(String name, String password, boolean cold) throws DuplicateNameException {
+        if (ecKey == null || ecKey.getPrivKey() == null) {
+          throw new NullPointerException("Private Key is null");
+        }
+        byte[] pwd = getPassWord(password);
+        String pwdAsc = ByteArray.toHexString(pwd);
+
+        //encrypted by password
+        byte[] aseKey = getEncKey(password);
+
+        byte[] privKeyPlain = ecKey.getPrivKeyBytes();
+        byte[] privKeyEnced = SymmEncoder.AES128EcbEnc(privKeyPlain, aseKey);
+        String privKeyStr = ByteArray.toHexString(privKeyEnced);
+
+        byte[] pubKeyBytes = ecKey.getPubKey();
+        String pubKeyStr = ByteArray.toHexString(pubKeyBytes);
+
+
+        Context context = TronWalletApplication.getAppContext();
+        if(context == null) {
+            throw new NullPointerException("Context is null");
+        }
+
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor sharedEditor = sharedPreferences.edit();
+
+        Set<String> walletNames = new HashSet<>(sharedPreferences.getStringSet(context.getString(R.string.wallets_key), new HashSet<>()));
+
+        if(walletNames.contains(name)) {
+          throw new DuplicateNameException("Wallet name already exist");
+        }
+        walletNames.add(name);
+
+        sharedEditor.putStringSet(context.getString(R.string.wallets_key), walletNames);
+        sharedEditor.commit();
+
+
+
+        SharedPreferences walletPreferences = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+        SharedPreferences.Editor walletEditor = walletPreferences.edit();
+
+    // SAVE IS COLD WALLET
+        walletEditor.putBoolean(context.getString(R.string.is_cold_wallet_key), cold);
+    // SAVE NAME
+        walletEditor.putString(context.getString(R.string.wallet_name_key), name);
     // SAVE PASSWORD
-    editor.putString(context.getString(R.string.pwd_key), pwdAsc);
+        walletEditor.putString(context.getString(R.string.pwd_key), pwdAsc);
     // SAVE PUBKEY
-    editor.putString(context.getString(R.string.pub_key), pubKeyStr);
+        walletEditor.putString(context.getString(R.string.pub_key), pubKeyStr);
     // SAVE PRIKEY
-    editor.putString(context.getString(R.string.priv_key), privKeyStr);
+        walletEditor.putString(context.getString(R.string.priv_key), privKeyStr);
 
-    editor.commit();
-  }
+        walletEditor.commit();
 
-  public Account queryAccount() {
+        Wallet wallet = new Wallet();
+        wallet.setWatchOnly(false);
+        wallet.setColdWallet(cold);
+        wallet.setWalletName(name);
+        wallet.setPassword(pwdAsc);
+        wallet.setPublicKey(pubKeyStr);
+        wallet.setPrivateKey(privKeyStr);
+
+        return wallet;
+      }
+
+      public static Wallet storeWatchOnlyWallet(String name, String publicAddress) throws DuplicateNameException {
+          Context context = TronWalletApplication.getAppContext();
+          if(context == null) {
+              throw new NullPointerException("Context is null");
+          }
+
+          SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+          SharedPreferences.Editor sharedEditor = sharedPreferences.edit();
+
+          Set<String> walletNames = sharedPreferences.getStringSet(context.getString(R.string.wallets_key), new HashSet<>());
+
+          if(walletNames.contains(name)) {
+              throw new DuplicateNameException("Wallet name already exist");
+          }
+          walletNames.add(name);
+
+          sharedPreferences.getStringSet(context.getString(R.string.wallets_key), walletNames);
+          sharedEditor.commit();
+
+
+          SharedPreferences walletPreferences = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+          SharedPreferences.Editor walletEditor = walletPreferences.edit();
+
+          // SAVE IS WATCH ONLY
+          walletEditor.putBoolean(context.getString(R.string.is_watch_only_setup_key), true);
+          // SAVE NAME
+          walletEditor.putString(context.getString(R.string.wallet_name_key), name);
+          // SAVE PUBKEY
+          walletEditor.putString(context.getString(R.string.pub_key), publicAddress);
+
+          walletEditor.commit();
+
+          Wallet wallet = new Wallet();
+          wallet.setWatchOnly(true);
+          wallet.setColdWallet(false);
+          wallet.setWalletName(name);
+
+          return wallet;
+      }
+
+      public static boolean existWallet(String walletName) {
+          Context context = TronWalletApplication.getAppContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        Set<String> walletNames = sharedPreferences.getStringSet(context.getString(R.string.wallets_key), null);
+
+          return walletNames != null && walletNames.contains(walletName);
+      }
+
+      public static Set<String> getWalletNames() {
+          Context context = TronWalletApplication.getAppContext();
+          SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+          return new HashSet<>(sharedPreferences.getStringSet(context.getString(R.string.wallets_key), new HashSet<>()));
+      }
+
+      public static Wallet getSelectedWallet() {
+        Context context = TronWalletApplication.getAppContext();
+          SharedPreferences pref = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+          return getWallet(pref.getString(context.getString(R.string.selected_wallet_key), null));
+      }
+
+    public static Wallet getWallet(String walletName) {
+        if(existWallet(walletName)) {
+            Context context = TronWalletApplication.getAppContext();
+            SharedPreferences walletPref = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
+
+            Wallet wallet = new Wallet();
+            wallet.setWatchOnly(walletPref.getBoolean(context.getString(R.string.is_watch_only_setup_key), false));
+            wallet.setColdWallet(walletPref.getBoolean(context.getString(R.string.is_cold_wallet_key), false));
+            wallet.setWalletName(walletPref.getString(context.getString(R.string.wallet_name_key), ""));
+            wallet.setPassword(walletPref.getString(context.getString(R.string.pwd_key), ""));
+            wallet.setPublicKey(walletPref.getString(context.getString(R.string.pub_key), ""));
+            wallet.setPrivateKey(walletPref.getString(context.getString(R.string.priv_key), ""));
+
+            return wallet;
+        }
+
+        return null;
+    }
+
+      public static void selectWallet(String walletName) {
+          Context context = TronWalletApplication.getAppContext();
+        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        if(existWallet(walletName)) {
+            editor.putString(context.getString(R.string.selected_wallet_key), walletName);
+            editor.commit();
+        }
+      }
+
+  public Account queryAccount(String walletName) {
     byte[] address;
     if (this.ecKey == null) {
-      String pubKey = loadPubKey(); //04 PubKey[128]
+      String pubKey = loadPubKey(walletName); //04 PubKey[128]
       if (StringUtils.isEmpty(pubKey)) {
         logger.warn("Warning: QueryAccount failed, no wallet address !!");
         return null;
@@ -559,36 +671,36 @@ public class WalletClient {
     return builder.build();
   }
 
-  private static String loadPassword() {
+  private static String loadPassword(String walletName) {
     Context context = TronWalletApplication.getAppContext();
-    if(context == null)
+    if(context == null || !existWallet(walletName))
       return null;
-    SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
     return sharedPreferences.getString(context.getString(R.string.pwd_key), null);
   }
 
-  public static String loadPubKey() {
+  public static String loadPubKey(String walletName) {
     Context context = TronWalletApplication.getAppContext();
-    if(context == null)
+    if(context == null || !existWallet(walletName))
       return null;
-    SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
     return sharedPreferences.getString(context.getString(R.string.pub_key), null);
   }
 
-  private static String loadPriKey() {
+  private static String loadPriKey(String walletName) {
     Context context = TronWalletApplication.getAppContext();
-    if(context == null)
+    if(context == null || !existWallet(walletName))
       return null;
-    SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
     return sharedPreferences.getString(context.getString(R.string.priv_key), null);
   }
 
   /**
    * Get a Wallet from storage
    */
-  public static WalletClient GetWalletByStorageIgnorPrivKey() {
+  public static WalletClient GetWalletByStorageIgnorePrivKey(String walletName) {
     try {
-      String pubKey = loadPubKey(); //04 PubKey[128]
+      String pubKey = loadPubKey(walletName); //04 PubKey[128]
       if (StringUtils.isEmpty(pubKey)) {
         return null;
       }
@@ -602,9 +714,9 @@ public class WalletClient {
     }
   }
 
-  public static String getAddressByStorage() {
+  public static String getAddressByStorage(String walletName) {
     try {
-      String pubKey = loadPubKey(); //04 PubKey[128]
+      String pubKey = loadPubKey(walletName); //04 PubKey[128]
       if (StringUtils.isEmpty(pubKey)) {
         return null;
       }
@@ -639,13 +751,13 @@ public class WalletClient {
     return encKey;
   }
 
-  public static boolean checkPassWord(String password) {
+  public static boolean checkPassWord(String walletName, String password) {
     byte[] pwd = getPassWord(password);
     if (pwd == null) {
       return false;
     }
     String pwdAsc = ByteArray.toHexString(pwd);
-    String pwdInstore = loadPassword();
+    String pwdInstore = loadPassword(walletName);
     return pwdAsc.equals(pwdInstore);
   }
 

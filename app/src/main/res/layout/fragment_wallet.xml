@@ -308,6 +308,7 @@
                 android:clickable="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/baseline_edit_white_24"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toTopOf="@+id/Wallet_trx_balance_textView"
                 app:layout_constraintStart_toEndOf="@+id/linearLayout2"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout2" />

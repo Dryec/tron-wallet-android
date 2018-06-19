@@ -93,9 +93,6 @@ public class WalletFragment extends Fragment {
 
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mForeOrBackgroundedBroadcastReceiver, new IntentFilter(TronWalletApplication.FOREGROUND_CHANGED));
 
-        publicAddress = Utils.getPublicAddress(getContext());
-
-
         // Account Updater starts in OnResume();
         PriceUpdater.start();
 
@@ -103,7 +100,7 @@ public class WalletFragment extends Fragment {
         mTokensAdapter = new TokenListAdapter(getContext(), mTokens);
 
         // Make sure latest data is loaded if no internet connection
-        mLatestAccountData = Utils.getAccount(getContext());
+        mLatestAccountData = Utils.getAccount(getContext(), WalletClient.getSelectedWallet().getWalletName());
     }
 
     @Override
@@ -123,6 +120,9 @@ public class WalletFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        publicAddress = WalletClient.getSelectedWallet().computeAddress();
+        onAccountUpdated();
+
         AccountUpdater.setInterval(TronWalletApplication.ACCOUNT_UPDATE_FOREGROUND_INTERVAL, true);
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mAccountUpdatedBroadcastReceiver, new IntentFilter(AccountUpdater.ACCOUNT_UPDATED));
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mPricesUpdatedBroadcastReceiver, new IntentFilter(PriceUpdater.PRICES_UPDATED));
@@ -144,8 +144,6 @@ public class WalletFragment extends Fragment {
         mVote_Button = view.findViewById(R.id.Wallet_vote_floatingActionButton);
         mName_TextView = view.findViewById(R.id.Wallet_name_textView);
         mEditName_ImageView = view.findViewById(R.id.Wallet_edit_name_imageView);
-
-        mTRX_address_TextView.setText(publicAddress);
 
         mTRX_balance_TextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,6 +263,7 @@ public class WalletFragment extends Fragment {
             }
         });
 
+        // TODO
         View.OnClickListener editNameClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -282,8 +281,8 @@ public class WalletFragment extends Fragment {
                         .show();
             }
         };
-        mName_TextView.setOnClickListener(editNameClickListener);
-        mEditName_ImageView.setOnClickListener(editNameClickListener);
+        //mName_TextView.setOnClickListener(editNameClickListener);
+        //mEditName_ImageView.setOnClickListener(editNameClickListener);
 
         mTokens_RecyclerView.setHasFixedSize(true);
         mTokens_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -302,7 +301,7 @@ public class WalletFragment extends Fragment {
         if(mLatestAccountData != null) {
 
             NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
+            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext(), WalletClient.getSelectedWallet().getWalletName());
 
             double balance = (mLatestAccountData.getBalance() / 1000000.0d);
             mTRX_balance_TextView
@@ -360,6 +359,9 @@ public class WalletFragment extends Fragment {
     private void onAccountUpdated() {
         if(getContext() != null && mLatestAccountData != null) {
 
+            mName_TextView.setText(WalletClient.getSelectedWallet().getWalletName());
+            mTRX_address_TextView.setText(publicAddress);
+
             updateBalanceTextViews();
 
             AsyncJob.doInBackground(() -> {
@@ -385,7 +387,7 @@ public class WalletFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            mLatestAccountData = Utils.getAccount(context);
+            mLatestAccountData = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
             onAccountUpdated();
         }
     }

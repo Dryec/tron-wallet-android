@@ -28,6 +28,7 @@ import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.tron.common.utils.ByteArray;
+import org.tron.walletserver.DuplicateNameException;
 import org.tron.walletserver.WalletClient;
 
 public class ImportWalletActivity extends AppCompatActivity {
@@ -39,6 +40,7 @@ public class ImportWalletActivity extends AppCompatActivity {
     private TextInputLayout mPublicAddress_Layout;
     private TextInputLayout mPrivateKey_Layout;
 
+    private EditText mName_EditText;
     private EditText mPassword_EditText;
     private EditText mPublicAddress_EditText;
     private EditText mPrivateKey_EditText;
@@ -88,6 +90,7 @@ public class ImportWalletActivity extends AppCompatActivity {
         mPassword_Layout = findViewById(R.id.ImportWallet_password_textInputLayout);
         mPrivateKey_Layout = findViewById(R.id.ImportWallet_priv_key_textInputLayout);
 
+        mName_EditText = findViewById(R.id.ImportWallet_name_editText);
         mPublicAddress_EditText = findViewById(R.id.ImportWallet_pub_address_editText);
         mPassword_EditText = findViewById(R.id.ImportWallet_password_editText);
         mPrivateKey_EditText = findViewById(R.id.ImportWallet_priv_key_editText);
@@ -212,6 +215,32 @@ public class ImportWalletActivity extends AppCompatActivity {
         } catch (IllegalArgumentException ignored) { }
 
         if(addressValid) {
+            String name = mName_EditText.getText().toString();
+            String password = mPassword_EditText.getText().toString();
+
+            boolean validPassword = isValidPassword(password);
+            boolean validName = isValidName(name);
+
+            if(!validName) {
+                new LovelyInfoDialog(ImportWalletActivity.this)
+                        .setTopColorRes(R.color.colorPrimary)
+                        .setIcon(R.drawable.ic_info_white_24px)
+                        .setTitle("Invalid Name")
+                        .setMessage("Please enter a valid name")
+                        .show();
+                return;
+            }
+
+            if(!validPassword) {
+                new LovelyInfoDialog(ImportWalletActivity.this)
+                        .setTopColorRes(R.color.colorPrimary)
+                        .setIcon(R.drawable.ic_info_white_24px)
+                        .setTitle(R.string.create_wallet_inv_password_dialog_title)
+                        .setMessage(R.string.create_wallet_inv_password_dialog_message)
+                        .show();
+                return;
+            }
+
             new LovelyStandardDialog(this, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
                     .setTopColorRes(R.color.colorPrimary)
                     .setButtonsColor(Color.WHITE)
@@ -221,12 +250,18 @@ public class ImportWalletActivity extends AppCompatActivity {
                     .setPositiveButton(R.string.ok, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putBoolean(getString(R.string.is_public_address_only), true);
-                            editor.putString(getString(R.string.public_address_raw), address);
-                            editor.commit();
-                            startMainActivity();
+                            try {
+                                WalletClient.storeWatchOnlyWallet(name, address);
+                                WalletClient.selectWallet(name);
+                                startMainActivity();
+                            } catch (DuplicateNameException e) {
+                                new LovelyInfoDialog(ImportWalletActivity.this)
+                                        .setTopColorRes(R.color.colorPrimary)
+                                        .setIcon(R.drawable.ic_info_white_24px)
+                                        .setTitle("Invalid Name")
+                                        .setMessage("You already have an wallet with this name")
+                                        .show();
+                            }
                         }
                     })
                     .setNegativeButton(R.string.cancel, null)
@@ -284,6 +319,7 @@ public class ImportWalletActivity extends AppCompatActivity {
         boolean coldWallet = mColdWallet_Switch.isChecked();
         boolean inputInvalid = false;
 
+        String name = mName_EditText.getText().toString();
         String password = mPassword_EditText.getText().toString();
         String privKey = "";
 
@@ -297,6 +333,11 @@ public class ImportWalletActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        if(!isValidName(name)) {
+            dialog.setTitle("Invalid Name")
+                    .setMessage("Please enter a valid name");
+            inputInvalid = true;
+        }
         if (!isValidPassword(password)) {
             dialog.setMessage(R.string.create_wallet_inv_password_dialog_message)
                     .setTitle(R.string.create_wallet_inv_password_dialog_title);
@@ -320,18 +361,19 @@ public class ImportWalletActivity extends AppCompatActivity {
             dialog.setPositiveButton(R.string.ok, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-
-                    WalletClient wallet = new WalletClient(finalPrivKey);
-                    wallet.store(password);
-
-                    editor.putString(getString(R.string.public_address_raw), WalletClient.encode58Check(wallet.getAddress()));
-                    editor.putBoolean(getString(R.string.is_cold_wallet_key), coldWallet);
-                    editor.commit();
-
-                    startMainActivity();
+                    try {
+                        WalletClient wallet = new WalletClient(finalPrivKey);
+                        wallet.store(name, password, coldWallet);
+                        WalletClient.selectWallet(name);
+                        startMainActivity();
+                    } catch (DuplicateNameException e) {
+                        new LovelyInfoDialog(ImportWalletActivity.this)
+                                .setTopColorRes(R.color.colorPrimary)
+                                .setIcon(R.drawable.ic_info_white_24px)
+                                .setTitle("Invalid Name")
+                                .setMessage("You already have an wallet with this name")
+                                .show();
+                    }
                 }
             });
 
@@ -351,6 +393,10 @@ public class ImportWalletActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CreateWalletActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private boolean isValidName(String name) {
+        return !name.isEmpty(); // TODO
     }
 
     private boolean isValidPassword(String password) {

@@ -91,13 +91,13 @@ public class AccountUpdater {
                 public void doOnBackground() {
                     if(mContext != null) {
                         try {
-                            byte[] address = WalletClient.decodeFromBase58Check(Utils.getPublicAddress(mContext));
+                            byte[] address = WalletClient.decodeFromBase58Check(WalletClient.getSelectedWallet().computeAddress());
 
                             Protocol.Account account = WalletClient.queryAccount(address);
                             GrpcAPI.AccountNetMessage accountNetMessage = WalletClient.getAccountNet(address);
 
-                            Utils.saveAccount(mContext, account);
-                            Utils.saveAccountNet(mContext, accountNetMessage);
+                            Utils.saveAccount(mContext, WalletClient.getSelectedWallet().getWalletName(), account);
+                            Utils.saveAccountNet(mContext, WalletClient.getSelectedWallet().getWalletName(), accountNetMessage);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -19,6 +19,8 @@ import android.widget.Toast;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 
+import org.tron.walletserver.WalletClient;
+
 import static com.eletac.tronwallet.Utils.strToQR;
 
 
@@ -42,7 +44,7 @@ public class ReceiveFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAddress = Utils.getPublicAddress(getContext());
+        mAddress = WalletClient.getSelectedWallet().computeAddress();
         mAddressQRBitmap = strToQR(mAddress, 800,800);
     }
 

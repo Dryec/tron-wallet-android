@@ -120,9 +120,20 @@
             android:name=".wallet.IssueTokenActivity"
             android:label="@string/title_activity_issue_token"
             android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.ActionBar"
-            android:parentActivityName=".MainActivity">
+            android:theme="@style/AppTheme.ActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.eletac.tronwallet.MainActivity" />
+        </activity>
+        <activity
+            android:name=".settings.SelectWalletActivity"
+            android:label="@string/title_activity_select_wallet"
+            android:launchMode="singleTop"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.ActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eletac.tronwallet.MainActivity" />

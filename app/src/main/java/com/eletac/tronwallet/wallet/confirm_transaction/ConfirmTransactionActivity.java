@@ -47,6 +47,7 @@ import org.spongycastle.util.encoders.DecoderException;
 import org.tron.api.GrpcAPI;
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Protocol;
+import org.tron.walletserver.Wallet;
 import org.tron.walletserver.WalletClient;
 
 import java.text.NumberFormat;
@@ -74,7 +75,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
     private Protocol.Transaction mTransactionUnsigned;
     private Protocol.Transaction mTransactionSigned;
-    private boolean mIsPublicAddressOnly;
+    private boolean mIsWatchOnly;
     private boolean mIsColdWallet;
 
     private byte[] mTransactionBytes;
@@ -136,9 +137,9 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
             return;
         }
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
-        mIsColdWallet = sharedPreferences.getBoolean(getString(R.string.is_cold_wallet_key), false);
+        Wallet wallet = WalletClient.getSelectedWallet();
+        mIsWatchOnly = wallet.isWatchOnly();
+        mIsColdWallet = wallet.isColdWallet();
 
         setupBandwidth();
         updateConfirmButton();
@@ -176,13 +177,13 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                         broadcastTransaction();
                     }
                 }
-                else if(mIsPublicAddressOnly) {
+                else if(mIsWatchOnly) {
                     Intent intent = new Intent(ConfirmTransactionActivity.this, SignTransactionActivity.class);
                     intent.putExtra(SignTransactionActivity.TRANSACTION_DATA_EXTRA, mTransactionBytes);
                     startActivityForResult(intent, SignTransactionActivity.TRANSACTION_SIGN_REQUEST_CODE);
                 }
-                else if(WalletClient.checkPassWord(password)) {
-                    WalletClient walletClient = WalletClient.GetWalletByStorage(password);
+                else if(WalletClient.checkPassWord(WalletClient.getSelectedWallet().getWalletName(), password)) {
+                    WalletClient walletClient = WalletClient.GetWalletByStorage(WalletClient.getSelectedWallet().getWalletName(), password);
                     mTransactionSigned = TransactionUtils.setTimestamp(mTransactionUnsigned);
                     mTransactionSigned = TransactionUtils.sign(mTransactionSigned, walletClient.getEcKey());
 
@@ -291,7 +292,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         if(isTransactionSigned()) {
             mBandwidth_CardView.setVisibility(mIsColdWallet ? View.GONE : View.VISIBLE);
 
-            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(this);
+            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(this, WalletClient.getSelectedWallet().getWalletName());
             long bandwidthNormal = accountNetMessage.getNetLimit()-accountNetMessage.getNetUsed();
             long bandwidthFree = accountNetMessage.getFreeNetLimit()-accountNetMessage.getFreeNetUsed();
 
@@ -331,7 +332,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     private void updateConfirmButton() {
         boolean needSign = !isTransactionSigned();
 
-        mPassword_Layout.setVisibility(needSign && !mIsPublicAddressOnly ? View.VISIBLE : View.GONE);
+        mPassword_Layout.setVisibility(needSign && !mIsWatchOnly ? View.VISIBLE : View.GONE);
 
         mConfirm_Button.setBackgroundTintList(ColorStateList.valueOf(
                 (needSign ? getResources().getColor(R.color.colorAccent) : getResources().getColor(R.color.positive))

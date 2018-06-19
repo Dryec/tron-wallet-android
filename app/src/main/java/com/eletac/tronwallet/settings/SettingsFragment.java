@@ -18,7 +18,6 @@ import android.widget.Button;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.wallet.AboutActivity;
 import com.eletac.tronwallet.wallet.AccountActivity;
-import com.eletac.tronwallet.wallet.CreateWalletActivity;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
@@ -27,12 +26,13 @@ import org.tron.walletserver.WalletClient;
 
 public class SettingsFragment extends Fragment {
 
-    private Button mReset_Button;
+    private Button mRemove_Button;
+    private Button mSelectWallet_Button;
     private Button mAccount_Button;
     private Button mConnection_Button;
     private Button mAbout_Button;
 
-    private boolean mIsPublicAddressOnly;
+    private boolean mIsWachtOnly;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -47,8 +47,7 @@ public class SettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
+        mIsWachtOnly = WalletClient.getSelectedWallet().isWatchOnly();
     }
 
     @Override
@@ -62,21 +61,29 @@ public class SettingsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mSelectWallet_Button = view.findViewById(R.id.Settings_select_wallet_button);
         mAccount_Button = view.findViewById(R.id.Settings_account_button);
         mConnection_Button = view.findViewById(R.id.Settings_connection_button);
-        mReset_Button = view.findViewById(R.id.Settings_reset_button);
+        mRemove_Button = view.findViewById(R.id.Settings_remove_button);
         mAbout_Button = view.findViewById(R.id.Settings_about_button);
 
-        mReset_Button.setOnClickListener(new View.OnClickListener() {
+        mSelectWallet_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mIsPublicAddressOnly) {
+                Intent intent = new Intent(getContext(), SelectWalletActivity.class);
+                startActivity(intent);
+            }
+        });
+        mRemove_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mIsWachtOnly) {
                     new LovelyStandardDialog(getActivity())
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle(R.string.confirm_reset)
-                            .setMessage(R.string.reset_address_only_info)
-                            .setPositiveButton(R.string.reset, new View.OnClickListener() {
+                            .setTitle(R.string.confirm_removing)
+                            .setMessage(R.string.remove_address_only_info)
+                            .setPositiveButton(R.string.remove, new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
                                     reset();
@@ -88,22 +95,22 @@ public class SettingsFragment extends Fragment {
                     new LovelyTextInputDialog(getActivity(), R.style.EditTextTintTheme)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle(R.string.confirm_reset)
-                            .setMessage(R.string.reset_info)
+                            .setTitle(R.string.confirm_removing)
+                            .setMessage(R.string.remove_info)
                             .setHint(R.string.password)
                             .setInputType(InputType.TYPE_CLASS_TEXT |
                                     InputType.TYPE_TEXT_VARIATION_PASSWORD)
                             .setConfirmButtonColor(Color.WHITE)
-                            .setConfirmButton(R.string.reset, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                            .setConfirmButton(R.string.remove, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                                 @Override
                                 public void onTextInputConfirmed(String text) {
-                                    if (WalletClient.checkPassWord(text)) {
+                                    if (WalletClient.checkPassWord(WalletClient.getSelectedWallet().getWalletName(), text)) {
                                         reset();
                                     } else {
                                         new LovelyInfoDialog(getContext())
                                                 .setTopColorRes(R.color.colorPrimary)
                                                 .setIcon(R.drawable.ic_error_white_24px)
-                                                .setTitle(R.string.resetting_failed)
+                                                .setTitle(R.string.removing_failed)
                                                 .setMessage(R.string.wrong_password)
                                                 .show();
                                     }
@@ -117,7 +124,7 @@ public class SettingsFragment extends Fragment {
         mAccount_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mIsPublicAddressOnly) {
+                if(mIsWachtOnly) {
                     new LovelyInfoDialog(getContext())
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_error_white_24px)
@@ -136,8 +143,9 @@ public class SettingsFragment extends Fragment {
                             .setConfirmButton(R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                                 @Override
                                 public void onTextInputConfirmed(String text) {
-                                    if (WalletClient.checkPassWord(text)) {
+                                    if (WalletClient.checkPassWord(WalletClient.getSelectedWallet().getWalletName(), text)) {
                                         Intent intent = new Intent(getContext(), AccountActivity.class);
+                                        intent.putExtra("name", WalletClient.getSelectedWallet().getWalletName());
                                         intent.putExtra("password", text);
                                         startActivity(intent);
                                     } else {
@@ -172,7 +180,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void reset() {
-        SharedPreferences.Editor editor = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getContext().getSharedPreferences(WalletClient.getSelectedWallet().getWalletName(), Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.commit();
         getActivity().recreate();

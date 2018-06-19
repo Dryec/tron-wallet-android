@@ -74,7 +74,6 @@ public class FreezeFragment extends Fragment {
     private Button mUnfreeze_Button;
 
     private Protocol.Account mAccount;
-    private boolean mIsPublicAddressOnly;
     private String mAddress;
 
     private AccountUpdatedBroadcastReceiver mAccountUpdatedBroadcastReceiver;
@@ -95,13 +94,10 @@ public class FreezeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
-
         mAccountUpdatedBroadcastReceiver = new AccountUpdatedBroadcastReceiver();
 
-        mAddress = Utils.getPublicAddress(getContext());
-        mAccount = Utils.getAccount(getContext());
+        mAddress = WalletClient.getSelectedWallet().computeAddress();
+        mAccount = Utils.getAccount(getContext(), WalletClient.getSelectedWallet().getWalletName());
     }
 
     @Override
@@ -269,7 +265,7 @@ public class FreezeFragment extends Fragment {
         mFreezeAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, mAccount.getBalance()/1000000)});
         mFreezeAmount_SeekBar.setMax((int)(mAccount.getBalance()/1000000L));
 
-        GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext());
+        GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext(), WalletClient.getSelectedWallet().getWalletName());
 
         NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
@@ -313,7 +309,7 @@ public class FreezeFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            mAccount = Utils.getAccount(context);
+            mAccount = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
             updateUI();
         }
     }

@@ -252,7 +252,7 @@ public class IssueTokenActivity extends AppCompatActivity {
                         failedMessage = "End should be after start";
                     }
 
-                    Protocol.Account account = Utils.getAccount(IssueTokenActivity.this);
+                    Protocol.Account account = Utils.getAccount(IssueTokenActivity.this, WalletClient.getSelectedWallet().getWalletName());
 
                     if(account.getBalance()/1000000D < 1024.D) {
                         failedMessage = "Not enough TRX\nNeeded: 1024 TRX";
@@ -282,7 +282,7 @@ public class IssueTokenActivity extends AppCompatActivity {
                 }
 
                 Contract.AssetIssueContract contract = WalletClient.createAssetIssueContract(
-                        WalletClient.decodeFromBase58Check(Utils.getPublicAddress(IssueTokenActivity.this)),
+                        WalletClient.decodeFromBase58Check(WalletClient.getSelectedWallet().computeAddress()),
                         name,
                         abbr,
                         supply,

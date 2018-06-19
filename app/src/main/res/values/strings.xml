@@ -194,14 +194,14 @@
     <string name="unfreezing_failed">Unfreezing Failed</string>
     <string name="unfreezing">Unfreezing</string>
     <string name="unfreeze_successfully">Unfreeze successfully</string>
-    <string name="reset_app">Reset App</string>
+    <string name="remove_wallet">Remove Wallet</string>
     <string name="secret_account_info">Secret Account Info</string>
     <string name="connection">Connection</string>
-    <string name="confirm_reset">Confirm Reset</string>
-    <string name="reset">Reset</string>
-    <string name="reset_info">You are about to reset your wallet.\n\nPlease make sure you have your private key or recovery phrase before resetting everything, otherwise you will lose your access to your account.</string>
-    <string name="reset_address_only_info">You are about to reset your wallet.\n\nYou\'ll only remove your public address, so there is no risk.</string>
-    <string name="resetting_failed">Resetting failed</string>
+    <string name="confirm_removing">Confirm Remove</string>
+    <string name="remove">Remove</string>
+    <string name="remove_info">You are about to remove this wallet.\n\nPlease make sure you have your private key or recovery phrase before removing this wallet, otherwise you will lose your access to your account.\n\nOther wallets will remain</string>
+    <string name="remove_address_only_info">You are about to remove this wallet.\n\nYou\'ll only remove your public address, so there is no risk.</string>
+    <string name="removing_failed">Removing failed</string>
     <string name="no_access">No Access</string>
     <string name="account_no_access_info">An address only wallet cannot access these information</string>
     <string name="password_needed">Password</string>
@@ -227,4 +227,9 @@
     <string name="transaction_will_cost">Transaction will cost</string>
     <string name="loading">Loading…</string>
     <string name="title_activity_issue_token">Create Token</string>
+    <string name="selected_wallet_key">selected_wallet_key</string>
+    <string name="wallet_name_key">wallet_name_key</string>
+    <string name="is_watch_only_setup_key">is_watch_only_setup_key</string>
+    <string name="wallets_key">wallets_key</string>
+    <string name="title_activity_select_wallet">Select Wallet</string>
 </resources>

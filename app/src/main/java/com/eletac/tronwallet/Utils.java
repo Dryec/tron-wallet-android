@@ -51,32 +51,9 @@ public class Utils {
         return null;
     }
 
-    public static int pxToDp(Context context, int px) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int dp = Math.round(px / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return dp;
-    }
-
-    public static int dpToPx(Context context, int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
-
-    public static byte[] transactionToByteArray(Protocol.Transaction transaction) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        transaction.writeTo(outputStream);
-        outputStream.flush();
-        return outputStream.toByteArray();
-    }
-
-    public static Protocol.Transaction parseTransaction(byte[] transactionBytes) throws InvalidProtocolBufferException {
-        return Protocol.Transaction.parseFrom(transactionBytes);
-    }
-
-    public static void saveAccount(Context context, Protocol.Account account) {
-        if (context != null && account != null) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_account_file_key), Context.MODE_PRIVATE);
+    public static void saveAccount(Context context, String walletName, Protocol.Account account) {
+        if (context != null && account != null && WalletClient.existWallet(walletName)) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             editor.putString(context.getString(R.string.name_key), account.getAccountName().toStringUtf8());
@@ -111,24 +88,23 @@ public class Utils {
         }
     }
 
-    public static void saveAccountNet(Context context, GrpcAPI.AccountNetMessage accountNet) {
-        if (context != null && accountNet != null) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_account_file_key), Context.MODE_PRIVATE);
+    public static void saveAccountNet(Context context, String walletName, GrpcAPI.AccountNetMessage accountNet) {
+        if (context != null && accountNet != null && WalletClient.existWallet(walletName)) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             editor.putLong(context.getString(R.string.net_limit_key), accountNet.getNetLimit());
             editor.putLong(context.getString(R.string.net_used_key), accountNet.getNetUsed());
             editor.putLong(context.getString(R.string.net_free_limit_key), accountNet.getFreeNetLimit());
             editor.putLong(context.getString(R.string.net_free_used_key), accountNet.getFreeNetUsed());
-            // TODO asset net usage
 
             editor.apply();
         }
     }
 
-    public static GrpcAPI.AccountNetMessage getAccountNet(Context context) {
-        if(context != null) {
-            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_account_file_key), Context.MODE_PRIVATE);
+    public static GrpcAPI.AccountNetMessage getAccountNet(Context context, String walletName) {
+        if(context != null && WalletClient.existWallet(walletName)) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
 
             GrpcAPI.AccountNetMessage.Builder accountNetMessage = GrpcAPI.AccountNetMessage.newBuilder();
 
@@ -142,11 +118,11 @@ public class Utils {
         return GrpcAPI.AccountNetMessage.getDefaultInstance();
     }
 
-    public static Protocol.Account getAccount(Context context) {
-        if(context != null) {
+    public static Protocol.Account getAccount(Context context, String walletName) {
+        if(context != null && WalletClient.existWallet(walletName)) {
             Protocol.Account.Builder builder = Protocol.Account.newBuilder();
 
-            SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_account_file_key), Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
 
             String name = sharedPreferences.getString(context.getString(R.string.name_key),"");
             String address = sharedPreferences.getString(context.getString(R.string.address_key),"");
@@ -218,10 +194,5 @@ public class Utils {
     public static long getAccountAssetAmount(Protocol.Account account, String assetName) {
         Map<String, Long> assets = account.getAssetMap();
         return assets.containsKey(assetName) ? assets.get(assetName) : 0;
-    }
-
-    public static String getPublicAddress(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(context.getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        return sharedPreferences.getString(context.getString(R.string.public_address_raw), "");
     }
 }

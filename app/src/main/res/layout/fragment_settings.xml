@@ -27,7 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_behavior="android.support.design.widget.AppBarLayout$ScrollingViewBehavior"
-        app:layout_constraintBottom_toTopOf="@+id/Settings_reset_button"
+        app:layout_constraintBottom_toTopOf="@+id/Settings_remove_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +46,18 @@
                 tools:layout_editor_absoluteY="0dp">
 
                 <Button
+                    android:id="@+id/Settings_select_wallet_button"
+                    android:layout_width="0dp"
+                    android:layout_height="70dp"
+                    android:backgroundTint="#323232"
+                    android:text="Select Wallet"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
                     android:id="@+id/Settings_about_button"
                     android:layout_width="0dp"
                     android:layout_height="70dp"
@@ -61,13 +73,12 @@
                     android:id="@+id/Settings_account_button"
                     android:layout_width="0dp"
                     android:layout_height="70dp"
-                    android:layout_marginTop="8dp"
                     android:backgroundTint="#323232"
                     android:text="@string/secret_account_info"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/Settings_select_wallet_button" />
 
                 <Button
                     android:id="@+id/Settings_connection_button"
@@ -84,11 +95,11 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/Settings_reset_button"
+        android:id="@+id/Settings_remove_button"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:backgroundTint="#323232"
-        android:text="@string/reset_app"
+        android:text="@string/remove_wallet"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

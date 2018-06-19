@@ -49,7 +49,6 @@ public class VoteActivity extends AppCompatActivity {
     private HashMap<String, String> mVoteWitnesses;
     private VotesUpdatedBroadcastReceiver mVotesUpdatedBroadcastReceiver;
 
-    private boolean mIsPublicAddressOnly;
     private Protocol.Account mAccount;
     private AccountUpdatedBroadcastReceiver mAccountUpdatedBroadcastReceiver;
 
@@ -71,9 +70,7 @@ public class VoteActivity extends AppCompatActivity {
         mVotesUpdatedBroadcastReceiver = new VotesUpdatedBroadcastReceiver();
         mAccountUpdatedBroadcastReceiver = new AccountUpdatedBroadcastReceiver();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        mIsPublicAddressOnly = sharedPreferences.getBoolean(getString(R.string.is_public_address_only), false);
-        mAccount = Utils.getAccount(this);
+        mAccount = Utils.getAccount(this, WalletClient.getSelectedWallet().getWalletName());
 
         mViewPager = findViewById(R.id.Vote_container);
         mRemaining_TextView = findViewById(R.id.Vote_remaining_textView);
@@ -120,7 +117,7 @@ public class VoteActivity extends AppCompatActivity {
                     Protocol.Transaction transaction = null;
                     try {
                         transaction = WalletClient.createVoteWitnessTransaction(
-                                WalletClient.decodeFromBase58Check(Utils.getPublicAddress(VoteActivity.this)),
+                                WalletClient.decodeFromBase58Check(WalletClient.getSelectedWallet().computeAddress()),
                                 mVoteWitnesses);
                     } catch (Exception ignored) { }
 
@@ -259,7 +256,7 @@ public class VoteActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            mAccount = Utils.getAccount(context);
+            mAccount = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
             if(mLoadVotesOnNextAccountUpdate)
                 loadVotes();
         }

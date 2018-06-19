@@ -39,6 +39,7 @@ public class AccountActivity extends AppCompatActivity {
     boolean mQR_Address_zoomed = false;
     boolean mQR_PrivateKey_zoomed = false;
 
+    String mName;
     String mPassword;
     String mAddress;
     String mPrivKey;
@@ -60,11 +61,13 @@ public class AccountActivity extends AppCompatActivity {
         mPrivKey_TextView = findViewById(R.id.Account_priv_key_textView);
         mRecoveryPhrase_TextView = findViewById(R.id.Account_recovery_phrase_textView);
 
+        mName = getIntent().getStringExtra("name");
         mPassword = getIntent().getStringExtra("password");
         boolean freshlyCreated = getIntent().getBooleanExtra("freshly_created", false);
 
-        walletClient = WalletClient.GetWalletByStorage(mPassword);
-        if(walletClient == null || !walletClient.login(mPassword)) {
+        walletClient = WalletClient.GetWalletByStorage(mName, mPassword);
+
+        if(walletClient == null || !WalletClient.checkPassWord(mName, mPassword)) {
             finish();
             return;
         }
