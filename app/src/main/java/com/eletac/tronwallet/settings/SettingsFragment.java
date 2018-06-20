@@ -24,6 +24,9 @@ import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.tron.walletserver.WalletClient;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class SettingsFragment extends Fragment {
 
     private Button mRemove_Button;
@@ -180,9 +183,21 @@ public class SettingsFragment extends Fragment {
     }
 
     private void reset() {
-        SharedPreferences.Editor editor = getContext().getSharedPreferences(WalletClient.getSelectedWallet().getWalletName(), Context.MODE_PRIVATE).edit();
+        String selectedWallet = WalletClient.getSelectedWallet().getWalletName();
+        SharedPreferences.Editor editor = getContext().getSharedPreferences(selectedWallet, Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.commit();
+
+        SharedPreferences preferences = getContext().getSharedPreferences(getContext().getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        editor = preferences.edit();
+        Set<String> wallets = new HashSet<>(preferences.getStringSet(getString(R.string.wallets_key), new HashSet<>()));
+        wallets.remove(selectedWallet);
+        editor.putStringSet(getString(R.string.wallets_key), wallets);
+
+        if(!wallets.isEmpty())
+            editor.putString(getString(R.string.selected_wallet_key), wallets.iterator().next());
+        editor.commit();
+
         getActivity().recreate();
     }
 }

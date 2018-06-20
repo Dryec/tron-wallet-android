@@ -7,10 +7,11 @@ import org.tron.common.utils.ByteArray;
 public class Wallet {
     private boolean isWatchOnly = false;
     private boolean isColdWallet = false;
-    private String walletName;
-    private String password;
-    private String publicKey;
-    private String privateKey;
+    private String walletName = "";
+    private String password = "";
+    private String publicKey = "";
+    private String privateKey = "";
+    private String address = "";
 
     public boolean isWatchOnly() {
         return isWatchOnly;
@@ -49,12 +50,17 @@ public class Wallet {
     }
 
     public String computeAddress() {
-        try {
-            byte[] pubKeyAsc = publicKey.getBytes();
-            byte[] pubKeyHex = Hex.decode(pubKeyAsc);
-            return WalletClient.encode58Check(ECKey.fromPublicOnly(pubKeyHex).getAddress());
-        } catch (Exception ex) {
-            return null;
+        if(publicKey.isEmpty()) {
+            return address;
+        }
+        else {
+            try {
+                byte[] pubKeyAsc = publicKey.getBytes();
+                byte[] pubKeyHex = Hex.decode(pubKeyAsc);
+                return WalletClient.encode58Check(ECKey.fromPublicOnly(pubKeyHex).getAddress());
+            } catch (Exception ex) {
+                return null;
+            }
         }
     }
 
@@ -68,5 +74,13 @@ public class Wallet {
 
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }

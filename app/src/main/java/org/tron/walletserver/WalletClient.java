@@ -235,7 +235,7 @@ public class WalletClient {
           }
           walletNames.add(name);
 
-          sharedPreferences.getStringSet(context.getString(R.string.wallets_key), walletNames);
+          sharedEditor.putStringSet(context.getString(R.string.wallets_key), walletNames);
           sharedEditor.commit();
 
 
@@ -247,7 +247,7 @@ public class WalletClient {
           // SAVE NAME
           walletEditor.putString(context.getString(R.string.wallet_name_key), name);
           // SAVE PUBKEY
-          walletEditor.putString(context.getString(R.string.pub_key), publicAddress);
+          walletEditor.putString(context.getString(R.string.wallet_address_key), publicAddress);
 
           walletEditor.commit();
 
@@ -255,6 +255,7 @@ public class WalletClient {
           wallet.setWatchOnly(true);
           wallet.setColdWallet(false);
           wallet.setWalletName(name);
+          wallet.setAddress(publicAddress);
 
           return wallet;
       }
@@ -291,11 +292,12 @@ public class WalletClient {
             wallet.setPassword(walletPref.getString(context.getString(R.string.pwd_key), ""));
             wallet.setPublicKey(walletPref.getString(context.getString(R.string.pub_key), ""));
             wallet.setPrivateKey(walletPref.getString(context.getString(R.string.priv_key), ""));
+            wallet.setAddress(walletPref.getString(context.getString(R.string.wallet_address_key), ""));
 
             return wallet;
         }
 
-        return null;
+        return new Wallet();
     }
 
       public static void selectWallet(String walletName) {

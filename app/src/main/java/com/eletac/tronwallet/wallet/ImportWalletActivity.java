@@ -216,9 +216,7 @@ public class ImportWalletActivity extends AppCompatActivity {
 
         if(addressValid) {
             String name = mName_EditText.getText().toString();
-            String password = mPassword_EditText.getText().toString();
 
-            boolean validPassword = isValidPassword(password);
             boolean validName = isValidName(name);
 
             if(!validName) {
@@ -227,16 +225,6 @@ public class ImportWalletActivity extends AppCompatActivity {
                         .setIcon(R.drawable.ic_info_white_24px)
                         .setTitle("Invalid Name")
                         .setMessage("Please enter a valid name")
-                        .show();
-                return;
-            }
-
-            if(!validPassword) {
-                new LovelyInfoDialog(ImportWalletActivity.this)
-                        .setTopColorRes(R.color.colorPrimary)
-                        .setIcon(R.drawable.ic_info_white_24px)
-                        .setTitle(R.string.create_wallet_inv_password_dialog_title)
-                        .setMessage(R.string.create_wallet_inv_password_dialog_message)
                         .show();
                 return;
             }
