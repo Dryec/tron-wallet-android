@@ -49,10 +49,10 @@ public class MainActivity extends AppCompatActivity {
 
         WalletClient.init();
 
-        mWalletClient = WalletClient.GetWalletByStorageIgnorePrivKey(WalletClient.getSelectedWallet().getWalletName());
         Wallet wallet = WalletClient.getSelectedWallet();
+        mWalletClient = wallet != null ? WalletClient.GetWalletByStorageIgnorePrivKey(wallet.getWalletName()) : null;
 
-        if(mWalletClient == null && !wallet.isWatchOnly())
+        if(mWalletClient == null && (wallet == null ||!wallet.isWatchOnly()))
         {
             Intent intent = new Intent(this, CreateWalletActivity.class);
             startActivity(intent);
