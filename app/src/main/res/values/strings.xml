@@ -4,7 +4,7 @@
     <string name="fullnode_ip">47.91.246.252</string>
     <string name="fullnode_port">50051</string>
     <string name="soliditynode_ip"></string>
-    <string name="soliditynode_port"></string>
+    <string name="soliditynode_port">50051</string>
 
     <string name="app_name">Tron Wallet</string>
     <string name="app_version">v1.1.0.2</string>
