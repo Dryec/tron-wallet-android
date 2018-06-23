@@ -1,56 +1,30 @@
 package com.eletac.tronwallet.wallet;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arasthel.asyncjob.AsyncJob;
-import com.eletac.tronwallet.CaptureActivityPortrait;
 import com.eletac.tronwallet.InputFilterMinMax;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.block_explorer.BlockExplorerUpdater;
 import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
-import com.google.protobuf.InvalidProtocolBufferException;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
-import org.spongycastle.util.encoders.DecoderException;
-import org.spongycastle.util.encoders.Hex;
-import org.tron.api.GrpcAPI;
-import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.Wallet;
+import org.tron.walletserver.WalletManager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.util.Date;
@@ -73,9 +47,10 @@ public class ParticipateAssetActivity extends AppCompatActivity {
     private TextView mCost_TextView;
     private Button mSpend_Button;
 
+    private Wallet mWallet;
+
     private Contract.AssetIssueContract mAsset;
     private Protocol.Account mAccount;
-    private String mAddress;
     private double mTokenPrice;
 
     private boolean mUpdatingAmount = false;
@@ -115,15 +90,16 @@ public class ParticipateAssetActivity extends AppCompatActivity {
             }
         }
 
-        if(mAsset != null) {
+        mWallet = WalletManager.getSelectedWallet();
 
-            mAccount = Utils.getAccount(this, WalletClient.getSelectedWallet().getWalletName());
-            mAddress = WalletClient.getSelectedWallet().computeAddress();
+        if(mAsset != null && mWallet != null) {
+
+            mAccount = Utils.getAccount(this, mWallet.getWalletName());
 
             mName_TextView.setText(mAsset.getName().toStringUtf8());
             mDescription_TextView.setText(mAsset.getDescription().toStringUtf8());
             mSupply_TextView.setText(NumberFormat.getInstance(Locale.US).format(mAsset.getTotalSupply()));
-            mIssuer_TextView.setText(WalletClient.encode58Check(mAsset.getOwnerAddress().toByteArray()));
+            mIssuer_TextView.setText(WalletManager.encode58Check(mAsset.getOwnerAddress().toByteArray()));
             mStart_TextView.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(mAsset.getStartTime())));
             mEnd_TextView.setText(DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(mAsset.getEndTime())));
 
@@ -210,8 +186,8 @@ public class ParticipateAssetActivity extends AppCompatActivity {
                     AsyncJob.doInBackground(() -> {
                         Protocol.Transaction transaction = null;
                         try {
-                            transaction = WalletClient.participateAssetIssueTransaction(
-                                mAsset.getOwnerAddress().toByteArray(), mAsset.getName().toByteArray(), WalletClient.decodeFromBase58Check(mAddress), finalAmount);
+                            transaction = WalletManager.createParticipateAssetIssueTransaction(
+                                mAsset.getOwnerAddress().toByteArray(), mAsset.getName().toByteArray(), WalletManager.decodeFromBase58Check(mWallet.getAddress()), finalAmount);
 
                         } catch (Exception ignored) { }
 

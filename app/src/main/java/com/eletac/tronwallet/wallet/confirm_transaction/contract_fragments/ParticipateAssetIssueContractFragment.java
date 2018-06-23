@@ -15,7 +15,6 @@ import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivi
 
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
-import org.tron.walletserver.WalletClient;
 
 import java.text.NumberFormat;
 import java.util.Locale;

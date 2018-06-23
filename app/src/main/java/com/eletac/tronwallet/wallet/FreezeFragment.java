@@ -5,9 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,48 +13,31 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.InputFilter;
-import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.arasthel.asyncjob.AsyncJob;
-import com.eletac.tronwallet.CaptureActivityPortrait;
 import com.eletac.tronwallet.InputFilterMinMax;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.tron.api.GrpcAPI;
-import org.tron.common.utils.TransactionUtils;
-import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.Wallet;
+import org.tron.walletserver.WalletManager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 public class FreezeFragment extends Fragment {
 
@@ -73,8 +53,8 @@ public class FreezeFragment extends Fragment {
     private Button mFreeze_Button;
     private Button mUnfreeze_Button;
 
+    private Wallet mWallet;
     private Protocol.Account mAccount;
-    private String mAddress;
 
     private AccountUpdatedBroadcastReceiver mAccountUpdatedBroadcastReceiver;
 
@@ -96,8 +76,10 @@ public class FreezeFragment extends Fragment {
 
         mAccountUpdatedBroadcastReceiver = new AccountUpdatedBroadcastReceiver();
 
-        mAddress = WalletClient.getSelectedWallet().computeAddress();
-        mAccount = Utils.getAccount(getContext(), WalletClient.getSelectedWallet().getWalletName());
+        mWallet = WalletManager.getSelectedWallet();
+        if(mWallet != null) {
+            mAccount = Utils.getAccount(getContext(), mWallet.getWalletName());
+        }
     }
 
     @Override
@@ -172,6 +154,17 @@ public class FreezeFragment extends Fragment {
         mFreeze_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(mWallet == null) {
+                    new LovelyInfoDialog(getContext())
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setIcon(R.drawable.ic_error_white_24px)
+                            .setTitle(R.string.error)
+                            .setMessage(R.string.no_wallet_selected)
+                            .show();
+                    return;
+                }
+
                 String textBackup = mFreeze_Button.getText().toString();
 
                 mFreeze_Button.setEnabled(false);
@@ -180,7 +173,7 @@ public class FreezeFragment extends Fragment {
                     long amount = mFreezeAmount*1000000;
                     Protocol.Transaction transaction = null;
                     try {
-                        transaction = WalletClient.createFreezeBalanceTransaction(WalletClient.decodeFromBase58Check(mAddress), amount, 3);
+                        transaction = WalletManager.createFreezeBalanceTransaction(WalletManager.decodeFromBase58Check(mWallet.getAddress()), amount, 3);
                     } catch (Exception ignored) { }
 
                     Protocol.Transaction finalTransaction = transaction;
@@ -211,6 +204,17 @@ public class FreezeFragment extends Fragment {
         mUnfreeze_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(mWallet == null) {
+                    new LovelyInfoDialog(getContext())
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setIcon(R.drawable.ic_error_white_24px)
+                            .setTitle(R.string.error)
+                            .setMessage(R.string.no_wallet_selected)
+                            .show();
+                    return;
+                }
+
                 String textBackup = mUnfreeze_Button.getText().toString();
 
                 mUnfreeze_Button.setEnabled(false);
@@ -219,7 +223,7 @@ public class FreezeFragment extends Fragment {
                 AsyncJob.doInBackground(() -> {
                     Protocol.Transaction transaction = null;
                     try {
-                        transaction = WalletClient.createUnfreezeBalanceTransaction(WalletClient.decodeFromBase58Check(mAddress));
+                        transaction = WalletManager.createUnfreezeBalanceTransaction(WalletManager.decodeFromBase58Check(mWallet.getAddress()));
                     } catch (Exception ignored) { }
 
                     Protocol.Transaction finalTransaction = transaction;
@@ -257,51 +261,53 @@ public class FreezeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mWallet = WalletManager.getSelectedWallet();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mAccountUpdatedBroadcastReceiver, new IntentFilter(AccountUpdater.ACCOUNT_UPDATED));
     }
 
     private void updateUI() {
         mUpdatingUI = true;
-        mFreezeAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, mAccount.getBalance()/1000000)});
-        mFreezeAmount_SeekBar.setMax((int)(mAccount.getBalance()/1000000L));
+        if(mWallet != null && mAccount != null) {
+            mFreezeAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, mAccount.getBalance()/1000000)});
+            mFreezeAmount_SeekBar.setMax((int)(mAccount.getBalance()/1000000L));
 
-        GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext(), WalletClient.getSelectedWallet().getWalletName());
+            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext(), mWallet.getWalletName());
 
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
-        long freezed = 0;
-        long unfreezable = 0;
-        long expire = 0;
-        for (Protocol.Account.Frozen frozen : mAccount.getFrozenList()) {
-            freezed += frozen.getFrozenBalance();
-            if(frozen.getExpireTime() > expire)
-                expire = frozen.getExpireTime();
-            if(frozen.getExpireTime() <= System.currentTimeMillis()) {
-                unfreezable += frozen.getFrozenBalance();
+            long freezed = 0;
+            long unfreezable = 0;
+            long expire = 0;
+            for (Protocol.Account.Frozen frozen : mAccount.getFrozenList()) {
+                freezed += frozen.getFrozenBalance();
+                if (frozen.getExpireTime() > expire)
+                    expire = frozen.getExpireTime();
+                if (frozen.getExpireTime() <= System.currentTimeMillis()) {
+                    unfreezable += frozen.getFrozenBalance();
+                }
             }
+
+            long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
+            long bandwidthUsed = accountNetMessage.getNetUsed() + accountNetMessage.getFreeNetUsed();
+
+            mFrozenNow_TextView.setText(numberFormat.format(freezed / 1000000));
+            mVotesNow_TextView.setText(numberFormat.format(freezed / 1000000));
+            mBandwidthNow_TextView.setText(
+                    numberFormat.format(bandwidthUsed)
+                            + " / " +
+                            numberFormat.format(bandwidth)
+                            + " ➡ " +
+                            numberFormat.format(bandwidth - bandwidthUsed)
+            );
+            mExpires_TextView.setText(expire == 0 ? "-" : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(expire)));
+            mUnfreeze_Button.setText(String.format(Locale.US, "%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
+            mUnfreeze_Button.setEnabled(unfreezable > 0);
+
+            long newFreeze = (freezed / 1000000L) + mFreezeAmount;
+            mFrozenNew_TextView.setText(numberFormat.format(newFreeze));
+            mVotesNew_TextView.setText(numberFormat.format(newFreeze));
+            mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getNetUsage() + mFreezeAmount)); // not visible anymore
         }
-
-        long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
-        long bandwidthUsed = accountNetMessage.getNetUsed()+accountNetMessage.getFreeNetUsed();
-
-        mFrozenNow_TextView.setText(numberFormat.format(freezed/1000000));
-        mVotesNow_TextView.setText(numberFormat.format(freezed/1000000));
-        mBandwidthNow_TextView.setText(
-                        numberFormat.format(bandwidthUsed)
-                        + " / " +
-                        numberFormat.format(bandwidth)
-                        + " ➡ " +
-                        numberFormat.format(bandwidth-bandwidthUsed)
-                        );
-        mExpires_TextView.setText(expire == 0 ? "-" : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(expire)));
-        mUnfreeze_Button.setText(String.format(Locale.US,"%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
-        mUnfreeze_Button.setEnabled(unfreezable > 0);
-
-        long newFreeze = (freezed/1000000L) + mFreezeAmount;
-        mFrozenNew_TextView.setText(numberFormat.format(newFreeze));
-        mVotesNew_TextView.setText(numberFormat.format(newFreeze));
-        mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getNetUsage() + mFreezeAmount)); // not visible anymore
-
         mUpdatingUI = false;
     }
 
@@ -309,8 +315,10 @@ public class FreezeFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            mAccount = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
-            updateUI();
+            if(mWallet != null) {
+                mAccount = Utils.getAccount(context, mWallet.getWalletName());
+                updateUI();
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class SettingsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mIsWachtOnly = WalletClient.getSelectedWallet().isWatchOnly();
+        mIsWachtOnly = WalletManager.getSelectedWallet().isWatchOnly();
     }
 
     @Override
@@ -107,7 +107,7 @@ public class SettingsFragment extends Fragment {
                             .setConfirmButton(R.string.remove, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                                 @Override
                                 public void onTextInputConfirmed(String text) {
-                                    if (WalletClient.checkPassWord(WalletClient.getSelectedWallet().getWalletName(), text)) {
+                                    if (WalletManager.checkPassword(WalletManager.getSelectedWallet().getWalletName(), text)) {
                                         reset();
                                     } else {
                                         new LovelyInfoDialog(getContext())
@@ -146,9 +146,9 @@ public class SettingsFragment extends Fragment {
                             .setConfirmButton(R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                                 @Override
                                 public void onTextInputConfirmed(String text) {
-                                    if (WalletClient.checkPassWord(WalletClient.getSelectedWallet().getWalletName(), text)) {
+                                    if (WalletManager.checkPassword(WalletManager.getSelectedWallet().getWalletName(), text)) {
                                         Intent intent = new Intent(getContext(), AccountActivity.class);
-                                        intent.putExtra("name", WalletClient.getSelectedWallet().getWalletName());
+                                        intent.putExtra("name", WalletManager.getSelectedWallet().getWalletName());
                                         intent.putExtra("password", text);
                                         startActivity(intent);
                                     } else {
@@ -183,7 +183,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void reset() {
-        String selectedWallet = WalletClient.getSelectedWallet().getWalletName();
+        String selectedWallet = WalletManager.getSelectedWallet().getWalletName();
         SharedPreferences.Editor editor = getContext().getSharedPreferences(selectedWallet, Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.commit();

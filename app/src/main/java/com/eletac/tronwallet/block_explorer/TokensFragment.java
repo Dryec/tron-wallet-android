@@ -32,10 +32,8 @@ import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.WrapContentLinearLayoutManager;
 import com.eletac.tronwallet.wallet.IssueTokenActivity;
 
-import org.tron.api.GrpcAPI;
 import org.tron.protos.Contract;
-import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -207,7 +205,7 @@ public class TokensFragment extends Fragment implements SwipeRefreshLayout.OnRef
 
     private boolean checkFilterConditions(Contract.AssetIssueContract asset) {
         String filter = mSearch_EditText.getText().toString().toLowerCase();
-        return WalletClient.encode58Check(asset.getOwnerAddress().toByteArray()).toLowerCase().contains(filter)
+        return WalletManager.encode58Check(asset.getOwnerAddress().toByteArray()).toLowerCase().contains(filter)
                 || asset.getName().toStringUtf8().toLowerCase().contains(filter)
                 || asset.getDescription().toStringUtf8().toLowerCase().contains(filter);
     }

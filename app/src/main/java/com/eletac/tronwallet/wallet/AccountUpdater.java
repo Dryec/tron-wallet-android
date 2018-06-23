@@ -6,19 +6,17 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.Utils;
 
 import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.Wallet;
+import org.tron.walletserver.WalletManager;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import io.grpc.StatusRuntimeException;
 
 
 public class AccountUpdater {
@@ -91,13 +89,14 @@ public class AccountUpdater {
                 public void doOnBackground() {
                     if(mContext != null) {
                         try {
-                            byte[] address = WalletClient.decodeFromBase58Check(WalletClient.getSelectedWallet().computeAddress());
+                            Wallet selectedWallet = WalletManager.getSelectedWallet();
+                            byte[] address = WalletManager.decodeFromBase58Check(selectedWallet.getAddress());
 
-                            Protocol.Account account = WalletClient.queryAccount(address);
-                            GrpcAPI.AccountNetMessage accountNetMessage = WalletClient.getAccountNet(address);
+                            Protocol.Account account = WalletManager.queryAccount(address);
+                            GrpcAPI.AccountNetMessage accountNetMessage = WalletManager.getAccountNet(address);
 
-                            Utils.saveAccount(mContext, WalletClient.getSelectedWallet().getWalletName(), account);
-                            Utils.saveAccountNet(mContext, WalletClient.getSelectedWallet().getWalletName(), accountNetMessage);
+                            Utils.saveAccount(mContext, selectedWallet.getWalletName(), account);
+                            Utils.saveAccountNet(mContext, selectedWallet.getWalletName(), accountNetMessage);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

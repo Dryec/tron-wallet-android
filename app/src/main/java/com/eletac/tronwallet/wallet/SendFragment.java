@@ -5,16 +5,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.InputFilter;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,32 +21,22 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.CaptureActivityPortrait;
 import com.eletac.tronwallet.InputFilterMinMax;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
-import com.eletac.tronwallet.settings.SettingsFragment;
 import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
-import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
-import org.spongycastle.util.encoders.Hex;
-import org.tron.api.GrpcAPI;
-import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.Wallet;
+import org.tron.walletserver.WalletManager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -66,7 +52,7 @@ public class SendFragment extends Fragment {
     private TextView mAvailable_TextView;
     private TextView mAsset_TextView;
 
-    private String mAddress;
+    private Wallet mWallet;
 
     private AccountUpdatedBroadcastReceiver mAccountUpdatedBroadcastReceiver;
 
@@ -95,9 +81,8 @@ public class SendFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mWallet = WalletManager.getSelectedWallet();
         mAccountUpdatedBroadcastReceiver = new AccountUpdatedBroadcastReceiver();
-
-        mAddress = WalletClient.getSelectedWallet().computeAddress();
     }
 
     @Override
@@ -116,6 +101,7 @@ public class SendFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mWallet = WalletManager.getSelectedWallet();
         LocalBroadcastManager.getInstance(getContext()).registerReceiver(mAccountUpdatedBroadcastReceiver, new IntentFilter(AccountUpdater.ACCOUNT_UPDATED));
     }
 
@@ -163,7 +149,17 @@ public class SendFragment extends Fragment {
                 String asset = mAssets_Spinner.getSelectedItem().toString();
                 String to = mTo_EditText.getText().toString();
 
-                if(mAddress.equals(to)) {
+                if(mWallet == null) {
+                    new LovelyInfoDialog(getContext())
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setIcon(R.drawable.ic_error_white_24px)
+                            .setTitle(R.string.error)
+                            .setMessage(R.string.no_wallet_selected)
+                            .show();
+                    return;
+                }
+
+                if(mWallet.getAddress().equals(to)) {
                     new LovelyInfoDialog(getContext())
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_error_white_24px)
@@ -175,7 +171,7 @@ public class SendFragment extends Fragment {
 
                 byte[] toRaw;
                 try {
-                    toRaw = WalletClient.decodeFromBase58Check(to);
+                    toRaw = WalletManager.decodeFromBase58Check(to);
                 } catch (IllegalArgumentException ignored) {
                     new LovelyInfoDialog(getContext())
                             .setTopColorRes(R.color.colorPrimary)
@@ -206,10 +202,10 @@ public class SendFragment extends Fragment {
                     Protocol.Transaction transaction = null;
                     try {
                         if(isTrxCoin) {
-                            Contract.TransferContract contract = WalletClient.createTransferContract(finalToRaw, WalletClient.decodeFromBase58Check(mAddress), (long) (amount * 1000000.0d));
-                            transaction = WalletClient.createTransaction4Transfer(contract);
+                            Contract.TransferContract contract = WalletManager.createTransferContract(finalToRaw, WalletManager.decodeFromBase58Check(mWallet.getAddress()), (long) (amount * 1000000.0d));
+                            transaction = WalletManager.createTransaction4Transfer(contract);
                         } else {
-                            transaction = WalletClient.createTransferAssetTransaction(finalToRaw, asset.getBytes(), WalletClient.decodeFromBase58Check(mAddress), (long) amount);
+                            transaction = WalletManager.createTransferAssetTransaction(finalToRaw, asset.getBytes(), WalletManager.decodeFromBase58Check(mWallet.getAddress()), (long) amount);
                         }
                     } catch (Exception ignored) { }
 
@@ -254,27 +250,30 @@ public class SendFragment extends Fragment {
     }
 
     private void updateAvailableAmount() {
-        Protocol.Account account = Utils.getAccount(getContext(), WalletClient.getSelectedWallet().getWalletName());
+        if(mWallet != null) {
+            Protocol.Account account = Utils.getAccount(getContext(), mWallet.getWalletName());
 
-        double assetAmount;
+            double assetAmount;
 
-        int selectedPosition = mAssets_Spinner.getSelectedItemPosition();
-        if(selectedPosition == 0) {
-            assetAmount = account.getBalance() / 1000000.0d;
-        } else {
-            assetAmount = Utils.getAccountAssetAmount(account, mAssets_Spinner.getAdapter().getItem(selectedPosition).toString());
+            int selectedPosition = mAssets_Spinner.getSelectedItemPosition();
+            if (selectedPosition == 0) {
+                assetAmount = account.getBalance() / 1000000.0d;
+            } else {
+                assetAmount = Utils.getAccountAssetAmount(account, mAssets_Spinner.getAdapter().getItem(selectedPosition).toString());
+            }
+
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+            numberFormat.setMaximumFractionDigits(6);
+
+            mAmount_EditText.setFilters(new InputFilter[]{new InputFilterMinMax(0, assetAmount)});
+            mAvailable_TextView.setText(numberFormat.format(assetAmount));
+
+            try {
+                if (Long.valueOf(mAmount_EditText.getText().toString()) > assetAmount)
+                    mAmount_EditText.setText(String.valueOf(assetAmount));
+            } catch (NumberFormatException ignored) {
+            }
         }
-
-        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-        numberFormat.setMaximumFractionDigits(6);
-
-        mAmount_EditText.setFilters(new InputFilter[]{ new InputFilterMinMax(0, assetAmount)});
-        mAvailable_TextView.setText(numberFormat.format(assetAmount));
-
-        try {
-            if (Long.valueOf(mAmount_EditText.getText().toString()) > assetAmount)
-                mAmount_EditText.setText(String.valueOf(assetAmount));
-        } catch (NumberFormatException ignored) {}
     }
 
 
@@ -291,8 +290,8 @@ public class SendFragment extends Fragment {
 
         Context context = getContext();
 
-        if(context != null) {
-            Protocol.Account account = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
+        if(context != null && mWallet != null) {
+            Protocol.Account account = Utils.getAccount(context, mWallet.getWalletName());
 
             Map<String, Long> assets = account.getAssetMap();
 

@@ -2,10 +2,8 @@ package com.eletac.tronwallet.block_explorer;
 
 import android.content.Context;
 import android.content.Intent;
-import android.icu.text.SimpleDateFormat;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +12,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
-import com.eletac.tronwallet.settings.SettingConnectionActivity;
 import com.eletac.tronwallet.wallet.ParticipateAssetActivity;
 
 import org.tron.protos.Contract;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -124,7 +121,7 @@ public class TokenItemListAdapter extends RecyclerView.Adapter<TokenItemListAdap
             mName_TextView.setText(asset.getName().toStringUtf8());
             mDescription_TextView.setText(asset.getDescription().toStringUtf8());
             mSupply_TextView.setText(numberFormat.format(asset.getTotalSupply()));
-            mIssuer_TextView.setText(WalletClient.encode58Check(asset.getOwnerAddress().toByteArray()));
+            mIssuer_TextView.setText(WalletManager.encode58Check(asset.getOwnerAddress().toByteArray()));
             mStart_TextView.setText(dateTimeInstance.format(start));
             mEnd_TextView.setText(dateTimeInstance.format(end));
 

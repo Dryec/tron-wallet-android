@@ -10,21 +10,16 @@ import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
-import android.widget.Toast;
 
-import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.CaptureActivityPortrait;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
-import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
 
 import java.io.IOException;
 

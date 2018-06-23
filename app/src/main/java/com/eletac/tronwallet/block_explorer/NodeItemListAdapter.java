@@ -3,21 +3,15 @@ package com.eletac.tronwallet.block_explorer;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.tron.api.GrpcAPI;
 import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.TransactionUtils;
-import org.tron.protos.Contract;
-import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
 
 import java.util.List;
 

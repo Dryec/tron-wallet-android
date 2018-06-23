@@ -11,11 +11,8 @@ import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
 
-import org.tron.api.GrpcAPI;
-import org.tron.common.utils.ByteArray;
-import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -86,7 +83,7 @@ public class AccountItemListAdapter extends RecyclerView.Adapter<AccountItemList
         public void bind(Protocol.Account account) {
             NumberFormat numberFormat = NumberFormat.getNumberInstance();
 
-            mAddress_TextView.setText(WalletClient.encode58Check(account.getAddress().toByteArray()));
+            mAddress_TextView.setText(WalletManager.encode58Check(account.getAddress().toByteArray()));
             mBalance_TextView.setText(numberFormat.format((double)account.getBalance()/1000000d));
             mAssets_TextView.setText(numberFormat.format(account.getAssetCount()));
 

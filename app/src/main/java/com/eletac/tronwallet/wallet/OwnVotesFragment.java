@@ -18,7 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
@@ -26,7 +25,7 @@ import com.eletac.tronwallet.WrapContentLinearLayoutManager;
 import com.eletac.tronwallet.block_explorer.BlockExplorerUpdater;
 
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -69,7 +68,7 @@ public class OwnVotesFragment extends Fragment implements SwipeRefreshLayout.OnR
         mAccountUpdatedBroadcastReceiver = new AccountUpdatedBroadcastReceiver();
         mWitnessesUpdatedBroadcastReceiver = new WitnessesUpdatedBroadcastReceiver();
         mVotesUpdatedBroadcastReceiver = new VotesUpdatedBroadcastReceiver();
-        mAccount = Utils.getAccount(getContext(), WalletClient.getSelectedWallet().getWalletName());
+        mAccount = Utils.getAccount(getContext(), WalletManager.getSelectedWallet().getWalletName());
         mWitnesses = BlockExplorerUpdater.getWitnesses();
         mVotedWitnesses = new ArrayList<>();
 
@@ -169,7 +168,7 @@ public class OwnVotesFragment extends Fragment implements SwipeRefreshLayout.OnR
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            mAccount = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
+            mAccount = Utils.getAccount(context, WalletManager.getSelectedWallet().getWalletName());
         }
     }
 

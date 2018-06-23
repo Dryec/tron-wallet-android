@@ -7,8 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -31,12 +29,9 @@ import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.WrapContentLinearLayoutManager;
-import com.eletac.tronwallet.wallet.WitnessItemListAdapter;
 
 import org.tron.api.GrpcAPI;
 import org.tron.common.utils.ByteArray;
-import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
 
 import java.util.ArrayList;
 import java.util.List;

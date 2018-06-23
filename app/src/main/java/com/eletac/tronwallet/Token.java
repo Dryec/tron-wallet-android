@@ -3,23 +3,17 @@ package com.eletac.tronwallet;
 import org.tron.protos.Contract;
 
 public class Token {
-    private Contract.AssetIssueContract assetIssueContract;
+    private String name;
+    private long amount;
     private Price price;
 
     public Token() {
 
     }
 
-    public Token(Contract.AssetIssueContract contract) {
-        assetIssueContract = contract;
-    }
-
-    public Contract.AssetIssueContract getAssetIssueContract() {
-        return assetIssueContract;
-    }
-
-    public void setAssetIssueContract(Contract.AssetIssueContract assetIssueContract) {
-        this.assetIssueContract = assetIssueContract;
+    public Token(String name, long amount) {
+        this.name = name;
+        this.amount = amount;
     }
 
     public Price getPrice() {
@@ -28,5 +22,21 @@ public class Token {
 
     public void setPrice(Price price) {
         this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
     }
 }

@@ -1,11 +1,8 @@
 package com.eletac.tronwallet.block_explorer;
 
 import android.content.Context;
-import android.icu.text.SimpleDateFormat;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +10,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -89,7 +83,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case AccountCreateContract:
                             Log.i("TRANSACTIONS", "AccountCreateContract");
                             Contract.AccountCreateContract accountCreateContract = TransactionUtils.unpackContract(contract, Contract.AccountCreateContract.class);
-                            from = WalletClient.encode58Check(accountCreateContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(accountCreateContract.getOwnerAddress().toByteArray());
                             to = accountCreateContract.getAccountName().toStringUtf8();
                             amount = -1;
                             contract_desc = "account created";
@@ -97,23 +91,23 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case TransferContract:
                             Log.i("TRANSACTIONS", "TransferContract");
                             Contract.TransferContract transferContract = TransactionUtils.unpackContract(contract, Contract.TransferContract.class);
-                            from = WalletClient.encode58Check(transferContract.getOwnerAddress().toByteArray());
-                            to = WalletClient.encode58Check(transferContract.getToAddress().toByteArray());
+                            from = WalletManager.encode58Check(transferContract.getOwnerAddress().toByteArray());
+                            to = WalletManager.encode58Check(transferContract.getToAddress().toByteArray());
                             amount = transferContract.getAmount() / 1000000.0d;
                             contract_desc = mContext.getString(R.string.trx_symbol);
                             break;
                         case TransferAssetContract:
                             Log.i("TRANSACTIONS", "TransferAssetContract");
                             Contract.TransferAssetContract transferAssetContract = TransactionUtils.unpackContract(contract, Contract.TransferAssetContract.class);
-                            from = WalletClient.encode58Check(transferAssetContract.getOwnerAddress().toByteArray());
-                            to = WalletClient.encode58Check(transferAssetContract.getToAddress().toByteArray());
+                            from = WalletManager.encode58Check(transferAssetContract.getOwnerAddress().toByteArray());
+                            to = WalletManager.encode58Check(transferAssetContract.getToAddress().toByteArray());
                             amount = transferAssetContract.getAmount();
                             contract_desc = transferAssetContract.getAssetName().toStringUtf8();
                             break;
                         case VoteAssetContract:
                             Log.i("TRANSACTIONS", "VoteAssetContract");
                             Contract.VoteAssetContract voteAssetContract = TransactionUtils.unpackContract(contract, Contract.VoteAssetContract.class);
-                            from = WalletClient.encode58Check(voteAssetContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(voteAssetContract.getOwnerAddress().toByteArray());
                             to = "";
                             amount = -1;
                             contract_desc = "asset vote";
@@ -121,10 +115,10 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case VoteWitnessContract:
                             Log.i("TRANSACTIONS", "VoteWitnessContract");
                             Contract.VoteWitnessContract voteWitnessContract = TransactionUtils.unpackContract(contract, Contract.VoteWitnessContract.class);
-                            from = WalletClient.encode58Check(voteWitnessContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(voteWitnessContract.getOwnerAddress().toByteArray());
                             to = voteWitnessContract.getVotesCount() > 1
                                     ? mContext.getString(R.string.multiple_witnesses)
-                                    : voteWitnessContract.getVotesCount() == 0 ? "votes reset" : WalletClient.encode58Check(voteWitnessContract.getVotes(0).getVoteAddress().toByteArray());
+                                    : voteWitnessContract.getVotesCount() == 0 ? "votes reset" : WalletManager.encode58Check(voteWitnessContract.getVotes(0).getVoteAddress().toByteArray());
 
                             for(Contract.VoteWitnessContract.Vote vote : voteWitnessContract.getVotesList()) {
                                 amount += vote.getVoteCount();
@@ -134,7 +128,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case WitnessCreateContract:
                             Log.i("TRANSACTIONS", "WitnessCreateContract");
                             Contract.WitnessCreateContract witnessCreateContract = TransactionUtils.unpackContract(contract, Contract.WitnessCreateContract.class);
-                            from = WalletClient.encode58Check(witnessCreateContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(witnessCreateContract.getOwnerAddress().toByteArray());
                             to = witnessCreateContract.getUrl().toStringUtf8();
                             amount = -1;
                             contract_desc = "witness created";
@@ -142,7 +136,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case AssetIssueContract:
                             Log.i("TRANSACTIONS", "AssetIssueContract");
                             Contract.AssetIssueContract assetIssueContract = TransactionUtils.unpackContract(contract, Contract.AssetIssueContract.class);
-                            from = WalletClient.encode58Check(assetIssueContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(assetIssueContract.getOwnerAddress().toByteArray());
                             to = assetIssueContract.getName().toStringUtf8();
                             amount = assetIssueContract.getTotalSupply();
                             contract_desc = "asset issued";
@@ -150,7 +144,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case DeployContract:
                             Log.i("TRANSACTIONS", "DeployContract");
                             Contract.DeployContract deployContract = TransactionUtils.unpackContract(contract, Contract.DeployContract.class);
-                            from = WalletClient.encode58Check(deployContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(deployContract.getOwnerAddress().toByteArray());
                             to = deployContract.getScript().toStringUtf8();
                             amount = -1;
                             contract_desc = "DeployContract";
@@ -158,7 +152,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case WitnessUpdateContract:
                             Log.i("TRANSACTIONS", "WitnessUpdateContract");
                             Contract.WitnessUpdateContract witnessUpdateContract = TransactionUtils.unpackContract(contract, Contract.WitnessUpdateContract.class);
-                            from = WalletClient.encode58Check(witnessUpdateContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(witnessUpdateContract.getOwnerAddress().toByteArray());
                             to = witnessUpdateContract.getUpdateUrl().toStringUtf8();
                             amount = -1;
                             contract_desc = "witness updated";
@@ -166,7 +160,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case ParticipateAssetIssueContract:
                             Log.i("TRANSACTIONS", "ParticipateAssetIssueContract");
                             Contract.ParticipateAssetIssueContract participateAssetIssueContract = TransactionUtils.unpackContract(contract, Contract.ParticipateAssetIssueContract.class);
-                            from = WalletClient.encode58Check(participateAssetIssueContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(participateAssetIssueContract.getOwnerAddress().toByteArray());
                             to = participateAssetIssueContract.getAssetName().toStringUtf8();
                             amount = participateAssetIssueContract.getAmount()/1000000;
                             contract_desc = "participate asset";
@@ -174,7 +168,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case AccountUpdateContract:
                             Log.i("TRANSACTIONS", "AccountUpdateContract");
                             Contract.AccountUpdateContract accountUpdateContract = TransactionUtils.unpackContract(contract, Contract.AccountUpdateContract.class);
-                            from = WalletClient.encode58Check(accountUpdateContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(accountUpdateContract.getOwnerAddress().toByteArray());
                             to = accountUpdateContract.getAccountName().toStringUtf8();
                             amount = -1;
                             contract_desc = "account updated";
@@ -182,7 +176,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case FreezeBalanceContract:
                             Log.i("TRANSACTIONS", "FreezeBalanceContract");
                             Contract.FreezeBalanceContract freezeBalanceContract = TransactionUtils.unpackContract(contract, Contract.FreezeBalanceContract.class);
-                            from = WalletClient.encode58Check(freezeBalanceContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(freezeBalanceContract.getOwnerAddress().toByteArray());
                             to = "Duration: " + freezeBalanceContract.getFrozenDuration();
                             amount = freezeBalanceContract.getFrozenBalance()/1000000;
                             contract_desc = "freezed balance";
@@ -190,7 +184,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case UnfreezeBalanceContract:
                             Log.i("TRANSACTIONS", "UnfreezeBalanceContract");
                             Contract.UnfreezeBalanceContract unfreezeBalanceContract = TransactionUtils.unpackContract(contract, Contract.UnfreezeBalanceContract.class);
-                            from = WalletClient.encode58Check(unfreezeBalanceContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(unfreezeBalanceContract.getOwnerAddress().toByteArray());
                             to = "";
                             amount = -1;
                             contract_desc = "unfreezed balance";
@@ -198,7 +192,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case WithdrawBalanceContract:
                             Log.i("TRANSACTIONS", "WithdrawBalanceContract");
                             Contract.WithdrawBalanceContract withdrawBalanceContract = TransactionUtils.unpackContract(contract, Contract.WithdrawBalanceContract.class);
-                            from = WalletClient.encode58Check(withdrawBalanceContract.getOwnerAddress().toByteArray());
+                            from = WalletManager.encode58Check(withdrawBalanceContract.getOwnerAddress().toByteArray());
                             to = "";
                             amount = -1;
                             contract_desc = "withdraw balance";
@@ -210,7 +204,7 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                         case CustomContract:
                             Log.i("TRANSACTIONS", "CustomContract");
                             //Contract.CustomContract customContract = TransactionUtils.unpackContract(contract, Contract.CustomContract.class);
-                            from = "";//WalletClient.encode58Check(withdrawBalanceContract.getOwnerAddress().toByteArray());
+                            from = "";//WalletManager.encode58Check(withdrawBalanceContract.getOwnerAddress().toByteArray());
                             to = "";
                             amount = -1;
                             contract_desc = "CustomContract";

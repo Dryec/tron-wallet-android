@@ -8,7 +8,6 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -24,7 +23,8 @@ import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.Wallet;
+import org.tron.walletserver.WalletManager;
 
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -182,6 +182,18 @@ public class IssueTokenActivity extends AppCompatActivity {
         mCreate_Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Wallet wallet = WalletManager.getSelectedWallet();
+
+                if(wallet == null) {
+                    new LovelyInfoDialog(IssueTokenActivity.this)
+                            .setTopColorRes(R.color.colorPrimary)
+                            .setIcon(R.drawable.ic_error_white_24px)
+                            .setTitle(R.string.error)
+                            .setMessage(R.string.no_wallet_selected)
+                            .show();
+                    return;
+                }
+
                 String name = mName_EditText.getText().toString();
                 String abbr = mAbbr_EditText.getText().toString();
                 String url = mURL_EditText.getText().toString();
@@ -252,7 +264,7 @@ public class IssueTokenActivity extends AppCompatActivity {
                         failedMessage = "End should be after start";
                     }
 
-                    Protocol.Account account = Utils.getAccount(IssueTokenActivity.this, WalletClient.getSelectedWallet().getWalletName());
+                    Protocol.Account account = Utils.getAccount(IssueTokenActivity.this, wallet.getWalletName());
 
                     if(account.getBalance()/1000000D < 1024.D) {
                         failedMessage = "Not enough TRX\nNeeded: 1024 TRX";
@@ -281,8 +293,8 @@ public class IssueTokenActivity extends AppCompatActivity {
                     frozenSupplyList.add(builder.build());
                 }
 
-                Contract.AssetIssueContract contract = WalletClient.createAssetIssueContract(
-                        WalletClient.decodeFromBase58Check(WalletClient.getSelectedWallet().computeAddress()),
+                Contract.AssetIssueContract contract = WalletManager.createAssetIssueContract(
+                        WalletManager.decodeFromBase58Check(wallet.getAddress()),
                         name,
                         abbr,
                         supply,
@@ -315,7 +327,7 @@ public class IssueTokenActivity extends AppCompatActivity {
                                 AsyncJob.doInBackground(() -> {
                                     Protocol.Transaction transaction = null;
                                     try {
-                                        transaction = WalletClient.createAssetIssueTransaction(contract);
+                                        transaction = WalletManager.createAssetIssueTransaction(contract);
                                     } catch (Exception ignored) { }
 
                                     Protocol.Transaction finalTransaction = transaction;

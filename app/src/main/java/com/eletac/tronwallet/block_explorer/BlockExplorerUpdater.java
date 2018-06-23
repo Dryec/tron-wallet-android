@@ -11,7 +11,7 @@ import com.arasthel.asyncjob.AsyncJob;
 import org.tron.api.GrpcAPI;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -153,7 +153,7 @@ public class BlockExplorerUpdater {
 
                             // Load Blocks and transactions
                             try {
-                                GrpcAPI.BlockList result = WalletClient.getBlockByLatestNum(25);
+                                GrpcAPI.BlockList result = WalletManager.getBlockByLatestNum(25);
                                 if (result != null) {
                                     mBlocks.clear();
                                     mBlocks.addAll(result.getBlockList());
@@ -203,7 +203,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load nodes
                         try {
-                            GrpcAPI.NodeList result = WalletClient.listNodes();
+                            GrpcAPI.NodeList result = WalletManager.listNodes();
                             if(result != null) {
                                 mNodes.clear();
                                 mNodes.addAll(result.getNodesList());
@@ -243,7 +243,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load witnesses
                         try {
-                            GrpcAPI.WitnessList result = WalletClient.listWitnesses();
+                            GrpcAPI.WitnessList result = WalletManager.listWitnesses();
                             if(result != null) {
                                 mWitnesses.clear();
                                 mWitnesses.addAll(result.getWitnessesList());
@@ -283,7 +283,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load tokens
                         try {
-                            GrpcAPI.AssetIssueList result = WalletClient.getAssetIssueList();
+                            GrpcAPI.AssetIssueList result = WalletManager.getAssetIssueList();
                             if(result != null) {
                                 mTokens.clear();
                                 mTokens.addAll(result.getAssetIssueList());
@@ -329,7 +329,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load accounts
                         /*try {
-                            GrpcAPI.AccountList result = WalletClient.listAccounts();
+                            GrpcAPI.AccountList result = WalletManager.listAccounts();
                             if(result != null) {
                                 mAccounts.clear();
                                 mAccounts.addAll(result.getAccountsList());

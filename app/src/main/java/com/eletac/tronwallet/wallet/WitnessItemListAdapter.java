@@ -8,18 +8,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
 
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
 import java.util.HashMap;
@@ -141,7 +139,7 @@ public class WitnessItemListAdapter extends RecyclerView.Adapter<WitnessItemList
                         String witnessAddress = null;
 
                         if (mWitness != null) {
-                            witnessAddress = WalletClient.encode58Check(mWitness.getAddress().toByteArray());
+                            witnessAddress = WalletManager.encode58Check(mWitness.getAddress().toByteArray());
                         }
 
                         if (witnessAddress != null) {
@@ -169,7 +167,7 @@ public class WitnessItemListAdapter extends RecyclerView.Adapter<WitnessItemList
             mRank_TextView.setText(String.format("#%s", numberFormat.format(mWitnesses.indexOf(witness)+1)));
             mRank_TextView.setTextColor(witness.getIsJobs() ? Color.GREEN : Color.WHITE);
             mUrl_TextView.setText(witness.getUrl());
-            mAddress_TextView.setText(WalletClient.encode58Check(witness.getAddress().toByteArray()));
+            mAddress_TextView.setText(WalletManager.encode58Check(witness.getAddress().toByteArray()));
             mTotalVotes_TextView.setText(numberFormat.format(witness.getVoteCount()));
             mLastBlock_TextView.setText(numberFormat.format(witness.getLatestBlockNum()));
             mProduced_TextView.setText(numberFormat.format(witness.getTotalProduced()));

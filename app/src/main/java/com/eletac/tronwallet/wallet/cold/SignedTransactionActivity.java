@@ -1,29 +1,19 @@
 package com.eletac.tronwallet.wallet.cold;
 
-import android.app.Activity;
-import android.graphics.Color;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
-import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
-import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.spongycastle.util.encoders.DecoderException;
 import org.spongycastle.util.encoders.Hex;
-import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 public class SignedTransactionActivity extends AppCompatActivity {
 

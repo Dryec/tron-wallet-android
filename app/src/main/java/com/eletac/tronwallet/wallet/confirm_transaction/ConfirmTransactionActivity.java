@@ -3,7 +3,6 @@ package com.eletac.tronwallet.wallet.confirm_transaction;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -48,7 +47,7 @@ import org.tron.api.GrpcAPI;
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.Wallet;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -75,12 +74,12 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
     private Protocol.Transaction mTransactionUnsigned;
     private Protocol.Transaction mTransactionSigned;
-    private boolean mIsWatchOnly;
-    private boolean mIsColdWallet;
 
     private byte[] mTransactionBytes;
     private byte[] mExtraBytes;
     private double mTRX_Cost;
+
+    private Wallet mWallet;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -137,9 +136,12 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
             return;
         }
 
-        Wallet wallet = WalletClient.getSelectedWallet();
-        mIsWatchOnly = wallet.isWatchOnly();
-        mIsColdWallet = wallet.isColdWallet();
+        mWallet = WalletManager.getSelectedWallet();
+        if(mWallet == null) {
+            Toast.makeText(this, "No wallet selected", Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         setupBandwidth();
         updateConfirmButton();
@@ -177,32 +179,40 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                         broadcastTransaction();
                     }
                 }
-                else if(mIsWatchOnly) {
+                else if(mWallet.isWatchOnly()) {
                     Intent intent = new Intent(ConfirmTransactionActivity.this, SignTransactionActivity.class);
                     intent.putExtra(SignTransactionActivity.TRANSACTION_DATA_EXTRA, mTransactionBytes);
                     startActivityForResult(intent, SignTransactionActivity.TRANSACTION_SIGN_REQUEST_CODE);
                 }
-                else if(WalletClient.checkPassWord(WalletClient.getSelectedWallet().getWalletName(), password)) {
-                    WalletClient walletClient = WalletClient.GetWalletByStorage(WalletClient.getSelectedWallet().getWalletName(), password);
-                    mTransactionSigned = TransactionUtils.setTimestamp(mTransactionUnsigned);
-                    mTransactionSigned = TransactionUtils.sign(mTransactionSigned, walletClient.getEcKey());
+                else if(WalletManager.checkPassword(mWallet, password)) {
+                    if(mWallet.open(password)) {
+                        mTransactionSigned = TransactionUtils.setTimestamp(mTransactionUnsigned);
+                        mTransactionSigned = TransactionUtils.sign(mTransactionSigned, mWallet.getECKey());
 
-                    // Hide Keyboard
-                    View view = ConfirmTransactionActivity.this.getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
+                        // Hide Keyboard
+                        View view = ConfirmTransactionActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
 
-                    if(mIsColdWallet) {
-                        Intent intent = new Intent(ConfirmTransactionActivity.this, SignedTransactionActivity.class);
-                        intent.putExtra(SignedTransactionActivity.TRANSACTION_DATA_EXTRA, mTransactionSigned.toByteArray());
-                        startActivity(intent);
+                        if (mWallet.isColdWallet()) {
+                            Intent intent = new Intent(ConfirmTransactionActivity.this, SignedTransactionActivity.class);
+                            intent.putExtra(SignedTransactionActivity.TRANSACTION_DATA_EXTRA, mTransactionSigned.toByteArray());
+                            startActivity(intent);
 
-                        resetSign();
+                            resetSign();
+                        } else {
+                            updateConfirmButton();
+                            setupBandwidth();
+                        }
                     } else {
-                        updateConfirmButton();
-                        setupBandwidth();
+                        new LovelyInfoDialog(ConfirmTransactionActivity.this)
+                                .setTopColorRes(R.color.colorPrimary)
+                                .setIcon(R.drawable.ic_error_white_24px)
+                                .setTitle(R.string.failed)
+                                .setMessage("Couldn't open wallet")
+                                .show();
                     }
                 }
                 else {
@@ -229,6 +239,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mWallet = WalletManager.getSelectedWallet();
         //resetSign();
     }
 
@@ -253,7 +264,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
         mConfirm_Button.setEnabled(false);
         AsyncJob.doInBackground(() -> {
-            final boolean sent = WalletClient.broadcastTransaction(mTransactionSigned);
+            final boolean sent = WalletManager.broadcastTransaction(mTransactionSigned);
             AsyncJob.doOnMainThread(() -> {
                 progressDialog.dismiss();
 
@@ -290,11 +301,11 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
     private void setupBandwidth() {
         if(isTransactionSigned()) {
-            mBandwidth_CardView.setVisibility(mIsColdWallet ? View.GONE : View.VISIBLE);
+            mBandwidth_CardView.setVisibility(mWallet.isColdWallet() ? View.GONE : View.VISIBLE);
 
-            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(this, WalletClient.getSelectedWallet().getWalletName());
-            long bandwidthNormal = accountNetMessage.getNetLimit()-accountNetMessage.getNetUsed();
-            long bandwidthFree = accountNetMessage.getFreeNetLimit()-accountNetMessage.getFreeNetUsed();
+            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(this, mWallet.getWalletName());
+            long bandwidthNormal = accountNetMessage.getNetLimit() - accountNetMessage.getNetUsed();
+            long bandwidthFree = accountNetMessage.getFreeNetLimit() - accountNetMessage.getFreeNetUsed();
 
             long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
             long bandwidthUsed = accountNetMessage.getNetUsed() + accountNetMessage.getFreeNetUsed();
@@ -312,7 +323,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
             mEstBandwidthCost_TextView.setText(numberFormat.format(bandwidthCost));
             mNewBandwidth_TextView.setText(enoughBandwidth ? numberFormat.format(newBandwidth) : "-");
 
-            if(!enoughBandwidth) {
+            if (!enoughBandwidth) {
                 mTRX_Cost = (double) bandwidthCost / 100000D;
                 mNotEnoughBandwidth_ConstraintLayout.setVisibility(View.VISIBLE);
                 mTRX_Cost_TextView.setText(String.format("%s %s", numberFormat.format(mTRX_Cost), getString(R.string.trx_symbol)));
@@ -332,7 +343,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     private void updateConfirmButton() {
         boolean needSign = !isTransactionSigned();
 
-        mPassword_Layout.setVisibility(needSign && !mIsWatchOnly ? View.VISIBLE : View.GONE);
+        mPassword_Layout.setVisibility(needSign && !mWallet.isWatchOnly() ? View.VISIBLE : View.GONE);
 
         mConfirm_Button.setBackgroundTintList(ColorStateList.valueOf(
                 (needSign ? getResources().getColor(R.color.colorAccent) : getResources().getColor(R.color.positive))

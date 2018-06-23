@@ -62,9 +62,9 @@ public class TokenListAdapter extends RecyclerView.Adapter<TokenListAdapter.Toke
         }
 
         public void bind(Token token) {
-            mTokenName_TextView.setText(token.getAssetIssueContract().getName().toStringUtf8());
+            mTokenName_TextView.setText(token.getName());
             mTokenPerPrice_TextView.setText("$0.00"); // @TODO load token price (CoinMarketCap(?))
-            mTokenBalance_TextView.setText(NumberFormat.getInstance(Locale.US).format(token.getAssetIssueContract().getNum()));
+            mTokenBalance_TextView.setText(NumberFormat.getInstance(Locale.US).format(token.getAmount()));
             mTokenTotalPrice_TextView.setText("$0.00");
         }
     }

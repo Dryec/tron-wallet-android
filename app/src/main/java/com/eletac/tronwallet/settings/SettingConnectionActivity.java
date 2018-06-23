@@ -13,7 +13,7 @@ import com.eletac.tronwallet.R;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
 import org.apache.commons.lang3.StringUtils;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 public class SettingConnectionActivity extends AppCompatActivity {
 
@@ -73,7 +73,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                             .setTitle("Saved new node connection")
                             .show();
 
-                    WalletClient.init();
+                    WalletManager.init();
                 } else {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
@@ -103,7 +103,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                         .setTitle("Node connection reset to default")
                         .show();
 
-                WalletClient.init();
+                WalletManager.init();
             }
         });
 
@@ -134,7 +134,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                             .setTitle("Saved new solidity node connection")
                             .show();
 
-                    WalletClient.init();
+                    WalletManager.init();
                 } else {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
@@ -164,7 +164,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                         .setTitle("Solidity node connection reset to default")
                         .show();
 
-                WalletClient.init();
+                WalletManager.init();
             }
         });
     }

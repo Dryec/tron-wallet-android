@@ -233,4 +233,6 @@
     <string name="wallets_key">wallets_key</string>
     <string name="title_activity_select_wallet">Select Wallet</string>
     <string name="wallet_address_key">wallet_address_key</string>
+    <string name="no_wallet_selected">No wallet selected</string>
+    <string name="could_not_copy">Couldn\'t copy, no wallet selected</string>
 </resources>

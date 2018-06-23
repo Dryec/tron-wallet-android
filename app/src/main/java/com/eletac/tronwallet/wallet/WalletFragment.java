@@ -33,7 +33,8 @@ import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 import org.tron.api.GrpcAPI;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.Wallet;
+import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public class WalletFragment extends Fragment {
 
     private TokenListAdapter mTokensAdapter;
 
-    private String publicAddress;
+    private Wallet mWallet;
 
     private float mTRX_price;
     private float mTRX_24hChange;
@@ -99,8 +100,12 @@ public class WalletFragment extends Fragment {
         mTokens = new ArrayList<>();
         mTokensAdapter = new TokenListAdapter(getContext(), mTokens);
 
-        // Make sure latest data is loaded if no internet connection
-        mLatestAccountData = Utils.getAccount(getContext(), WalletClient.getSelectedWallet().getWalletName());
+        mWallet = WalletManager.getSelectedWallet();
+
+        if(mWallet != null) {
+            // Make sure latest data is loaded if no internet connection
+            mLatestAccountData = Utils.getAccount(getContext(), mWallet.getWalletName());
+        }
     }
 
     @Override
@@ -120,7 +125,7 @@ public class WalletFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        publicAddress = WalletClient.getSelectedWallet().computeAddress();
+        mWallet = WalletManager.getSelectedWallet();
         onAccountUpdated();
 
         AccountUpdater.setInterval(TronWalletApplication.ACCOUNT_UPDATE_FOREGROUND_INTERVAL, true);
@@ -228,10 +233,14 @@ public class WalletFragment extends Fragment {
                                         .setDuration(COPY_ADDRESS_ANIM_INTERVAL)
                                         .setListener(null);
 
-                                ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
-                                ClipData clip = ClipData.newPlainText("Address", publicAddress);
-                                clipboard.setPrimaryClip(clip);
-                                Toast.makeText(getActivity(), getString(R.string.copy_success), Toast.LENGTH_SHORT).show();
+                                if(mWallet != null) {
+                                    ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                                    ClipData clip = ClipData.newPlainText("Address", mWallet.getAddress());
+                                    clipboard.setPrimaryClip(clip);
+                                    Toast.makeText(getActivity(), getString(R.string.copy_success), Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(getActivity(), R.string.could_not_copy, Toast.LENGTH_SHORT).show();
+                                }
                             }
 
                             @Override
@@ -298,10 +307,10 @@ public class WalletFragment extends Fragment {
     }
 
     private void updateBalanceTextViews() {
-        if(mLatestAccountData != null) {
+        if(mLatestAccountData != null && mWallet != null) {
 
             NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext(), WalletClient.getSelectedWallet().getWalletName());
+            GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext(), mWallet.getWalletName());
 
             double balance = (mLatestAccountData.getBalance() / 1000000.0d);
             mTRX_balance_TextView
@@ -357,10 +366,10 @@ public class WalletFragment extends Fragment {
     }
 
     private void onAccountUpdated() {
-        if(getContext() != null && mLatestAccountData != null) {
+        if(getContext() != null && mLatestAccountData != null && mWallet != null) {
 
-            mName_TextView.setText(WalletClient.getSelectedWallet().getWalletName());
-            mTRX_address_TextView.setText(publicAddress);
+            mName_TextView.setText(mWallet.getWalletName());
+            mTRX_address_TextView.setText(mWallet.getAddress());
 
             updateBalanceTextViews();
 
@@ -369,10 +378,7 @@ public class WalletFragment extends Fragment {
 
                 List<Token> tokens = new ArrayList<>();
                 for (Map.Entry<String, Long> asset : assets.entrySet()) {
-                    tokens.add(new Token(
-                            Contract.AssetIssueContract.newBuilder()
-                                    .setName(com.google.protobuf.ByteString.copyFromUtf8(asset.getKey()))
-                                    .setNum(asset.getValue().intValue()).build()));
+                    tokens.add(new Token(asset.getKey(), asset.getValue()));
                 }
                 AsyncJob.doOnMainThread(() -> {
                     mTokens.clear();
@@ -387,8 +393,10 @@ public class WalletFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            mLatestAccountData = Utils.getAccount(context, WalletClient.getSelectedWallet().getWalletName());
-            onAccountUpdated();
+            if(mWallet != null) {
+                mLatestAccountData = Utils.getAccount(context, mWallet.getWalletName());
+                onAccountUpdated();
+            }
         }
     }
 

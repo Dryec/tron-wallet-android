@@ -3,17 +3,10 @@ package com.eletac.tronwallet;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
-import android.util.ArrayMap;
-import android.util.ArraySet;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.arasthel.asyncjob.AsyncJob;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -22,18 +15,12 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.GrpcClient;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import io.grpc.StatusRuntimeException;
 
 public class Utils {
     public static Bitmap strToQR(String str, int width, int height) {
@@ -52,19 +39,19 @@ public class Utils {
     }
 
     public static void saveAccount(Context context, String walletName, Protocol.Account account) {
-        if (context != null && account != null && WalletClient.existWallet(walletName)) {
+        if (context != null && account != null && WalletManager.existWallet(walletName)) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
             editor.putString(context.getString(R.string.name_key), account.getAccountName().toStringUtf8());
-            editor.putString(context.getString(R.string.address_key), WalletClient.encode58Check(account.getAddress().toByteArray()));
+            editor.putString(context.getString(R.string.address_key), WalletManager.encode58Check(account.getAddress().toByteArray()));
             editor.putLong(context.getString(R.string.balance_key), account.getBalance());
             editor.putString(context.getString(R.string.assets_key), new Gson().toJson(account.getAssetMap()));
 
             List<Protocol.Vote> votesList = account.getVotesList();
             Map<String, Long> votesMap = new HashMap<>();
             for (Protocol.Vote vote : votesList) {
-                String voteAddress = WalletClient.encode58Check(vote.getVoteAddress().toByteArray());
+                String voteAddress = WalletManager.encode58Check(vote.getVoteAddress().toByteArray());
                 if(!voteAddress.equals(""))
                     votesMap.put(voteAddress, vote.getVoteCount());
             }
@@ -89,7 +76,7 @@ public class Utils {
     }
 
     public static void saveAccountNet(Context context, String walletName, GrpcAPI.AccountNetMessage accountNet) {
-        if (context != null && accountNet != null && WalletClient.existWallet(walletName)) {
+        if (context != null && accountNet != null && WalletManager.existWallet(walletName)) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -103,7 +90,7 @@ public class Utils {
     }
 
     public static GrpcAPI.AccountNetMessage getAccountNet(Context context, String walletName) {
-        if(context != null && WalletClient.existWallet(walletName)) {
+        if(context != null && WalletManager.existWallet(walletName)) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
 
             GrpcAPI.AccountNetMessage.Builder accountNetMessage = GrpcAPI.AccountNetMessage.newBuilder();
@@ -119,7 +106,7 @@ public class Utils {
     }
 
     public static Protocol.Account getAccount(Context context, String walletName) {
-        if(context != null && WalletClient.existWallet(walletName)) {
+        if(context != null && WalletManager.existWallet(walletName)) {
             Protocol.Account.Builder builder = Protocol.Account.newBuilder();
 
             SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
@@ -142,7 +129,7 @@ public class Utils {
                                     }.getType());
             if (votesMap != null) {
                 for (Map.Entry<String, Long> entry : votesMap.entrySet()) {
-                    byte[] voteAddress = WalletClient.decodeFromBase58Check(entry.getKey());
+                    byte[] voteAddress = WalletManager.decodeFromBase58Check(entry.getKey());
                     if(voteAddress != null) {
                         Protocol.Vote.Builder voteBuilder = Protocol.Vote.newBuilder();
                         voteBuilder.setVoteAddress(ByteString.copyFrom(voteAddress));
@@ -176,8 +163,8 @@ public class Utils {
 
 
             builder.setAccountName(ByteString.copyFromUtf8(name));
-            if(WalletClient.addressValid(WalletClient.decodeFromBase58Check(address)))
-                builder.setAddress(ByteString.copyFrom(WalletClient.decodeFromBase58Check(address)));
+            if(WalletManager.isAddressValid(WalletManager.decodeFromBase58Check(address)))
+                builder.setAddress(ByteString.copyFrom(WalletManager.decodeFromBase58Check(address)));
             builder.setBalance(balance);
             if(assets != null)
                 builder.putAllAsset(assets);

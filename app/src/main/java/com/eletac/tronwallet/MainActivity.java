@@ -1,15 +1,12 @@
 package com.eletac.tronwallet;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.Toast;
 
 import com.eletac.tronwallet.block_explorer.BlockExplorerFragment;
 import com.eletac.tronwallet.settings.SettingsFragment;
@@ -20,7 +17,7 @@ import com.roughike.bottombar.BottomBar;
 import com.roughike.bottombar.OnTabSelectListener;
 
 import org.tron.walletserver.Wallet;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,9 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private BlockExplorerFragment mBlockExplorerFragment;
     private SimpleTextDisplayFragment mSimpleTextDisplayFragment;
 
-    private WalletClient mWalletClient;
-
-    private boolean mIsColdWallet;
+    private Wallet mWallet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,20 +42,20 @@ public class MainActivity extends AppCompatActivity {
         BottomBar bottomBar = findViewById(R.id.bottomBar);
         bottomBar.setDefaultTab(R.id.tab_wallet);
 
-        WalletClient.init();
+        WalletManager.init();
 
-        Wallet wallet = WalletClient.getSelectedWallet();
-        mWalletClient = wallet != null ? WalletClient.GetWalletByStorageIgnorePrivKey(wallet.getWalletName()) : null;
-
-        if(mWalletClient == null && (wallet == null ||!wallet.isWatchOnly()))
+        if(!WalletManager.existAnyWallet())
         {
             Intent intent = new Intent(this, CreateWalletActivity.class);
             startActivity(intent);
             finish();
             return;
         }
-
-        mIsColdWallet = wallet.isColdWallet();
+        mWallet = WalletManager.getSelectedWallet();
+        if(mWallet == null) {
+            WalletManager.selectWallet(WalletManager.getWalletNames().iterator().next());
+            mWallet = WalletManager.getSelectedWallet();
+        }
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
@@ -135,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
             Fragment fragment = null;
             switch (position) {
                 case 0:
-                    if(mIsColdWallet) {
+                    if(mWallet.isColdWallet()) {
                         mSimpleTextDisplayFragment = SimpleTextDisplayFragment.newInstance(getString(R.string.not_available_in_cold_wallet));
                         fragment = mSimpleTextDisplayFragment;
                     } else {
@@ -144,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case 1:
-                    if(mIsColdWallet) {
+                    if(mWallet.isColdWallet()) {
                         mWalletColdFragment = WalletColdFragment.newInstance();
                         fragment = mWalletColdFragment;
                     } else {

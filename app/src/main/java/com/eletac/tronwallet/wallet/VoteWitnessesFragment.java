@@ -6,8 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,11 +25,10 @@ import com.eletac.tronwallet.WrapContentLinearLayoutManager;
 import com.eletac.tronwallet.block_explorer.BlockExplorerUpdater;
 
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class VoteWitnessesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
@@ -155,7 +152,7 @@ public class VoteWitnessesFragment extends Fragment implements SwipeRefreshLayou
 
     private boolean checkFilterConditions(Protocol.Witness witness) {
         String filter = mSearch_EditText.getText().toString();
-        return WalletClient.encode58Check(witness.getAddress().toByteArray()).toLowerCase().contains(filter.toLowerCase()) || witness.getUrl().toLowerCase().contains(filter.toLowerCase());
+        return WalletManager.encode58Check(witness.getAddress().toByteArray()).toLowerCase().contains(filter.toLowerCase()) || witness.getUrl().toLowerCase().contains(filter.toLowerCase());
     }
 
     private class WitnessesUpdatedBroadcastReceiver extends BroadcastReceiver {

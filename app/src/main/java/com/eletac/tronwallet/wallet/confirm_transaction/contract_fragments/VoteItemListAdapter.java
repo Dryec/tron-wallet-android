@@ -1,30 +1,21 @@
 package com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
 
 import org.tron.protos.Contract;
-import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 public class VoteItemListAdapter extends RecyclerView.Adapter<VoteItemListAdapter.VoteItemViewHolder> {
 
@@ -72,7 +63,7 @@ public class VoteItemListAdapter extends RecyclerView.Adapter<VoteItemListAdapte
         public void bind(Contract.VoteWitnessContract.Vote vote) {
             NumberFormat numberFormat = NumberFormat.getInstance(Locale.US);
 
-            mAddress_TextView.setText(WalletClient.encode58Check(vote.getVoteAddress().toByteArray()));
+            mAddress_TextView.setText(WalletManager.encode58Check(vote.getVoteAddress().toByteArray()));
             mAmount_TextView.setText(numberFormat.format(vote.getVoteCount()));
         }
     }

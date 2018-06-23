@@ -1,29 +1,20 @@
 package com.eletac.tronwallet.wallet;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.eletac.tronwallet.R;
 
-import org.tron.protos.Contract;
 import org.tron.walletserver.Wallet;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
-import java.text.DateFormat;
-import java.text.NumberFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class WalletItemListAdapter extends RecyclerView.Adapter<WalletItemListAdapter.WalletItemViewHolder> {
 
@@ -87,9 +78,14 @@ public class WalletItemListAdapter extends RecyclerView.Adapter<WalletItemListAd
             mWallet = wallet;
 
             mName_TextView.setText(wallet.getWalletName());
-            mAddress_TextView.setText(wallet.computeAddress());
+            mAddress_TextView.setText(wallet.getAddress());
 
-            mName_TextView.setTextColor(wallet.getWalletName().equals(WalletClient.getSelectedWallet().getWalletName()) ? Color.GREEN : Color.WHITE);
+            Wallet selectedWallet = WalletManager.getSelectedWallet();
+            if(selectedWallet != null) {
+                mName_TextView.setTextColor(wallet.getWalletName().equals(selectedWallet.getWalletName()) ? Color.GREEN : Color.WHITE);
+            } else {
+                mName_TextView.setTextColor(Color.WHITE);
+            }
         }
     }
 

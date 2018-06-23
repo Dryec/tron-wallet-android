@@ -15,7 +15,7 @@ import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivi
 
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -66,7 +66,7 @@ public class TransferAssetContractFragment extends Fragment {
             numberFormat.setMaximumFractionDigits(6);
             mAmountTextView.setText(numberFormat.format(contract.getAmount()));
             mSymbolTextView.setText(contract.getAssetName().toStringUtf8());
-            mToTextView.setText(WalletClient.encode58Check(contract.getToAddress().toByteArray()));
+            mToTextView.setText(WalletManager.encode58Check(contract.getToAddress().toByteArray()));
         }
     }
 

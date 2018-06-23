@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,9 +18,8 @@ import com.eletac.tronwallet.bip39.BIP39;
 import com.eletac.tronwallet.bip39.ValidationException;
 
 import org.tron.common.utils.ByteArray;
-import org.tron.walletserver.WalletClient;
-
-import java.util.Arrays;
+import org.tron.walletserver.Wallet;
+import org.tron.walletserver.WalletManager;
 
 import static com.eletac.tronwallet.Utils.strToQR;
 
@@ -45,7 +43,7 @@ public class AccountActivity extends AppCompatActivity {
     String mPrivKey;
     String mRecoveryPhrase;
 
-    WalletClient walletClient;
+    Wallet mWallet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,17 +63,17 @@ public class AccountActivity extends AppCompatActivity {
         mPassword = getIntent().getStringExtra("password");
         boolean freshlyCreated = getIntent().getBooleanExtra("freshly_created", false);
 
-        walletClient = WalletClient.GetWalletByStorage(mName, mPassword);
+        mWallet = WalletManager.getWallet(mName, mPassword);
 
-        if(walletClient == null || !WalletClient.checkPassWord(mName, mPassword)) {
+        if(mWallet == null || !mWallet.isOpen()) {
             finish();
             return;
         }
 
-        mAddress = WalletClient.encode58Check(walletClient.getAddress());
-        mPrivKey = ByteArray.toHexString(walletClient.getEcKey().getPrivKeyBytes());
+        mAddress = mWallet.getAddress();
+        mPrivKey = ByteArray.toHexString(mWallet.getECKey().getPrivKeyBytes());
         try {
-            mRecoveryPhrase = BIP39.encode(walletClient.getEcKey().getPrivKeyBytes(), "pass");
+            mRecoveryPhrase = BIP39.encode(mWallet.getECKey().getPrivKeyBytes(), "pass");
         } catch (ValidationException e) {
             Toast.makeText(this, "Error: couldn't generate recovery phrase", Toast.LENGTH_LONG).show();
         }

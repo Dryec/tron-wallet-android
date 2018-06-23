@@ -1,15 +1,12 @@
 package com.eletac.tronwallet.block_explorer;
 
 
-import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -21,12 +18,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -36,9 +30,8 @@ import android.widget.TextView;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.WrapContentLinearLayoutManager;
 
-import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
-import org.tron.walletserver.WalletClient;
+import org.tron.walletserver.WalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -200,7 +193,7 @@ public class AccountsFragment extends Fragment implements SwipeRefreshLayout.OnR
 
     private boolean checkFilterConditions(Protocol.Account account) {
         String filter = mSearch_EditText.getText().toString();
-        return WalletClient.encode58Check(account.getAddress().toByteArray()).toLowerCase().contains(filter.toLowerCase());
+        return WalletManager.encode58Check(account.getAddress().toByteArray()).toLowerCase().contains(filter.toLowerCase());
     }
 
     private class AccountsUpdatedBroadcastReceiver extends BroadcastReceiver {
