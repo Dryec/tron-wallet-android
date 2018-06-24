@@ -1,13 +1,17 @@
 package com.eletac.tronwallet.settings;
 
 import android.animation.Animator;
+import android.app.Activity;
+import android.app.TaskStackBuilder;
 import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.RecyclerItemClickListener;
@@ -75,7 +79,10 @@ public class SelectWalletActivity extends AppCompatActivity {
 
                             @Override
                             public void onAnimationEnd(Animator animation) {
-                                finish();
+                                Intent upIntent = NavUtils.getParentActivityIntent( SelectWalletActivity.this);
+                                TaskStackBuilder.create(SelectWalletActivity.this)
+                                        .addNextIntentWithParentStack(upIntent)
+                                        .startActivities();
                             }
 
                             @Override

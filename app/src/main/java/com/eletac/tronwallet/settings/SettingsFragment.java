@@ -198,6 +198,13 @@ public class SettingsFragment extends Fragment {
             editor.putString(getString(R.string.selected_wallet_key), wallets.iterator().next());
         editor.commit();
 
-        getActivity().recreate();
+        Intent intent = getActivity().getIntent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        getActivity().overridePendingTransition(0, 0);
+        getActivity().finish();
+
+        getActivity().overridePendingTransition(0, 0);
+        startActivity(intent);
     }
 }

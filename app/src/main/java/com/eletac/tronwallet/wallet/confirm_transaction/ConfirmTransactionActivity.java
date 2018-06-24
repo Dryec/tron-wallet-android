@@ -26,7 +26,10 @@ import android.widget.Toast;
 
 import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.R;
+import com.eletac.tronwallet.TronWalletApplication;
 import com.eletac.tronwallet.Utils;
+import com.eletac.tronwallet.database.Transaction;
+import com.eletac.tronwallet.database.TronWalletDatabase;
 import com.eletac.tronwallet.wallet.AccountUpdater;
 import com.eletac.tronwallet.wallet.SendReceiveActivity;
 import com.eletac.tronwallet.wallet.SignTransactionActivity;
@@ -265,6 +268,12 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         mConfirm_Button.setEnabled(false);
         AsyncJob.doInBackground(() -> {
             final boolean sent = WalletManager.broadcastTransaction(mTransactionSigned);
+
+            if(sent) {
+                Transaction dbTransaction = new Transaction();
+                dbTransaction.transaction = mTransactionSigned;
+                TronWalletApplication.getDatabase().transactionDao().insert(dbTransaction);
+            }
             AsyncJob.doOnMainThread(() -> {
                 progressDialog.dismiss();
 

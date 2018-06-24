@@ -87,7 +87,7 @@ public class WalletManager {
     }
 
     public static void store(Wallet wallet, String password) throws DuplicateNameException, InvalidPasswordException, InvalidNameException {
-        if (wallet.getECKey() == null || wallet.getECKey().getPrivKey() == null) {
+        if (!wallet.isWatchOnly() && (wallet.getECKey() == null || wallet.getECKey().getPrivKey() == null)) {
             throw new NullPointerException("Private Key is null");
         }
 
