@@ -43,12 +43,6 @@ public class GrpcClient {
   private WalletSolidityGrpc.WalletSolidityBlockingStub blockingStubSolidity = null;
   private WalletExtensionGrpc.WalletExtensionBlockingStub blockingStubExtension = null;
 
-//  public GrpcClient(String host, int port) {
-//    channel = ManagedChannelBuilder.forAddress(host, port)
-//        .usePlaintext(true)
-//        .build();
-//    blockingStub = WalletGrpc.newBlockingStub(channel);
-//  }
 
   public GrpcClient(String fullnode, String soliditynode) {
     if (!StringUtils.isEmpty(fullnode)) {
@@ -214,13 +208,8 @@ public class GrpcClient {
   public AssetIssueList getAssetIssueByAccount(byte[] address) {
     ByteString addressBS = ByteString.copyFrom(address);
     Account request = Account.newBuilder().setAddress(addressBS).build();
-    if (blockingStubSolidity != null) {
-      AssetIssueList assetIssueList = blockingStubSolidity.getAssetIssueByAccount(request);
-      return (assetIssueList);
-    } else {
-      AssetIssueList assetIssueList = blockingStubFull.getAssetIssueByAccount(request);
-      return (assetIssueList);
-    }
+    AssetIssueList assetIssueList = blockingStubFull.getAssetIssueByAccount(request);
+    return (assetIssueList);
   }
 
   public AccountNetMessage getAccountNet(byte[] address) {
@@ -232,52 +221,15 @@ public class GrpcClient {
   public Contract.AssetIssueContract getAssetIssueByName(String assetName) {
     ByteString assetNameBs = ByteString.copyFrom(assetName.getBytes());
     BytesMessage request = BytesMessage.newBuilder().setValue(assetNameBs).build();
-    if (blockingStubSolidity != null) {
-      return blockingStubSolidity.getAssetIssueByName(request);
-    } else {
-      return blockingStubFull.getAssetIssueByName(request);
-    }
+    return blockingStubFull.getAssetIssueByName(request);
   }
 
   public NumberMessage getTotalTransaction() {
-    if (blockingStubSolidity != null) {
-      return blockingStubSolidity.totalTransaction(EmptyMessage.newBuilder().build());
-    } else {
-      return blockingStubFull.totalTransaction(EmptyMessage.newBuilder().build());
-    }
+    return blockingStubFull.totalTransaction(EmptyMessage.newBuilder().build());
   }
 
   public NumberMessage getNextMaintenanceTime() {
     return blockingStubFull.getNextMaintenanceTime(EmptyMessage.newBuilder().build());
-  }
-
-  public AssetIssueList getAssetIssueListByTimestamp(long time) {
-    NumberMessage.Builder timeStamp = NumberMessage.newBuilder();
-    timeStamp.setNum(time);
-    AssetIssueList assetIssueList = blockingStubSolidity
-        .getAssetIssueListByTimestamp(timeStamp.build());
-    return (assetIssueList);
-  }
-
-  public TransactionList getTransactionsByTimestamp(long start, long end, int offset,
-                                                    int limit) {
-    TimeMessage.Builder timeMessage = TimeMessage.newBuilder();
-    timeMessage.setBeginInMilliseconds(start);
-    timeMessage.setEndInMilliseconds(end);
-    TimePaginatedMessage.Builder timePaginatedMessage = TimePaginatedMessage.newBuilder();
-    timePaginatedMessage.setTimeMessage(timeMessage);
-    timePaginatedMessage.setOffset(offset);
-    timePaginatedMessage.setLimit(limit);
-    TransactionList transactionList = blockingStubExtension
-        .getTransactionsByTimestamp(timePaginatedMessage.build());
-    return (transactionList);
-  }
-
-  public NumberMessage getTransactionsByTimestampCount(long start, long end) {
-    TimeMessage.Builder timeMessage = TimeMessage.newBuilder();
-    timeMessage.setBeginInMilliseconds(start);
-    timeMessage.setEndInMilliseconds(end);
-    return blockingStubExtension.getTransactionsByTimestampCount(timeMessage.build());
   }
 
   public TransactionList getTransactionsFromThis(byte[] address, int offset, int limit) {
@@ -292,12 +244,6 @@ public class GrpcClient {
     return (transactionList);
   }
 
-  public NumberMessage getTransactionsFromThisCount(byte[] address) {
-    ByteString addressBS = ByteString.copyFrom(address);
-    Account account = Account.newBuilder().setAddress(addressBS).build();
-    return blockingStubExtension.getTransactionsFromThisCount(account);
-  }
-
   public TransactionList getTransactionsToThis(byte[] address, int offset, int limit) {
     ByteString addressBS = ByteString.copyFrom(address);
     Account account = Account.newBuilder().setAddress(addressBS).build();
@@ -308,12 +254,6 @@ public class GrpcClient {
     TransactionList transactionList = blockingStubExtension
         .getTransactionsToThis(accountPaginated.build());
     return (transactionList);
-  }
-
-  public NumberMessage getTransactionsToThisCount(byte[] address) {
-    ByteString addressBS = ByteString.copyFrom(address);
-    Account account = Account.newBuilder().setAddress(addressBS).build();
-    return blockingStubExtension.getTransactionsToThisCount(account);
   }
 
   public Transaction getTransactionById(String txID) {

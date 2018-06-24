@@ -11,6 +11,9 @@ public class Transaction {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    @ColumnInfo(name = "sender_address")
+    public String senderAddress;
+
     @ColumnInfo(name = "transaction")
     public Protocol.Transaction transaction;
 }

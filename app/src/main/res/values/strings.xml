@@ -3,7 +3,7 @@
     <!--> NO TRANSLATION <-->
     <string name="fullnode_ip">47.91.246.252</string>
     <string name="fullnode_port">50051</string>
-    <string name="soliditynode_ip"></string>
+    <string name="soliditynode_ip">47.254.39.153</string>
     <string name="soliditynode_port">50051</string>
 
     <string name="app_name">Tron Wallet</string>
@@ -235,4 +235,5 @@
     <string name="wallet_address_key">wallet_address_key</string>
     <string name="no_wallet_selected">No wallet selected</string>
     <string name="could_not_copy">Couldn\'t copy, no wallet selected</string>
+    <string name="tab_title_history">History</string>
 </resources>

@@ -12,6 +12,7 @@ import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -29,7 +30,6 @@ import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.TronWalletApplication;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.database.Transaction;
-import com.eletac.tronwallet.database.TronWalletDatabase;
 import com.eletac.tronwallet.wallet.AccountUpdater;
 import com.eletac.tronwallet.wallet.SendReceiveActivity;
 import com.eletac.tronwallet.wallet.SignTransactionActivity;
@@ -56,6 +56,8 @@ import java.text.NumberFormat;
 import java.util.Locale;
 
 public class ConfirmTransactionActivity extends AppCompatActivity {
+
+    public static final String TRANSACTION_SENT = "com.eletac.tronwallet.block_explorer_updater.transaction_sent";
 
     public static final String TRANSACTION_DATA_EXTRA = "transaction_data_extra";
     public static final String TRANSACTION_DATA2_EXTRA = "transaction_data2_extra";
@@ -271,6 +273,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
             if(sent) {
                 Transaction dbTransaction = new Transaction();
+                dbTransaction.senderAddress = mWallet.getAddress();
                 dbTransaction.transaction = mTransactionSigned;
                 TronWalletApplication.getDatabase().transactionDao().insert(dbTransaction);
             }
@@ -289,8 +292,12 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                                 finish();
                             }
                         });
-                if(!sent)
+                if(!sent) {
                     dialog.setMessage(getString(R.string.try_later));
+                } else {
+                    Intent transactionSentIntent = new Intent(TRANSACTION_SENT);
+                    LocalBroadcastManager.getInstance(ConfirmTransactionActivity.this).sendBroadcast(transactionSentIntent);
+                }
                 dialog.show();
 
                 mConfirm_Button.setEnabled(true);

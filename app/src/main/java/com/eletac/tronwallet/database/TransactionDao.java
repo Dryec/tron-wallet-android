@@ -16,4 +16,7 @@ public interface TransactionDao {
 
     @Query("SELECT * from transactions")
     List<Transaction> getAllTransactions();
+
+    @Query("SELECT * from transactions WHERE sender_address = :sender")
+    List<Transaction> getAllTransactionsFromSender(String sender);
 }

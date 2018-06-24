@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp">
+    android:layout_height="wrap_content">
 
 
     <android.support.v7.widget.CardView
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
@@ -32,6 +32,7 @@
                 android:maxLines="1"
                 android:text="27WK11uSBUjxmnbtQ3AArs1hLpUkPg4WAJF"
                 android:textAlignment="viewStart"
+                android:textColor="@android:color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_percent=".6" />
@@ -41,7 +42,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="right"
                 android:text="TRX"
+                android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/Transaction_amount_textView" />
 
@@ -62,13 +66,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginTop="8dp"
                 android:ellipsize="end"
+                android:gravity="end"
                 android:maxLines="1"
                 android:text="27io7s9CR9PGrmnvBtKfiBtd3qsMDTpwMcH"
                 android:textAlignment="viewEnd"
-                android:gravity="end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/Transaction_asset_textView"
+                app:layout_constraintVertical_bias="1.0"
                 app:layout_constraintWidth_percent=".6" />
 
             <TextView
@@ -77,9 +84,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
+                android:gravity="end"
                 android:text="0.000004"
                 android:textAlignment="viewEnd"
-                android:gravity="end"
+                android:textColor="@android:color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/Transaction_from_textView"
                 app:layout_constraintTop_toTopOf="@+id/Transaction_from_textView" />

@@ -35,7 +35,7 @@ public class SendReceiveActivity extends AppCompatActivity {
 
         mViewPager = findViewById(R.id.SendReceive_container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(4);
 
         TabLayout tabLayout = findViewById(R.id.SendReceive_tabs_tabLayout);
         tabLayout.setupWithViewPager(mViewPager);
@@ -83,13 +83,16 @@ public class SendReceiveActivity extends AppCompatActivity {
                 case 2:
                     fragment = FreezeFragment.newInstance();
                     break;
+                case 3:
+                    fragment = TransactionHistoryFragment.newInstance();
+                    break;
             }
             return fragment;
         }
 
         @Override
         public int getCount() {
-            return 3;
+            return 4;
         }
 
         @Nullable
@@ -102,6 +105,8 @@ public class SendReceiveActivity extends AppCompatActivity {
                     return getString(R.string.tab_title_receive);
                 case 2:
                     return getString(R.string.tab_title_freeze);
+                case 3:
+                    return getString(R.string.tab_title_history);
             }
             return null;
         }

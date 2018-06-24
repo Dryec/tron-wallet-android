@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateUtils;
@@ -78,6 +79,7 @@ public class RecentTransactionsFragment extends Fragment {
         mTransactions_RecyclerView.setLayoutManager(mLayoutManager);
         mTransactions_RecyclerView.setAdapter(mTransactionsItemListAdapter);
     }
+
 
     @Override
     public void onDestroy() {

@@ -640,18 +640,6 @@ public class WalletManager {
         return witnessList;
     }
 
-    public static AssetIssueList getAssetIssueListByTimestamp(long timestamp) {
-        return rpcCli.getAssetIssueListByTimestamp(timestamp);
-    }
-
-    public static TransactionList getTransactionsByTimestamp(long start, long end, int offset, int limit) {
-        return rpcCli.getTransactionsByTimestamp(start, end, offset, limit);
-    }
-
-    public static GrpcAPI.NumberMessage getTransactionsByTimestampCount(long start, long end) {
-        return rpcCli.getTransactionsByTimestampCount(start, end);
-    }
-
     public static AssetIssueList getAssetIssueList() {
         return rpcCli.getAssetIssueList();
     }
@@ -684,10 +672,6 @@ public class WalletManager {
         return rpcCli.getTransactionsFromThis(address, offset, limit);
     }
 
-    public static GrpcAPI.NumberMessage getTransactionsFromThisCount(byte[] address) {
-        return rpcCli.getTransactionsFromThisCount(address);
-    }
-
     public static TransactionList getTransactionsToThis(byte[] address, int offset, int limit) {
         return rpcCli.getTransactionsToThis(address, offset, limit);
     }
@@ -706,10 +690,6 @@ public class WalletManager {
 //    }
 //    return result;
 //  }
-
-    public static GrpcAPI.NumberMessage getTransactionsToThisCount(byte[] address) {
-        return rpcCli.getTransactionsToThisCount(address);
-    }
 
     public static Transaction getTransactionById(String txID) {
         return rpcCli.getTransactionById(txID);
