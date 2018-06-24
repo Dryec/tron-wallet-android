@@ -177,7 +177,7 @@ message Transaction {
     repeated acuthrity auths = 9; //FIXME authority
     // data not used
     bytes data = 10;
-    //only support size = 1,  repeated list here for extenstion
+    //only support size = 1,  repeated list here for extension
     repeated Contract contract = 11;
     // scripts not used
     bytes scripts = 12;
@@ -185,13 +185,25 @@ message Transaction {
   }
 
   raw raw_data = 1;
-  // only support size = 1,  repeated list here for muti-sig extenstion
+  // only support size = 1,  repeated list here for muti-sig extension
   repeated bytes signature = 2;
   repeated Result ret = 5;
 }
 
+message TransactionInfo {
+ bytes id = 1;
+ int64 fee = 2;
+ int64 blockNumber = 3;
+ int64 blockTimeStamp = 4;
+}
+
 message Transactions {
   repeated Transaction transactions = 1;
+}
+
+message TransactionSign {
+  Transaction transaction = 1;
+  bytes privateKey = 2;
 }
 
 message BlockHeader {
@@ -291,6 +303,7 @@ enum ReasonCode {
   INCOMPATIBLE_CHAIN = 0x19;
   TIME_OUT = 0x20;
   CONNECT_FAIL = 0x21;
+  TOO_MANY_PEERS_WITH_SAME_IP = 0x22;
   UNKNOWN = 0xFF;
 }
 
