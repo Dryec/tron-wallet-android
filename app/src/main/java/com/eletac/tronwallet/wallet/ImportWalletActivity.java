@@ -373,6 +373,13 @@ public class ImportWalletActivity extends AppCompatActivity {
                     } catch (DuplicateNameException | InvalidPasswordException | InvalidNameException e) {
                         // Should be already checked above
                         e.printStackTrace();
+                    } catch (NullPointerException ignored) {
+                        new LovelyInfoDialog(ImportWalletActivity.this)
+                                .setTopColorRes(R.color.colorPrimary)
+                                .setIcon(R.drawable.ic_info_white_24px)
+                                .setTitle(R.string.invalid_address)
+                                .setMessage(R.string.enter_valid_address)
+                                .show();
                     }
                 }
             });
