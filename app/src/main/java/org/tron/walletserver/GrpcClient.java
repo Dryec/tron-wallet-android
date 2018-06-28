@@ -28,6 +28,7 @@ import org.tron.api.WalletGrpc;
 import org.tron.api.WalletSolidityGrpc;
 import org.tron.common.utils.ByteArray;
 import org.tron.protos.Contract;
+import org.tron.protos.Protocol;
 import org.tron.protos.Protocol.Account;
 import org.tron.protos.Protocol.Block;
 import org.tron.protos.Protocol.Transaction;
@@ -69,10 +70,10 @@ public class GrpcClient {
     }
   }
 
-  public Account queryAccount(byte[] address) {
+  public Account queryAccount(byte[] address, boolean useSolidity) {
     ByteString addressBS = ByteString.copyFrom(address);
     Account request = Account.newBuilder().setAddress(addressBS).build();
-    if (blockingStubSolidity != null) {
+    if (blockingStubSolidity != null && useSolidity) {
       return blockingStubSolidity.getAccount(request);
     } else {
       return blockingStubFull.getAccount(request);
@@ -153,9 +154,9 @@ public class GrpcClient {
     return response.getResult();
   }
 
-  public Block getBlock(long blockNum) {
+  public Block getBlock(long blockNum, boolean useSolidity) {
     if (blockNum < 0) {
-      if (blockingStubSolidity != null) {
+      if (blockingStubSolidity != null && useSolidity) {
         return blockingStubSolidity.getNowBlock(EmptyMessage.newBuilder().build());
       } else {
         return blockingStubFull.getNowBlock(EmptyMessage.newBuilder().build());
@@ -177,10 +178,9 @@ public class GrpcClient {
 //
 //  }
 
-  public WitnessList listWitnesses() {
-    if (blockingStubSolidity != null) {
-      WitnessList witnessList = blockingStubSolidity
-          .listWitnesses(EmptyMessage.newBuilder().build());
+  public WitnessList listWitnesses(boolean useSolidity) {
+    if (blockingStubSolidity != null && useSolidity) {
+      WitnessList witnessList = blockingStubSolidity.listWitnesses(EmptyMessage.newBuilder().build());
       return (witnessList);
     } else {
       WitnessList witnessList = blockingStubFull.listWitnesses(EmptyMessage.newBuilder().build());
@@ -188,8 +188,8 @@ public class GrpcClient {
     }
   }
 
-  public AssetIssueList getAssetIssueList() {
-    if (blockingStubSolidity != null) {
+  public AssetIssueList getAssetIssueList(boolean useSolidity) {
+    if (blockingStubSolidity != null && useSolidity) {
       AssetIssueList assetIssueList = blockingStubSolidity
           .getAssetIssueList(EmptyMessage.newBuilder().build());
       return (assetIssueList);
@@ -256,10 +256,10 @@ public class GrpcClient {
     return (transactionList);
   }
 
-  public Transaction getTransactionById(String txID) {
+  public Transaction getTransactionById(String txID, boolean useSolidity) {
     ByteString bsTxid = ByteString.copyFrom(ByteArray.fromHexString(txID));
     BytesMessage request = BytesMessage.newBuilder().setValue(bsTxid).build();
-    if (blockingStubSolidity != null) {
+    if (blockingStubSolidity != null && useSolidity) {
       Transaction transaction = blockingStubSolidity.getTransactionById(request);
       return (transaction);
     } else {
@@ -287,5 +287,14 @@ public class GrpcClient {
     NumberMessage numberMessage = NumberMessage.newBuilder().setNum(num).build();
     BlockList blockList = blockingStubFull.getBlockByLatestNum(numberMessage);
     return (blockList);
+  }
+
+  public Protocol.TransactionInfo getTransactionInfo(String txID) {
+    ByteString bsTxid = ByteString.copyFrom(ByteArray.fromHexString(txID));
+    BytesMessage request = BytesMessage.newBuilder().setValue(bsTxid).build();
+    if (blockingStubSolidity != null) {
+      return blockingStubSolidity.getTransactionInfoById(request);
+    }
+    return Protocol.TransactionInfo.getDefaultInstance();
   }
 }

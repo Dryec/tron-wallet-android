@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".wallet.confirm_transaction.contract_fragments.AssetIssueContractFragment">
+    tools:context=".block_explorer.contract.contract_type_fragments.AssetIssueContractFragment">
 
     <android.support.v7.widget.CardView
         android:id="@+id/IssueTokenContract_details_cardView"

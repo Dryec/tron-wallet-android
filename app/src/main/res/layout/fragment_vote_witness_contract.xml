@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".wallet.confirm_transaction.contract_fragments.VoteWitnessContractFragment">
+    tools:context=".block_explorer.contract.contract_type_fragments.VoteWitnessContractFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/VoteWitnessContract_votes_recyclerView"

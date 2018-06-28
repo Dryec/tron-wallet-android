@@ -153,7 +153,7 @@ public class BlockExplorerUpdater {
 
                             // Load Blocks and transactions
                             try {
-                                GrpcAPI.BlockList result = WalletManager.getBlockByLatestNum(25);
+                                GrpcAPI.BlockList result = WalletManager.getBlockByLatestNum(50);
                                 if (result != null) {
                                     mBlocks.clear();
                                     mBlocks.addAll(result.getBlockList());
@@ -243,7 +243,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load witnesses
                         try {
-                            GrpcAPI.WitnessList result = WalletManager.listWitnesses();
+                            GrpcAPI.WitnessList result = WalletManager.listWitnesses(true);
                             if(result != null) {
                                 mWitnesses.clear();
                                 mWitnesses.addAll(result.getWitnessesList());
@@ -283,7 +283,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load tokens
                         try {
-                            GrpcAPI.AssetIssueList result = WalletManager.getAssetIssueList();
+                            GrpcAPI.AssetIssueList result = WalletManager.getAssetIssueList(true);
                             if(result != null) {
                                 mTokens.clear();
                                 mTokens.addAll(result.getAssetIssueList());

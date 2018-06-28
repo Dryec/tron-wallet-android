@@ -1,4 +1,4 @@
-package com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments;
+package com.eletac.tronwallet.block_explorer.contract.contract_type_fragments;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

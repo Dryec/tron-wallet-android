@@ -236,4 +236,7 @@
     <string name="no_wallet_selected">No wallet selected</string>
     <string name="could_not_copy">Couldn\'t copy, no wallet selected</string>
     <string name="tab_title_history">History</string>
+    <string name="title_activity_transaction_viewer">Transaction</string>
+    <string name="confirmed">Confirmed</string>
+    <string name="unconfirmed">Unconfirmed</string>
 </resources>

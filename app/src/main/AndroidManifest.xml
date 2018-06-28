@@ -113,9 +113,7 @@
             android:name=".wallet.confirm_transaction.ConfirmTransactionActivity"
             android:label="@string/title_activity_confirm_transaction"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".wallet.IssueTokenActivity"
             android:label="@string/title_activity_issue_token"
@@ -137,7 +135,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.eletac.tronwallet.MainActivity" />
-
+        </activity>
+        <activity
+            android:name=".block_explorer.TransactionViewerActivity"
+            android:label="@string/title_activity_transaction_viewer"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.ActionBar"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

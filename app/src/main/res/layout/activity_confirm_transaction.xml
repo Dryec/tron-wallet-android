@@ -163,63 +163,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/scrollView2"
+    <fragment
+        android:id="@+id/ConfirmTrans_contract_fragment"
+        android:name="com.eletac.tronwallet.block_explorer.contract.ContractLoaderFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/cardView11"
+        app:layout_constraintBottom_toTopOf="@+id/ConfirmTrans_bandwidth_cardView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView9">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <android.support.constraint.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <FrameLayout
-                    android:id="@+id/ConfirmTrans_contract_frameLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                </FrameLayout>
-
-            </android.support.constraint.ConstraintLayout>
-        </LinearLayout>
-    </ScrollView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView9"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:cardBackgroundColor="@color/colorAccent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ConfirmTrans_appbar">
-
-        <TextView
-            android:id="@+id/ConfirmTrans_contract_name_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="Asset Issue Contract"
-            android:textAppearance="@android:style/TextAppearance.Material.Body2"
-            android:textSize="18sp" />
-    </android.support.v7.widget.CardView>
+        app:layout_constraintTop_toBottomOf="@+id/ConfirmTrans_appbar"
+        tools:layout="@layout/fragment_contract_loader" />
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView8"
@@ -279,17 +232,5 @@
 
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView11"
-        android:layout_width="0dp"
-        android:layout_height="5dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        app:cardBackgroundColor="@color/colorAccent"
-        app:layout_constraintBottom_toTopOf="@+id/ConfirmTrans_bandwidth_cardView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

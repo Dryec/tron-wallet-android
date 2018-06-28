@@ -10,8 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,17 +26,12 @@ import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.TronWalletApplication;
 import com.eletac.tronwallet.Utils;
+import com.eletac.tronwallet.block_explorer.contract.ContractLoaderFragment;
 import com.eletac.tronwallet.database.Transaction;
 import com.eletac.tronwallet.wallet.AccountUpdater;
 import com.eletac.tronwallet.wallet.SendReceiveActivity;
 import com.eletac.tronwallet.wallet.SignTransactionActivity;
 import com.eletac.tronwallet.wallet.cold.SignedTransactionActivity;
-import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.AssetIssueContractFragment;
-import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.FreezeContractFragment;
-import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.ParticipateAssetIssueContractFragment;
-import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.TransferAssetContractFragment;
-import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.TransferContractFragment;
-import com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments.VoteWitnessContractFragment;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
@@ -64,8 +56,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
     public static final int TRANSACTION_FINISHED = 4325;
 
-    private TextView mContractNameTextView;
-    private FrameLayout mContract_FrameLayout;
+    private ContractLoaderFragment mContract_Fragment;
     private TextView mCurrentBandwidth_TextView;
     private TextView mEstBandwidthCost_TextView;
     private TextView mNewBandwidth_TextView;
@@ -111,8 +102,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mContractNameTextView = findViewById(R.id.ConfirmTrans_contract_name_textView);
-        mContract_FrameLayout = findViewById(R.id.ConfirmTrans_contract_frameLayout);
+        mContract_Fragment = (ContractLoaderFragment) getSupportFragmentManager().findFragmentById(R.id.ConfirmTrans_contract_fragment);
         mCurrentBandwidth_TextView = findViewById(R.id.ConfirmTrans_current_bandwidth_textView);
         mEstBandwidthCost_TextView = findViewById(R.id.ConfirmTrans_est_bandwidth_cost_textView);
         mNewBandwidth_TextView = findViewById(R.id.ConfirmTrans_new_bandwidth_textView);
@@ -151,8 +141,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         setupBandwidth();
         updateConfirmButton();
 
-        mContractNameTextView.setText(getContractName());
-        loadContractFragment();
+        mContract_Fragment.setContract(mTransactionUnsigned.getRawData().getContract(0));
 
         mConfirm_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -369,107 +358,6 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
     private boolean isTransactionSigned() {
         return mTransactionSigned != null && TransactionUtils.validTransaction(mTransactionSigned);
-    }
-
-    private String getContractName() {
-        Protocol.Transaction.Contract contract = mTransactionUnsigned.getRawData().getContract(0);
-
-        switch (contract.getType()) {
-            case AccountCreateContract:
-                return "Account Create Contract";
-            case TransferContract:
-                return "Transfer Contract";
-            case TransferAssetContract:
-                return "Transfer Asset Contract";
-            case VoteAssetContract:
-                return "Vote Asset Contract";
-            case VoteWitnessContract:
-                return "Vote Witness Contract";
-            case WitnessCreateContract:
-                return "Witness Create Contract";
-            case AssetIssueContract:
-                return "Asset Issue Contract";
-            case DeployContract:
-                return "Deploy Contract";
-            case WitnessUpdateContract:
-                return "Witness Update Contract";
-            case ParticipateAssetIssueContract:
-                return "Participate Asset Issue Contract";
-            case AccountUpdateContract:
-                return "Account Update Contract";
-            case FreezeBalanceContract:
-                return "Freeze Balance Contract";
-            case UnfreezeBalanceContract:
-                return "Unfreeze Balance Contract";
-            case WithdrawBalanceContract:
-                return "Withdraw Balance Contract";
-            case UnfreezeAssetContract:
-                return "Unfreeze Asset Contract";
-            case UpdateAssetContract:
-                return "Update Asset Contract";
-            case CustomContract:
-                return "Custom Contract";
-            case UNRECOGNIZED:
-                return "UNRECOGNIZED";
-        }
-        return "";
-    }
-
-    private void loadContractFragment() {
-        Protocol.Transaction.Contract contract = mTransactionUnsigned.getRawData().getContract(0);
-
-        final FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        Fragment fragment = null;
-
-        switch (contract.getType()) {
-            case AccountCreateContract:
-                break;
-            case TransferContract:
-                fragment = TransferContractFragment.newInstance();
-                break;
-            case TransferAssetContract:
-                fragment = TransferAssetContractFragment.newInstance();
-                break;
-            case VoteAssetContract:
-                break;
-            case VoteWitnessContract:
-                fragment = VoteWitnessContractFragment.newInstance();
-                break;
-            case WitnessCreateContract:
-                break;
-            case AssetIssueContract:
-                fragment = AssetIssueContractFragment.newInstance();
-                break;
-            case DeployContract:
-                break;
-            case WitnessUpdateContract:
-                break;
-            case ParticipateAssetIssueContract:
-                fragment = ParticipateAssetIssueContractFragment.newInstance();
-                break;
-            case AccountUpdateContract:
-                break;
-            case FreezeBalanceContract:
-                fragment = FreezeContractFragment.newInstance();
-                break;
-            case UnfreezeBalanceContract:
-                break;
-            case WithdrawBalanceContract:
-                break;
-            case UnfreezeAssetContract:
-                break;
-            case UpdateAssetContract:
-                break;
-            case CustomContract:
-                break;
-            case UNRECOGNIZED:
-                break;
-        }
-        if(fragment != null) {
-            transaction.replace(R.id.ConfirmTrans_contract_frameLayout, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-        }
     }
 
     public Protocol.Transaction getUnsignedTransaction() {

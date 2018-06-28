@@ -1,16 +1,25 @@
 package com.eletac.tronwallet.block_explorer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.R;
 
+import org.spongycastle.util.encoders.Hex;
+import org.tron.common.crypto.Hash;
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
@@ -51,25 +60,48 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
 
     public class TransactionItemViewHolder extends RecyclerView.ViewHolder {
         private Context mContext;
+        private Protocol.Transaction mTransaction;
 
         private TextView mTransactionFrom_TextView;
         private TextView mTransactionTo_TextView;
         private TextView mTransactionTimestamp_TextView;
         private TextView mTransactionAmount_TextView;
         private TextView mTransactionAsset_TextView;
+        private TextView mTransactionConfirmed_TextView;
+        private CardView mTransactionConfirmed_CardView;
+        private ProgressBar mTransactionLoadingConfirmation_ProgressBar;
 
         public TransactionItemViewHolder(View itemView) {
             super(itemView);
             mContext = itemView.getContext();
+            mTransaction = null;
 
             mTransactionFrom_TextView = itemView.findViewById(R.id.Transaction_from_textView);
             mTransactionTo_TextView = itemView.findViewById(R.id.Transaction_to_textView);
             mTransactionTimestamp_TextView = itemView.findViewById(R.id.Transaction_timestamp_textView);
             mTransactionAmount_TextView = itemView.findViewById(R.id.Transaction_amount_textView);
             mTransactionAsset_TextView = itemView.findViewById(R.id.Transaction_asset_textView);
+            mTransactionConfirmed_TextView = itemView.findViewById(R.id.Transaction_confirmed_textView);
+            mTransactionConfirmed_CardView = itemView.findViewById(R.id.Transaction_confirmation_CardView);
+            mTransactionLoadingConfirmation_ProgressBar = itemView.findViewById(R.id.Transaction_loading_confirmation_progressBar);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mTransaction != null) {
+                        Intent intent = new Intent(mContext, TransactionViewerActivity.class);
+                        intent.putExtra(TransactionViewerActivity.TRANSACTION_DATA, mTransaction.toByteArray());
+                        mContext.startActivity(intent);
+                    }
+                }
+            });
         }
 
         public void bind(Protocol.Transaction transaction) {
+            mTransaction = transaction;
+
+            loadConfirmation();
+
             if(transaction.getRawData().getContractCount() > 0) {
                 Protocol.Transaction.Contract contract = transaction.getRawData().getContract(0);
 
@@ -167,7 +199,8 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                             from = WalletManager.encode58Check(participateAssetIssueContract.getOwnerAddress().toByteArray());
                             to = participateAssetIssueContract.getAssetName().toStringUtf8();
                             amount = participateAssetIssueContract.getAmount()/1000000;
-                            contract_desc = "Token Participation | " + participateAssetIssueContract.getAssetName().toStringUtf8();
+                            amount_prefix = mContext.getString(R.string.trx_symbol);
+                            contract_desc = "Token Participation";
                             break;
                         case AccountUpdateContract:
                             Log.i("TRANSACTIONS", "AccountUpdateContract");
@@ -233,6 +266,34 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                 mTransactionAmount_TextView.setText((amount != -1 ? numberFormat.format(amount) : "") + " " + amount_prefix);
                 mTransactionAsset_TextView.setText(contract_desc);
             }
+        }
+
+        private void loadConfirmation() {
+            mTransactionConfirmed_CardView.setVisibility(View.GONE);
+            mTransactionLoadingConfirmation_ProgressBar.setVisibility(View.VISIBLE);
+
+            AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
+                @Override
+                public void doOnBackground() {
+                    boolean isConfirmed = WalletManager.isTransactionConfirmed(mTransaction);
+
+                    AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                        @Override
+                        public void doInUIThread() {
+                            mTransactionConfirmed_CardView.setVisibility(View.VISIBLE);
+                            mTransactionLoadingConfirmation_ProgressBar.setVisibility(View.GONE);
+
+                            if(isConfirmed) {
+                                mTransactionConfirmed_TextView.setText(R.string.confirmed);
+                                mTransactionConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.positive));
+                            } else {
+                                mTransactionConfirmed_TextView.setText(R.string.unconfirmed);
+                                mTransactionConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+                            }
+                        }
+                    });
+                }
+            });
         }
     }
 }

@@ -26,6 +26,7 @@ import org.tron.protos.Contract;
 import org.tron.protos.Contract.AssetIssueContract;
 import org.tron.protos.Contract.FreezeBalanceContract;
 import org.tron.protos.Contract.UnfreezeBalanceContract;
+import org.tron.protos.Protocol;
 import org.tron.protos.Protocol.Account;
 import org.tron.protos.Protocol.Block;
 import org.tron.protos.Protocol.Transaction;
@@ -260,8 +261,8 @@ public class WalletManager {
         }
     }
 
-    public static Account queryAccount(byte[] address) {
-        return rpcCli.queryAccount(address);
+    public static Account queryAccount(byte[] address, boolean useSolidity) {
+        return rpcCli.queryAccount(address, useSolidity);
     }
 
     public static Transaction createTransferAssetTransaction(byte[] to, byte[] assertName,
@@ -357,8 +358,8 @@ public class WalletManager {
         return rpcCli.createAssetIssue(contract);
     }
 
-    public static Block getBlock(long blockNum) {
-        return rpcCli.getBlock(blockNum);
+    public static Block getBlock(long blockNum, boolean useSolidity) {
+        return rpcCli.getBlock(blockNum, useSolidity);
     }
 
     public static Contract.TransferContract createTransferContract(byte[] to, byte[] owner,
@@ -624,8 +625,8 @@ public class WalletManager {
         return true;
     }
 
-    public static WitnessList listWitnesses() {
-        WitnessList witnessList = rpcCli.listWitnesses();
+    public static WitnessList listWitnesses(boolean useSolidity) {
+        WitnessList witnessList = rpcCli.listWitnesses(useSolidity);
         if (witnessList != null) {
             List<Witness> list = witnessList.getWitnessesList();
             List<Witness> newList = new ArrayList();
@@ -640,8 +641,8 @@ public class WalletManager {
         return witnessList;
     }
 
-    public static AssetIssueList getAssetIssueList() {
-        return rpcCli.getAssetIssueList();
+    public static AssetIssueList getAssetIssueList(boolean useSolidity) {
+        return rpcCli.getAssetIssueList(useSolidity);
     }
 
     public static NodeList listNodes() {
@@ -676,23 +677,23 @@ public class WalletManager {
         return rpcCli.getTransactionsToThis(address, offset, limit);
     }
 
-//  public static Optional<AccountList> listAccounts() {
-//    Optional<AccountList> result = rpcCli.listAccounts();
-//    if (result.isPresent()) {
-//      AccountList accountList = result.get();
-//      List<Account> list = accountList.getAccountsList();
-//      List<Account> newList = new ArrayList();
-//      newList.addAll(list);
-//      newList.sort(new AccountComparator());
-//      AccountList.Builder builder = AccountList.newBuilder();
-//      newList.forEach(account -> builder.addAccounts(account));
-//      result = Optional.of(builder.build());
-//    }
-//    return result;
-//  }
+    public static Transaction getTransactionById(String txID, boolean useSolidity) {
+        return rpcCli.getTransactionById(txID, useSolidity);
+    }
 
-    public static Transaction getTransactionById(String txID) {
-        return rpcCli.getTransactionById(txID);
+    public static Protocol.TransactionInfo getTransactionInfoById(String txID) {
+        return rpcCli.getTransactionInfo(txID);
+    }
+
+    public static Protocol.TransactionInfo getTransactionInfo(Transaction transaction) {
+        String txID = Hex.toHexString(Hash.sha256(transaction.getRawData().toByteArray()));
+        return rpcCli.getTransactionInfo(txID);
+    }
+
+    public static boolean isTransactionConfirmed(Transaction transaction) {
+        String txID = Hex.toHexString(Hash.sha256(transaction.getRawData().toByteArray()));
+        Protocol.Transaction confirmedTransaction = WalletManager.getTransactionById(txID, true);
+        return confirmedTransaction.hasRawData();
     }
 
     public static FreezeBalanceContract createFreezeBalanceContract(byte[] owner, long frozen_balance,

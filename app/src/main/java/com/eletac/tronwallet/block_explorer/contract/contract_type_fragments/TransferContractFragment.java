@@ -1,4 +1,4 @@
-package com.eletac.tronwallet.wallet.confirm_transaction.contract_fragments;
+package com.eletac.tronwallet.block_explorer.contract.contract_type_fragments;
 
 
 import android.os.Bundle;
@@ -11,27 +11,31 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
+import com.eletac.tronwallet.block_explorer.contract.ContractFragment;
 import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
+import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class TransferAssetContractFragment extends Fragment {
+public class TransferContractFragment extends ContractFragment {
+
+    private Contract.TransferContract mContract;
 
     private TextView mAmountTextView;
-    private TextView mSymbolTextView;
     private TextView mToTextView;
 
-    public TransferAssetContractFragment() {
+    public TransferContractFragment() {
         // Required empty public constructor
     }
 
-    public static TransferAssetContractFragment newInstance() {
-        TransferAssetContractFragment fragment = new TransferAssetContractFragment();
+    public static TransferContractFragment newInstance() {
+        TransferContractFragment fragment = new TransferContractFragment();
         return fragment;
     }
 
@@ -44,30 +48,34 @@ public class TransferAssetContractFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_transfer_asset_contract, container, false);
+        return inflater.inflate(R.layout.fragment_transfer_contract, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mAmountTextView = view.findViewById(R.id.TransferAssetContract_amount_textView);
-        mSymbolTextView = view.findViewById(R.id.TransferAssetContract_symbol_textView);
-        mToTextView = view.findViewById(R.id.TransferAssetContract_to_textView);
+        mAmountTextView = view.findViewById(R.id.TransferContract_amount_textView);
+        mToTextView = view.findViewById(R.id.TransferContract_to_textView);
 
-        Contract.TransferAssetContract contract = null;
+        updateUI();
+    }
+
+    @Override
+    public void setContract(Protocol.Transaction.Contract contract) {
         try {
-            contract = TransactionUtils.unpackContract(
-                    ((ConfirmTransactionActivity)getActivity()).getUnsignedTransaction().getRawData().getContract(0), Contract.TransferAssetContract.class);
-        } catch (Exception e) {
+            mContract = TransactionUtils.unpackContract(contract, Contract.TransferContract.class);
+            updateUI();
+        } catch (InvalidProtocolBufferException e) {
             e.printStackTrace();
-        }
-        if(contract != null) {
-            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-            numberFormat.setMaximumFractionDigits(6);
-            mAmountTextView.setText(numberFormat.format(contract.getAmount()));
-            mSymbolTextView.setText(contract.getAssetName().toStringUtf8());
-            mToTextView.setText(WalletManager.encode58Check(contract.getToAddress().toByteArray()));
         }
     }
 
+    public void updateUI() {
+        if(mContract != null && getView() != null) {
+            NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+            numberFormat.setMaximumFractionDigits(6);
+            mAmountTextView.setText(numberFormat.format(mContract.getAmount()/1000000D));
+            mToTextView.setText(WalletManager.encode58Check(mContract.getToAddress().toByteArray()));
+        }
+    }
 }
