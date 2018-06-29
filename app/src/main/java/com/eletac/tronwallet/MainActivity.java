@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         BottomBar bottomBar = findViewById(R.id.bottomBar);
         bottomBar.setDefaultTab(R.id.tab_wallet);
 
-        WalletManager.init();
 
         if(!WalletManager.existAnyWallet())
         {
@@ -55,6 +54,10 @@ public class MainActivity extends AppCompatActivity {
         if(mWallet == null) {
             WalletManager.selectWallet(WalletManager.getWalletNames().iterator().next());
             mWallet = WalletManager.getSelectedWallet();
+        }
+
+        if(!mWallet.isColdWallet()) {
+            WalletManager.initGRPC();
         }
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());

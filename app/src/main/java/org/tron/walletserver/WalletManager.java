@@ -60,7 +60,7 @@ public class WalletManager {
 
     private static GrpcClient rpcCli;
 
-    public static void init() {
+    public static void initGRPC() {
         if (rpcCli != null) {
             rpcCli.shutdown();
         }
@@ -72,7 +72,6 @@ public class WalletManager {
         int port = 0, port_sol = 0;
 
         try {
-
             ip = sharedPreferences.getString(context.getString(R.string.ip_key), context.getString(R.string.fullnode_ip));
             port = sharedPreferences.getInt(context.getString(R.string.port_key), Integer.parseInt(context.getString(R.string.fullnode_port)));
 
@@ -691,9 +690,17 @@ public class WalletManager {
     }
 
     public static boolean isTransactionConfirmed(Transaction transaction) {
+        Protocol.Transaction confirmedTransaction = null;
         String txID = Hex.toHexString(Hash.sha256(transaction.getRawData().toByteArray()));
-        Protocol.Transaction confirmedTransaction = WalletManager.getTransactionById(txID, true);
-        return confirmedTransaction.hasRawData();
+
+        int maxTries = 5;
+        int tries = 0;
+        while ((confirmedTransaction == null || !confirmedTransaction.hasRawData()) && tries <= maxTries) {
+            confirmedTransaction = WalletManager.getTransactionById(txID, true);
+            tries++;
+        }
+
+        return confirmedTransaction.hasRawData() && txID.equals(Hex.toHexString(Hash.sha256(confirmedTransaction.getRawData().toByteArray())));
     }
 
     public static FreezeBalanceContract createFreezeBalanceContract(byte[] owner, long frozen_balance,

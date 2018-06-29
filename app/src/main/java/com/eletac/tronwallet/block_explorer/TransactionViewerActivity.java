@@ -4,8 +4,10 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -34,6 +36,8 @@ import org.tron.walletserver.WalletManager;
 import java.text.DateFormat;
 import java.util.Date;
 
+import io.grpc.StatusRuntimeException;
+
 public class TransactionViewerActivity extends AppCompatActivity {
 
     public static final String TRANSACTION_DATA = "transaction_data";
@@ -47,6 +51,9 @@ public class TransactionViewerActivity extends AppCompatActivity {
     private Button mOpenTronscan_Button;
 
     private Protocol.Transaction mTransaction;
+    private Handler mUpdateConfirmationHandler;
+    private UpdateConfirmationRunnable mUpdateConfirmationRunnable;
+    private boolean mFirstConfirmationStateLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +77,9 @@ public class TransactionViewerActivity extends AppCompatActivity {
             finish();
             return;
         }
+
+        mUpdateConfirmationHandler = new Handler();
+        mUpdateConfirmationRunnable = new UpdateConfirmationRunnable();
 
         if(mTransaction.getRawData().getContractCount() > 0) {
             mContractLoaderFragment.setContract(mTransaction.getRawData().getContract(0));
@@ -126,34 +136,60 @@ public class TransactionViewerActivity extends AppCompatActivity {
     }
 
     private void loadConfirmationStatus() {
-        mConfirmed_CardView.setVisibility(View.GONE);
-        mLoadingConfirmation_ProgressBar.setVisibility(View.VISIBLE);
+        if(!mFirstConfirmationStateLoaded) {
+            mConfirmed_CardView.setVisibility(View.GONE);
+            mLoadingConfirmation_ProgressBar.setVisibility(View.VISIBLE);
+        }
 
         AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
             @Override
             public void doOnBackground() {
-                boolean isConfirmed = WalletManager.isTransactionConfirmed(mTransaction);
+                boolean isConfirmed = false;
 
-                AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
-                    @Override
-                    public void doInUIThread() {
-                        mConfirmed_CardView.setVisibility(View.VISIBLE);
-                        mLoadingConfirmation_ProgressBar.setVisibility(View.GONE);
+                try {
+                    isConfirmed = WalletManager.isTransactionConfirmed(mTransaction);
 
-                        if(isConfirmed) {
-                            mConfirmed_TextView.setText(R.string.confirmed);
-                            mConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(TransactionViewerActivity.this, R.color.positive));
-                        } else {
-                            mConfirmed_TextView.setText(R.string.unconfirmed);
-                            mConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(TransactionViewerActivity.this, R.color.colorAccent));
+                    boolean finalIsConfirmed = isConfirmed;
+                    AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                        @Override
+                        public void doInUIThread() {
+                            if(!mFirstConfirmationStateLoaded) {
+                                mConfirmed_CardView.setVisibility(View.VISIBLE);
+                                mLoadingConfirmation_ProgressBar.setVisibility(View.GONE);
+                            }
+                            mFirstConfirmationStateLoaded = true;
+
+                            if(finalIsConfirmed) {
+                                mConfirmed_TextView.setText(R.string.confirmed);
+                                mConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(TransactionViewerActivity.this, R.color.positive));
+                            } else {
+                                mConfirmed_TextView.setText(R.string.unconfirmed);
+                                mConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(TransactionViewerActivity.this, R.color.colorAccent));
+                                mUpdateConfirmationHandler.postDelayed(mUpdateConfirmationRunnable, 500);
+                            }
                         }
-                    }
-                });
+                    });
+
+                } catch (StatusRuntimeException e) {
+                    e.printStackTrace();
+                    mConfirmed_CardView.setVisibility(View.VISIBLE);
+                    mLoadingConfirmation_ProgressBar.setVisibility(View.GONE);
+                    mConfirmed_TextView.setText(R.string.unknown);
+                    mConfirmed_CardView.setCardBackgroundColor(Color.GRAY);
+                }
             }
         });
     }
 
     private String getTxID() {
         return Hex.toHexString(Hash.sha256(mTransaction.getRawData().toByteArray()));
+    }
+
+    private class UpdateConfirmationRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            loadConfirmationStatus();
+        }
     }
 }

@@ -27,6 +27,8 @@ public class SettingConnectionActivity extends AppCompatActivity {
     private Button mReset_Solidty_Button;
     private Button mSave_Solidty_Button;
 
+    boolean mIsColdWallet;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +47,8 @@ public class SettingConnectionActivity extends AppCompatActivity {
         mPort_Solidty_EditText= findViewById(R.id.SettingConnection_node_sol_port_editText);
         mReset_Solidty_Button= findViewById(R.id.SettingConnection_reset_sol_button);
         mSave_Solidty_Button= findViewById(R.id.SettingConnection_save_sol_button);
+
+        mIsColdWallet = WalletManager.getSelectedWallet().isColdWallet();
 
         loadNodes();
 
@@ -73,7 +77,9 @@ public class SettingConnectionActivity extends AppCompatActivity {
                             .setTitle("Saved new node connection")
                             .show();
 
-                    WalletManager.init();
+                    if(!mIsColdWallet) {
+                        WalletManager.initGRPC();
+                    }
                 } else {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
@@ -103,7 +109,9 @@ public class SettingConnectionActivity extends AppCompatActivity {
                         .setTitle("Node connection reset to default")
                         .show();
 
-                WalletManager.init();
+                if(!mIsColdWallet) {
+                    WalletManager.initGRPC();
+                }
             }
         });
 
@@ -134,7 +142,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                             .setTitle("Saved new solidity node connection")
                             .show();
 
-                    WalletManager.init();
+                    WalletManager.initGRPC();
                 } else {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
@@ -164,7 +172,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                         .setTitle("Solidity node connection reset to default")
                         .show();
 
-                WalletManager.init();
+                WalletManager.initGRPC();
             }
         });
     }

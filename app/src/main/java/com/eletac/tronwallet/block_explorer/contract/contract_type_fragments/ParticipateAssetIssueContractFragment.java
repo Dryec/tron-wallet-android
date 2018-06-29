@@ -75,25 +75,29 @@ public class ParticipateAssetIssueContractFragment extends ContractFragment {
     }
 
     public void updateUI() {
-        if(mContract != null && getView() != null) { // TODO load assetissuecontract from node
+        if(mContract != null && getView() != null) {
             NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
             numberFormat.setMaximumFractionDigits(6);
             mTokenTextView.setText(mContract.getAssetName().toStringUtf8());
             mCostTextView.setText(numberFormat.format(mContract.getAmount()/1000000D));
 
-            mAmountTextView.setText("-");
-            AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
-                @Override
-                public void doOnBackground() {
-                    mAssetIssueContract = WalletManager.getAssetIssueByName(mContract.getAssetName().toStringUtf8());
-                    AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
-                        @Override
-                        public void doInUIThread() {
-                            mAmountTextView.setText(numberFormat.format((mContract.getAmount()) * ((double)mAssetIssueContract.getNum()/(double)(mAssetIssueContract.getTrxNum()))));
-                        }
-                    });
-                }
-            });
+            if (!WalletManager.getSelectedWallet().isColdWallet()) {
+                mAmountTextView.setText("-");
+                AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
+                    @Override
+                    public void doOnBackground() {
+                        mAssetIssueContract = WalletManager.getAssetIssueByName(mContract.getAssetName().toStringUtf8());
+                        AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                            @Override
+                            public void doInUIThread() {
+                                mAmountTextView.setText(numberFormat.format((mContract.getAmount()) * ((double) mAssetIssueContract.getNum() / (double) (mAssetIssueContract.getTrxNum()))));
+                            }
+                        });
+                    }
+                });
+            } else {
+                mAmountTextView.setText("cannot load in cold wallet");
+            }
         }
     }
 }

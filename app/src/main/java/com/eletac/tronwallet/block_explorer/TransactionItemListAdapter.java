@@ -2,6 +2,8 @@ package com.eletac.tronwallet.block_explorer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
@@ -26,18 +28,28 @@ import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import io.grpc.StatusRuntimeException;
 
 public class TransactionItemListAdapter extends RecyclerView.Adapter<TransactionItemListAdapter.TransactionItemViewHolder> {
 
     private Context mContext;
     private List<Protocol.Transaction> mTransactions;
+    private ExecutorService mExecutorService;
+    private List<Protocol.Transaction> mConfirmedTransactions;
 
     public TransactionItemListAdapter(Context context, List<Protocol.Transaction> transactions) {
         mContext = context;
         mTransactions = transactions;
+        mConfirmedTransactions = new ArrayList<>();
+        mExecutorService = Executors.newFixedThreadPool(3);
     }
 
     @NonNull
@@ -61,6 +73,9 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
     public class TransactionItemViewHolder extends RecyclerView.ViewHolder {
         private Context mContext;
         private Protocol.Transaction mTransaction;
+        private Handler mUpdateConfirmationHandler;
+        private UpdateConfirmationRunnable mUpdateConfirmationRunnable;
+        private boolean mFirstConfirmationStateLoaded;
 
         private TextView mTransactionFrom_TextView;
         private TextView mTransactionTo_TextView;
@@ -75,6 +90,8 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
             super(itemView);
             mContext = itemView.getContext();
             mTransaction = null;
+            mUpdateConfirmationHandler = new Handler();
+            mUpdateConfirmationRunnable = new UpdateConfirmationRunnable();
 
             mTransactionFrom_TextView = itemView.findViewById(R.id.Transaction_from_textView);
             mTransactionTo_TextView = itemView.findViewById(R.id.Transaction_to_textView);
@@ -99,8 +116,10 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
 
         public void bind(Protocol.Transaction transaction) {
             mTransaction = transaction;
+            mFirstConfirmationStateLoaded = false;
 
-            loadConfirmation();
+            mUpdateConfirmationHandler.removeCallbacks(mUpdateConfirmationRunnable);
+            mUpdateConfirmationHandler.post(mUpdateConfirmationRunnable);
 
             if(transaction.getRawData().getContractCount() > 0) {
                 Protocol.Transaction.Contract contract = transaction.getRawData().getContract(0);
@@ -269,31 +288,66 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
         }
 
         private void loadConfirmation() {
-            mTransactionConfirmed_CardView.setVisibility(View.GONE);
-            mTransactionLoadingConfirmation_ProgressBar.setVisibility(View.VISIBLE);
+            if(mConfirmedTransactions.contains(mTransaction)) {
+                mTransactionConfirmed_TextView.setText(R.string.confirmed);
+                mTransactionConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.positive));
+                mTransactionLoadingConfirmation_ProgressBar.setVisibility(View.GONE);
+            } else {
+                if(!mFirstConfirmationStateLoaded) {
+                    mTransactionConfirmed_CardView.setVisibility(View.GONE);
+                    mTransactionLoadingConfirmation_ProgressBar.setVisibility(View.VISIBLE);
+                }
 
-            AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
-                @Override
-                public void doOnBackground() {
-                    boolean isConfirmed = WalletManager.isTransactionConfirmed(mTransaction);
+                AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
+                    @Override
+                    public void doOnBackground() {
 
-                    AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
-                        @Override
-                        public void doInUIThread() {
+                        boolean isConfirmed = false;
+                        try {
+                            isConfirmed = WalletManager.isTransactionConfirmed(mTransaction);
+
+                            boolean finalIsConfirmed = isConfirmed;
+                            AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                                @Override
+                                public void doInUIThread() {
+                                    if(!mFirstConfirmationStateLoaded) {
+                                        mTransactionConfirmed_CardView.setVisibility(View.VISIBLE);
+                                        mTransactionLoadingConfirmation_ProgressBar.setVisibility(View.GONE);
+                                    }
+                                    mFirstConfirmationStateLoaded = true;
+
+                                    if (finalIsConfirmed) {
+                                        if (!mConfirmedTransactions.contains(mTransaction)) {
+                                            mConfirmedTransactions.add(mTransaction);
+                                        }
+                                        mTransactionConfirmed_TextView.setText(R.string.confirmed);
+                                        mTransactionConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.positive));
+                                    } else {
+                                        mTransactionConfirmed_TextView.setText(R.string.unconfirmed);
+                                        mTransactionConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
+
+                                        mUpdateConfirmationHandler.postDelayed(mUpdateConfirmationRunnable, 500);
+                                    }
+                                }
+                            });
+                        } catch (StatusRuntimeException e) {
+                            e.printStackTrace();
                             mTransactionConfirmed_CardView.setVisibility(View.VISIBLE);
                             mTransactionLoadingConfirmation_ProgressBar.setVisibility(View.GONE);
-
-                            if(isConfirmed) {
-                                mTransactionConfirmed_TextView.setText(R.string.confirmed);
-                                mTransactionConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.positive));
-                            } else {
-                                mTransactionConfirmed_TextView.setText(R.string.unconfirmed);
-                                mTransactionConfirmed_CardView.setCardBackgroundColor(ContextCompat.getColor(mContext, R.color.colorAccent));
-                            }
+                            mTransactionConfirmed_TextView.setText(R.string.unknown);
+                            mTransactionConfirmed_CardView.setCardBackgroundColor(Color.GRAY);
                         }
-                    });
-                }
-            });
+                    }
+                }, mExecutorService);
+            }
+        }
+
+        private class UpdateConfirmationRunnable implements Runnable {
+
+            @Override
+            public void run() {
+                loadConfirmation();
+            }
         }
     }
 }

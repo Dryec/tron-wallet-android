@@ -32,44 +32,103 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView477771"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="8dp"
-                android:text="To:"
-                android:textColor="@android:color/white"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView467771"
-                app:layout_constraintTop_toBottomOf="@+id/textView467771" />
-
-            <TextView
                 android:id="@+id/TransferAssetContract_amount_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:text="-"
+                android:textColor="@android:color/white"
                 app:layout_constraintStart_toEndOf="@+id/textView467771"
                 app:layout_constraintTop_toTopOf="@+id/textView467771" />
-
-            <TextView
-                android:id="@+id/TransferAssetContract_to_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="-"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/TransferAssetContract_amount_textView"
-                app:layout_constraintTop_toTopOf="@+id/textView477771" />
 
             <TextView
                 android:id="@+id/TransferAssetContract_symbol_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="@string/trx_symbol"
+                android:text="MGX"
+                android:textColor="@android:color/white"
                 app:layout_constraintStart_toEndOf="@+id/TransferAssetContract_amount_textView"
                 app:layout_constraintTop_toTopOf="@+id/TransferAssetContract_amount_textView" />
+
+            <TextView
+                android:id="@+id/textView477775"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="From:"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toStartOf="@+id/textView467771"
+                app:layout_constraintTop_toBottomOf="@+id/textView467771" />
+
+            <TextView
+                android:id="@+id/TransferAssetContract_from_name_textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Luca"
+                android:textColor="@android:color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/TransferAssetContract_amount_textView"
+                app:layout_constraintTop_toTopOf="@+id/textView477775"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/TransferAssetContract_from_textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="TPHQiZcUFkQMP5B9rDPSxuLLxVuM8Md4sS"
+                android:visibility="visible"
+                app:layout_constraintBottom_toTopOf="@+id/TransferAssetContract_to_textView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/TransferAssetContract_amount_textView"
+                app:layout_constraintTop_toBottomOf="@+id/TransferAssetContract_from_name_textView"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+            <TextView
+                android:id="@+id/textView47777"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="To:"
+                android:textColor="@android:color/white"
+                app:layout_constraintStart_toStartOf="@+id/textView467771"
+                app:layout_constraintTop_toBottomOf="@+id/TransferAssetContract_from_textView" />
+
+            <TextView
+                android:id="@+id/TransferAssetContract_to_name_textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Marius"
+                android:textColor="@android:color/white"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/TransferAssetContract_amount_textView"
+                app:layout_constraintTop_toTopOf="@+id/textView47777"
+                app:layout_constraintVertical_bias="0.0" />
+
+            <TextView
+                android:id="@+id/TransferAssetContract_to_textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="TPHQiZcUFkQMP5B9rDPSxuLLxVuM8Md4sS"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/TransferAssetContract_from_textView"
+                app:layout_constraintTop_toBottomOf="@+id/TransferAssetContract_to_name_textView" />
+
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>

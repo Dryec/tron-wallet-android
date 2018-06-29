@@ -92,7 +92,7 @@ public class AccountUpdater {
                             Wallet selectedWallet = WalletManager.getSelectedWallet();
                             byte[] address = WalletManager.decodeFromBase58Check(selectedWallet.getAddress());
 
-                            Protocol.Account account = WalletManager.queryAccount(address, true);
+                            Protocol.Account account = WalletManager.queryAccount(address, false);
                             GrpcAPI.AccountNetMessage accountNetMessage = WalletManager.getAccountNet(address);
 
                             Utils.saveAccount(mContext, selectedWallet.getWalletName(), account);

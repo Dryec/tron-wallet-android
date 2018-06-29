@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import io.grpc.StatusRuntimeException;
+
 public class BlockExplorerUpdater {
 
     public enum UpdateTask {
@@ -151,26 +153,42 @@ public class BlockExplorerUpdater {
                     public void doOnBackground() {
                         if (mContext != null) {
 
-                            // Load Blocks and transactions
-                            try {
-                                GrpcAPI.BlockList result = WalletManager.getBlockByLatestNum(50);
-                                if (result != null) {
-                                    mBlocks.clear();
-                                    mBlocks.addAll(result.getBlockList());
-                                    Collections.sort(mBlocks, new Comparator<Protocol.Block>() {
-                                        @Override
-                                        public int compare(Protocol.Block o1, Protocol.Block o2) {
-                                            return Long.compare(o1.getBlockHeader().getRawData().getNumber(), o2.getBlockHeader().getRawData().getNumber());
-                                        }
-                                    });
-                                }
+                            boolean gotSomeBlocks = false;
+                            int blockCount = 50;
 
-                                mTransactions.clear();
-                                for (Protocol.Block block : mBlocks) {
-                                    mTransactions.addAll(block.getTransactionsList());
+                            while(!gotSomeBlocks && blockCount > 0) {
+                                // Load Blocks and transactions
+                                try {
+                                    GrpcAPI.BlockList result = WalletManager.getBlockByLatestNum(blockCount);
+                                    if (result != null) {
+                                        mBlocks.clear();
+                                        mBlocks.addAll(result.getBlockList());
+                                        Collections.sort(mBlocks, new Comparator<Protocol.Block>() {
+                                            @Override
+                                            public int compare(Protocol.Block o1, Protocol.Block o2) {
+                                                return Long.compare(o1.getBlockHeader().getRawData().getNumber(), o2.getBlockHeader().getRawData().getNumber());
+                                            }
+                                        });
+                                    }
+
+                                    mTransactions.clear();
+                                    for (Protocol.Block block : mBlocks) {
+                                        mTransactions.addAll(block.getTransactionsList());
+                                    }
+                                    gotSomeBlocks = true;
+                                } catch (StatusRuntimeException e) {
+                                    e.printStackTrace();
+                                    switch (e.getStatus().getCode()) {
+                                        case RESOURCE_EXHAUSTED:
+                                            blockCount-=2;
+                                            break;
+                                        case UNAVAILABLE:
+                                            blockCount = 0;
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    blockCount = 0;
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
                         }
 
@@ -243,7 +261,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load witnesses
                         try {
-                            GrpcAPI.WitnessList result = WalletManager.listWitnesses(true);
+                            GrpcAPI.WitnessList result = WalletManager.listWitnesses(false);
                             if(result != null) {
                                 mWitnesses.clear();
                                 mWitnesses.addAll(result.getWitnessesList());
@@ -283,7 +301,7 @@ public class BlockExplorerUpdater {
                     if(mContext != null) {
                         // Load tokens
                         try {
-                            GrpcAPI.AssetIssueList result = WalletManager.getAssetIssueList(true);
+                            GrpcAPI.AssetIssueList result = WalletManager.getAssetIssueList(false);
                             if(result != null) {
                                 mTokens.clear();
                                 mTokens.addAll(result.getAssetIssueList());
