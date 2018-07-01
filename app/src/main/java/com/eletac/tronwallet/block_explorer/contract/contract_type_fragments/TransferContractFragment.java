@@ -108,7 +108,6 @@ public class TransferContractFragment extends ContractFragment {
 
                         if (!fromName.isEmpty()) {
                             mFromName_TextView.setVisibility(View.VISIBLE);
-                            mFromName_TextView.setScaleX(0);
                             mFromName_TextView.setAlpha(0);
                             mFromName_TextView.animate().alpha(1).setDuration(250).start();
                         }
