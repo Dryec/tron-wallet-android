@@ -96,7 +96,7 @@
         <android.support.constraint.ConstraintLayout
             android:id="@+id/frameLayout"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="220dp"
             diagonal:layout_constraintEnd_toEndOf="parent"
             diagonal:layout_constraintHorizontal_bias="0.0"
             diagonal:layout_constraintStart_toStartOf="parent"
@@ -140,16 +140,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
                 android:layout_marginBottom="100dp"
+                android:layout_marginTop="4dp"
                 android:gravity="center"
                 android:text="2,999,979.94"
                 android:textAppearance="@android:style/TextAppearance.Material.Body2"
                 android:textColor="@android:color/white"
                 android:textSize="36sp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                app:layout_constraintHorizontal_bias="0.503"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout5"
                 app:layout_constraintVertical_bias="0.0"
                 diagonal:layout_constraintEnd_toEndOf="parent"
-                diagonal:layout_constraintHorizontal_bias="0.501"
                 diagonal:layout_constraintStart_toStartOf="parent" />
 
             <TextView
@@ -273,15 +274,7 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <TextView
-                    android:id="@+id/textView56"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1"
-                    android:text="Hello" />
+                app:layout_constraintTop_toBottomOf="@+id/Wallet_account_name_textView">
 
                 <TextView
                     android:id="@+id/Wallet_name_textView"
@@ -289,29 +282,59 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:clickable="true"
-                    android:text="Marius" />
-
-                <TextView
-                    android:id="@+id/textView58"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="!" />
+                    android:text="Main Wallet" />
 
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/Wallet_edit_name_imageView"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
                 android:layout_margin="2dp"
+                android:layout_weight="1"
                 android:clickable="true"
-                android:scaleType="fitCenter"
+                android:scaleType="centerInside"
                 android:src="@drawable/baseline_edit_white_24"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toTopOf="@+id/Wallet_trx_balance_textView"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@+id/linearLayout2"
                 app:layout_constraintStart_toEndOf="@+id/linearLayout2"
                 app:layout_constraintTop_toTopOf="@+id/linearLayout2" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+                <TextView
+                    android:id="@+id/Wallet_pub_account_name_info_textView"
+                    android:layout_width="203dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="For security reasons you should setup a public account name"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/Wallet_account_name_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:text="Marius"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
 

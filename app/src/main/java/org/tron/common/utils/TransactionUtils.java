@@ -85,11 +85,17 @@ public class TransactionUtils {
         case AssetIssueContract:
           owner = unpackContract(contract, org.tron.protos.Contract.AssetIssueContract.class).getOwnerAddress();
           break;
+        case WitnessUpdateContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.WitnessUpdateContract.class).getOwnerAddress();
+          break;
         case ParticipateAssetIssueContract:
           owner = unpackContract(contract, org.tron.protos.Contract.ParticipateAssetIssueContract.class).getOwnerAddress();
           break;
         case DeployContract:
           owner = unpackContract(contract, org.tron.protos.Contract.DeployContract.class).getOwnerAddress();
+          break;
+        case AccountUpdateContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.AccountUpdateContract.class).getOwnerAddress();
           break;
         case FreezeBalanceContract:
           owner = unpackContract(contract, org.tron.protos.Contract.FreezeBalanceContract.class).getOwnerAddress();
@@ -106,7 +112,6 @@ public class TransactionUtils {
         case UpdateAssetContract:
           owner = unpackContract(contract, org.tron.protos.Contract.UpdateAssetContract.class).getOwnerAddress();
           break;
-
         default:
           return null;
       }

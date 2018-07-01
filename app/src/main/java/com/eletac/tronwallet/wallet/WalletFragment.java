@@ -28,6 +28,10 @@ import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Token;
 import com.eletac.tronwallet.TronWalletApplication;
 import com.eletac.tronwallet.Utils;
+import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
+import com.yarolegovich.lovelydialog.LovelyInfoDialog;
+import com.yarolegovich.lovelydialog.LovelyProgressDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.tron.api.GrpcAPI;
@@ -58,7 +62,9 @@ public class WalletFragment extends Fragment {
     private FloatingActionButton mSendReceive_Button;
     private FloatingActionButton mVote_Button;
     private TextView mName_TextView;
+    private TextView mAccountName_TextView;
     private ImageView mEditName_ImageView;
+    private TextView mPubAccountNameInfo_TextView;
 
     private Protocol.Account mLatestAccountData;
     private List<Token> mTokens;
@@ -148,7 +154,9 @@ public class WalletFragment extends Fragment {
         mSendReceive_Button = view.findViewById(R.id.Wallet_send_receive_floatingActionButton);
         mVote_Button = view.findViewById(R.id.Wallet_vote_floatingActionButton);
         mName_TextView = view.findViewById(R.id.Wallet_name_textView);
+        mAccountName_TextView = view.findViewById(R.id.Wallet_account_name_textView);
         mEditName_ImageView = view.findViewById(R.id.Wallet_edit_name_imageView);
+        mPubAccountNameInfo_TextView = view.findViewById(R.id.Wallet_pub_account_name_info_textView);
 
         mTRX_balance_TextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -272,26 +280,77 @@ public class WalletFragment extends Fragment {
             }
         });
 
-        // TODO
         View.OnClickListener editNameClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new LovelyTextInputDialog(getContext(), R.style.EditTextTintTheme)
-                        .setTopColorRes(R.color.colorAccent)
-                        .setTitle("Edit Name")
-                        .setHint(mLatestAccountData.getAccountName().toStringUtf8())
-                        .setIcon(R.drawable.baseline_edit_white_24)
-                        .setConfirmButton(android.R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                new LovelyStandardDialog(getContext(), LovelyStandardDialog.ButtonLayout.HORIZONTAL)
+                        .setTopColorRes(R.color.colorPrimary)
+                        .setButtonsColor(Color.WHITE)
+                        .setIcon(R.drawable.ic_info_white_24px)
+                        .setTitle(R.string.attention)
+                        .setMessage("Your account name is not the same as that of your wallet. It is a publicly visible name and can be used, among other things, to compare transactions in order to verify an account more quickly.\n\nYour account name can only be changed once.\nMake sure you choose the right name.")
+                        .setPositiveButton(R.string.ok, new View.OnClickListener() {
                             @Override
-                            public void onTextInputConfirmed(String text) {
-                                Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+                            public void onClick(View v) {
+                                new LovelyTextInputDialog(getContext(), R.style.EditTextTintTheme)
+                                        .setTopColorRes(R.color.colorAccent)
+                                        .setTitle("Setup Account Name")
+                                        .setMessage("At least 8 characters and no whitespaces")
+                                        .setHint("Public Name")
+                                        .setIcon(R.drawable.baseline_edit_white_24)
+                                        .setConfirmButton(R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                                            @Override
+                                            public void onTextInputConfirmed(String text) {
+                                                LovelyProgressDialog progressDialog = new LovelyProgressDialog(getContext())
+                                                        .setIcon(R.drawable.ic_send_white_24px)
+                                                        .setTitle(R.string.loading)
+                                                        .setTopColorRes(R.color.colorPrimary);
+                                                progressDialog.show();
+                                                AsyncJob.doInBackground(new AsyncJob.OnBackgroundJob() {
+                                                    @Override
+                                                    public void doOnBackground() {
+                                                        Protocol.Transaction transaction =  WalletManager.createUpdateAccountTransaction(WalletManager.decodeFromBase58Check(mWallet.getAddress()), text);
+                                                        if(transaction.hasRawData()) {
+                                                            Context context = getContext();
+                                                            if(context != null) {
+                                                                AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                                                                    @Override
+                                                                    public void doInUIThread() {
+                                                                        progressDialog.dismiss();
+                                                                        ConfirmTransactionActivity.start(context, transaction);
+                                                                    }
+                                                                });
+                                                            }
+                                                        } else {
+                                                            AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                                                                @Override
+                                                                public void doInUIThread() {
+                                                                    progressDialog.dismiss();
+                                                                    new LovelyStandardDialog(getContext(), LovelyStandardDialog.ButtonLayout.HORIZONTAL)
+                                                                            .setTopColorRes(R.color.colorPrimary)
+                                                                            .setButtonsColor(Color.WHITE)
+                                                                            .setIcon(R.drawable.ic_info_white_24px)
+                                                                            .setTitle("Invalid Name")
+                                                                            .setMessage("Your name is not valid or already forgiven")
+                                                                            .setPositiveButton(R.string.ok, null)
+                                                                            .show();
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.cancel, null)
+                                        .show();
                             }
                         })
+                        .setNegativeButton(R.string.cancel, null)
                         .show();
             }
         };
-        //mName_TextView.setOnClickListener(editNameClickListener);
-        //mEditName_ImageView.setOnClickListener(editNameClickListener);
+        mPubAccountNameInfo_TextView.setOnClickListener(editNameClickListener);
+        mEditName_ImageView.setOnClickListener(editNameClickListener);
 
         mTokens_RecyclerView.setHasFixedSize(true);
         mTokens_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -368,7 +427,16 @@ public class WalletFragment extends Fragment {
     private void onAccountUpdated() {
         if(getContext() != null && mLatestAccountData != null && mWallet != null) {
 
+            String accountName = mLatestAccountData.getAccountName().toStringUtf8();
+            boolean needPublicName = accountName.isEmpty() && mLatestAccountData.getCreateTime() > 0;
+
+            mPubAccountNameInfo_TextView.setVisibility(needPublicName ? View.VISIBLE : View.GONE);
+            mEditName_ImageView.setVisibility(needPublicName ? View.VISIBLE : View.GONE);
+
             mName_TextView.setText(mWallet.getWalletName());
+            mAccountName_TextView.setVisibility(!accountName.isEmpty() ? View.VISIBLE : View.GONE);
+            mAccountName_TextView.setText(accountName);
+
             mTRX_address_TextView.setText(mWallet.getAddress());
 
             updateBalanceTextViews();

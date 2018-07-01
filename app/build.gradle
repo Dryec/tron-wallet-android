@@ -62,7 +62,6 @@ dependencies {
     implementation 'io.grpc:grpc-protobuf-lite:1.9.0'
     implementation 'io.grpc:grpc-stub:1.9.0'
     implementation 'javax.annotation:javax.annotation-api:1.2'
-    implementation 'io.grpc:grpc-stub:1.9.0'
 
     implementation "com.madgag.spongycastle:core:1.53.0.0"
     implementation "com.madgag.spongycastle:prov:1.53.0.0"

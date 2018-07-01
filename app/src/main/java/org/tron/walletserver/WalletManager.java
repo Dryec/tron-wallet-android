@@ -278,8 +278,8 @@ public class WalletManager {
         return rpcCli.createParticipateAssetIssueTransaction(contract);
     }
 
-    public static Transaction createUpdateAccountTransaction(byte[] addressBytes, byte[] accountNameBytes) {
-        Contract.AccountUpdateContract contract = createAccountUpdateContract(accountNameBytes,
+    public static Transaction createUpdateAccountTransaction(byte[] addressBytes, String accountName) {
+        Contract.AccountUpdateContract contract = createAccountUpdateContract(ByteArray.fromString(accountName),
                 addressBytes);
         return rpcCli.createTransaction(contract);
     }
