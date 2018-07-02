@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
+import com.eletac.tronwallet.block_explorer.contract.contract_type_fragments.AccountUpdateContractFragment;
 import com.eletac.tronwallet.block_explorer.contract.contract_type_fragments.AssetIssueContractFragment;
 import com.eletac.tronwallet.block_explorer.contract.contract_type_fragments.FreezeContractFragment;
 import com.eletac.tronwallet.block_explorer.contract.contract_type_fragments.ParticipateAssetIssueContractFragment;
@@ -134,6 +135,7 @@ public class ContractLoaderFragment extends ContractFragment {
                 fragment = ParticipateAssetIssueContractFragment.newInstance();
                 break;
             case AccountUpdateContract:
+                fragment = AccountUpdateContractFragment.newInstance();
                 break;
             case FreezeBalanceContract:
                 fragment = FreezeContractFragment.newInstance();
