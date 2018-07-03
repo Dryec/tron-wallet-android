@@ -1,7 +1,7 @@
 <resources>
 
     <!--> NO TRANSLATION <-->
-    <string name="fullnode_ip">34.237.220.206</string>
+    <string name="fullnode_ip">54.236.37.243</string>
     <string name="fullnode_port">50051</string>
     <string name="soliditynode_ip">39.105.66.80</string>
     <string name="soliditynode_port">50051</string>
