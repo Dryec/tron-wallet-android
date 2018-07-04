@@ -173,7 +173,15 @@ public class BlockExplorerUpdater {
 
                                     mTransactions.clear();
                                     for (Protocol.Block block : mBlocks) {
-                                        mTransactions.addAll(block.getTransactionsList());
+                                        for (Protocol.Transaction transaction : block.getTransactionsList()) {
+                                            Protocol.Transaction.Builder builder = transaction.toBuilder();
+                                            Protocol.Transaction.raw.Builder rawBuilder = transaction.getRawData().toBuilder();
+
+                                            rawBuilder.setTimestamp(block.getBlockHeader().getRawData().getTimestamp());
+                                            builder.setRawData(rawBuilder.build());
+                                            mTransactions.add(builder.build());
+                                        }
+                                        //mTransactions.addAll(block.getTransactionsList());
                                     }
                                     gotSomeBlocks = true;
                                 } catch (StatusRuntimeException e) {
