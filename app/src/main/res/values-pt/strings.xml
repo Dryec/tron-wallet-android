@@ -1,0 +1,264 @@
+<resources>
+
+    <!--> NO TRANSLATION <-->
+    <string name="fullnode_ip">54.236.37.243</string>
+    <string name="fullnode_port">50051</string>
+    <string name="soliditynode_ip">39.105.66.80</string>
+    <string name="soliditynode_port">50051</string>
+
+    <string name="app_name">Tron Wallet</string>
+    <string name="app_version">v1.1.4.3</string>
+
+    <string name="preference_file_key">com.eletac.tronwallet.wallet_preferences</string>
+    <string name="pwd_key">pwd_key</string>
+    <string name="priv_key">priv_key</string>
+    <string name="pub_key">pub_key</string>
+    <string name="is_cold_wallet_key">is_cold_wallet_key</string>
+    <string name="preference_account_file_key">com.eletac.tronwallet.wallet_account_preferences</string>
+    <string name="name_key">name_key</string>
+    <string name="balance_key">balance_key</string>
+    <string name="latest_operation_time_key">latest_operation_time_key</string>
+    <string name="assets_key">assets_key</string>
+    <string name="public_address_raw">public_address_raw</string>
+    <string name="is_public_address_only">is_public_address_only</string>
+    <string name="votes_key">votes_key</string>
+    <string name="create_time_key">create_time_key</string>
+    <string name="address_key">address_key</string>
+    <string name="frozen_key">frozen_key</string>
+    <string name="bandwidth_key">bandwidth_key</string>
+    <string name="ip_key">ip</string>
+    <string name="port_key">port</string>
+    <string name="ip_sol_key">ip_sol</string>
+    <string name="port_sol_key">port_sol</string>
+    <string name="net_limit_key">net_limit_key</string>
+    <string name="net_used_key">net_used_key</string>
+    <string name="net_free_limit_key">net_free_limit_key</string>
+    <string name="net_free_used_key">net_free_used_key</string>
+    <!--> NO TRANSLATION <-->
+
+    <string name="title_wallet">Carteira</string>
+    <string name="title_activity_import_wallet">Importar Carteira</string>
+    <string name="title_block_explorer">Explorador de Blocos</string>
+    <string name="title_settings">Configurações</string>
+
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="copy_success">Copiado com Sucesso</string>
+
+    <string name="create_wallet_dialog_message">Você está prestes a criar uma carteira com a senha digitada.\n\nNa próxima tela você verá o seu endereço e a sua chave privada.</string>
+    <string name="create_wallet_cold_dialog_message">Você está prestes a criar uma carteira fria(cold wallet) com a senha digitada.\n\nEssa carteira é somente utilizada para assinar transações.\n\nNa próxima tela você verá o seu endereço e a sua chave privada.</string>
+    <string name="create_wallet_dialog_title">Criar Carteira</string>
+
+    <string name="import_wallet_dialog_message">Você está prestes a importar uma carteira com a senha e a private key digitada/frase de recuperação.</string>
+    <string name="import_wallet_cold_dialog_message">Você está prestes a importar sua chave privada de uma carteira fria(cold wallet) com a senha digitada.\n\nEssa carteira é somente utilizda para assinar transações.</string>
+    <string name="import_wallet_dialog_title">Importar Carteira</string>
+
+    <string name="create_wallet_inv_password_dialog_message">Por favor digite uma senha com pelo menos 6 caracteres e sem espaços em branco.</string>
+    <string name="create_wallet_inv_password_dialog_title">Senha inválida</string>
+
+    <string name="inv_private_key_dialog_message">Digite todos os 64 caracteres da sua chave privada.</string>
+    <string name="inv_private_key_dialog_title">Chave Privada Inválida</string>
+
+
+    <string name="trx_symbol">TRX</string>
+
+    <string name="title_activity_send_receive">Carteira Tron</string>
+    <string name="tab_title_send">Enviar</string>
+    <string name="tab_title_receive">Receber</string>
+    <string name="action_settings">Configurações</string>
+
+    <string name="not_available_in_cold_wallet">Não disponível para carteira fria</string>
+    <string name="cold_wallet_info_dialog">Uma carteira fria nunca se conectará a internet e é utilizada somente para assinar transações.\n\nPara uma segurança ainda maior, você nunca deve conectar seu dispositivo a internet.\n\Use outro dispositivo com a Tron Wallet App e importe seu endereço público para ter uma visão geral e assinar transações a partir dele.</string>
+    <string name="create_wallet">Criar Carteira</string>
+    <string name="import_wallet">Importar Carteira</string>
+    <string name="import_text">Importar</string>
+    <string name="title_activity_signed_transaction">Transação Assinada</string>
+    <string name="title_activity_sign_transaction">Assinar Transação</string>
+    <string name="tab_title_blockchain">Blockchain</string>
+    <string name="tab_title_network">Rede</string>
+    <string name="tab_title_tokens">Tokens</string>
+    <string name="tab_title_accounts">Contas</string>
+    <string name="transaction_successfully_sent">Transação enviada com sucesso!</string>
+    <string name="transaction_sending_failed">Transação falhou!</string>
+    <string name="tab_title_sign">Assinar</string>
+    <string name="title_activity_vote">Representantes</string>
+    <string name="tab_title_candidates">Candidatos</string>
+    <string name="tab_title_votes">Seus Votos</string>
+    <string name="tab_title_representatives">Representantes</string>
+    <string name="tab_title_nodes">Nós</string>
+    <string name="none">Nenhum</string>
+    <string name="never">Nunca</string>
+    <string name="account_item_votes_text">%s para %s candidatos</string>
+    <string name="multiple_witnesses">multiplas testemunhas</string>
+    <string name="witness_votes">votos das testemunhas</string>
+    <string name="confirm_signing">Confirmar Assinatura</string>
+    <string name="password">Senha</string>
+    <string name="sign">Assinar</string>
+    <string name="error">Erro</string>
+    <string name="failed_to_generate_qr_code">Falha ao gerar QR code</string>
+    <string name="wrong_password">Senha Errada</string>
+    <string name="signing_canceled">A assinatura da sua transação foi cancelada.</string>
+    <string name="invalid_transaction">Transação Inválida</string>
+    <string name="no_valid_transaction_detected">Transação inválida foi detectada.</string>
+    <string name="scan_transaction_qr_code">Escaneie o QR code da sua transação</string>
+    <string name="cold_wallet">Carteira Fria</string>
+    <string name="cold_wallet_setup">Configurar Carteira Fria </string>
+    <string name="scan_your_address_qr_code">Escaneie o QR code do seu endereço público.</string>
+    <string name="scan_your_priv_key_qr_code">Escaneie o QR code da sua chave privada.</string>
+    <string name="import_address">Importar Endereço</string>
+    <string name="import_address_message">Você está prestes a importar apenas o endereço digitado.\n\nNâo será possível fazer transações sem sua carteira fria.</string>
+    <string name="invalid_address">Endereço Inválido</string>
+    <string name="enter_valid_address">Digite um endereço válido</string>
+    <string name="cant_send_to_own_address">Você não pode enviar para seu próprio endereço</string>
+    <string name="invalid_amount">Quantidade Inválida</string>
+    <string name="enter_amount_between">Por favor digite uma quantidade entre %d e %s</string>
+    <string name="send_message_text_asset">Ativo:</string>
+    <string name="send_message_text_to">Para:</string>
+    <string name="send_message_text_amount">Quantidade:</string>
+    <string name="confirm_transaction">Confirmar Transação</string>
+    <string name="send">Enviar</string>
+    <string name="sending">Enviando</string>
+    <string name="sent_successfully">Enviado com sucesso</string>
+    <string name="sending_failed">Falha ao enviar</string>
+    <string name="scan_send_to_qr_code">Escaneie o QR code que você deseja enviar para.</string>
+    <string name="scan_signed_transaction">Escaneie o QR code da transação assinada da sua carteira fria</string>
+    <string name="confirm_votes">Confirmar Votos</string>
+    <string name="sign_to_submit">Assinar para enviar</string>
+    <string name="submit">Enviar</string>
+    <string name="votes_submitted_successfully">Votos enviados com sucesso</string>
+    <string name="submitting_failed">Envio falhou</string>
+    <string name="try_later">Tente novamente mais tarde</string>
+    <string name="send_available">Disponível:</string>
+    <string name="amount">Quantidade</string>
+    <string name="to">Para</string>
+    <string name="asset">Ativo</string>
+    <string name="private_key">Chave Privada</string>
+    <string name="address">Endereço</string>
+    <string name="account">Conta</string>
+    <string name="continue_">Continuar</string>
+    <string name="store_the_private_key_securely">Armazene com segurança sua chave privada e sua frase de recuperação de 24 palavras!\np. ex. em um pedaço de papel em um cofre.\n\nPerder ambas resultará em perda de acesso a sua conta permanentemente!</string>
+    <string name="i_am_aware_of_the_risks">Estou ciente dos riscos</string>
+    <string name="new_password">Nova Senha</string>
+    <string name="new_name">Novo Nome</string>
+    <string name="password_info">Sua senha é importante para qualquer transação. Sem sua senha não será possível acessar seus ativos através da carteira!</string>
+    <string name="generate_address_and_private_key">Gerar Endereço e Chave Privada</string>
+    <string name="or">ou</string>
+    <string name="public_address">Endereço Público</string>
+    <string name="private_key_info">Sua chave privada é necessária para assinar transações e acessar seus ativos</string>
+    <string name="import_public_address_only">Importar apenas endereço público</string>
+    <string name="import_pub_address_only_info">Use essa opção quando você já criou sua carteira fria ou apenas deseja uma visão geral da sua conta</string>
+    <string name="recovery_phrase_switch">Frase de recuperação </string>
+    <string name="scan_unsigned_transaction">Eescaneie sua transação não assinada com seu dispositivo de carteira fria para assina-la.</string>
+    <string name="i_ve_signed_my_transaction">Eu assinei minha transação</string>
+    <string name="scan_your_signed_transaction">Escaneie sua transação assinada</string>
+    <string name="scan_signed_transaction_to_complete">Escaneie sua transação assinada com seu outro dispositivo para completar a transação.</string>
+    <string name="remaining_votes">Votos Restantes:</string>
+    <string name="submit_votes">Enviar Votos</string>
+    <string name="search">Procurar</string>
+    <string name="search_space">Procurar</string>
+    <string name="scan_qr_code_to_get_your_address_or_click_to_copy">Escaneie o QR Code para pegar seu endereço ou clique para copiar.</string>
+    <string name="recent_blocks">Blocos Recentes</string>
+    <string name="recent_transactions">Transações Recentes</string>
+    <string name="scan_a_transaction_qr_code_to_sign_it">Escaneie um QR code de transação para assina-la.</string>
+    <string name="balance">Saldo</string>
+    <string name="token">Token</string>
+    <string name="cold_wallet_caps">CARTEIRA FRIA</string>
+    <string name="receive">Receber</string>
+    <string name="balance_colon">Saldo:</string>
+    <string name="assets_colon">Ativos:</string>
+    <string name="votes_colon">Votos:</string>
+    <string name="last_operation_colon">Última Operação:</string>
+    <string name="produced_by">Produzi por</string>
+    <string name="port_colon">Porta:</string>
+    <string name="ip_colon">IP:</string>
+    <string name="vote">Voto</string>
+    <string name="total_votes_colon">Total de Votos:</string>
+    <string name="produced_colon">Produzido:</string>
+    <string name="missed_colon">Perdido:</string>
+    <string name="last_block_colon">Último Bloco:</string>
+    <string name="_24_words_recovery_phrase">frase de recuperação de 24 palavras</string>
+    <string name="recovery_phrase">frase de recuperação de 24 palavras</string>
+    <string name="recovery_phrase_info">Sua chave privada será recuperada usando a frase de recuperação.</string>
+    <string name="inv_recovery_phrase_dialog_title">Frase de Recuperação Inválida</string>
+    <string name="inv_recovery_phrase_dialog_message">Por favor digite todas as 24 palavras da sua frase de recuperação.</string>
+    <string name="could_not_create_transaction">Não foi possível criar transação.\nVerifique a conexão com a internet e as configurações do nó</string>
+    <string name="tab_title_freeze">Congelar</string>
+    <string name="freeze_info_long">TRX pode ser congelado para receber Tron Power(TP).\nPara cada TP você recebe um voto para super delegates e banda larga baseada na sua relação de quantidade total congelada e na rede.\nSeus TRX serão congelados por 3 dias, após isso eles poderão ser descongelados.\nDescongelar remove seus TP e banda larga.\nVocê tem 5000 de banda larga livre por dia.</string>
+
+    <string name="unfreeze">Descongelar</string>
+    <string name="confirm_freezing">Confirmar Congelamento</string>
+    <string name="freeze">Congelar</string>
+    <string name="freezing">Congelando</string>
+    <string name="freezed_succesfully">Congelado com Sucesso</string>
+    <string name="freezing_failed">Congelamento falhou</string>
+    <string name="frozen">Congelado</string>
+    <string name="confirm_unfreezing">Confirmar Descongelamento</string>
+    <string name="unfreezing_failed">Descongelamento Falhou</string>
+    <string name="unfreezing">Descongelando</string>
+    <string name="unfreeze_successfully">Descongelado com Sucesso</string>
+    <string name="remove_wallet">Remover Carteira</string>
+    <string name="secret_account_info">Informações da Contra Secreta</string>
+    <string name="connection">Conexão</string>
+    <string name="confirm_removing">Confirmar Removação</string>
+    <string name="remove">Remover</string>
+    <string name="remove_info">Você está prestes a remover essa carteira.\n\nPor favor tenha certeza que você tem sua chave privada ou a frase de recuperação antes de remover essa carteira, ao contrário você poderá acessa a sua conta.\n\nOutras carteiras permanecerão</string>
+    <string name="remove_address_only_info">Você está prestes a remover essa carteira.\n\nVocê removerá apenas seu endereço público, então não há risco.</string>
+    <string name="removing_failed">Remoção falhou</string>
+    <string name="no_access">Sem Acesso</string>
+    <string name="account_no_access_info">Uma carteira apenas de endereço não pode acessar essa informação</string>
+    <string name="password_needed">Senha</string>
+    <string name="access_denied">Acesso negado</string>
+    <string name="tron_wallet_description">Tron Wallet é uma carteira multifuncional para a rede Tron.</string>
+    <string name="copyright">© 2018 Marius Gill All Rights Reserved</string>
+    <string name="title_activity_participate_asset">Participar</string>
+    <string name="confirm_spending">Confirmar Pagamento</string>
+    <string name="spending_failed">Pagamento falhou</string>
+    <string name="spending">Pagamento</string>
+    <string name="spend">Pagar</string>
+    <string name="spending_successfully">Pagamento com Sucesso</string>
+    <string name="tron_power_short">TP</string>
+
+    <string name="not_enough_bandwidth">Banda larga insuficiente</string>
+    <string name="transactions_failed_bandwidth">Transação falhou, banda não larga insuficiente!</string>
+    <string name="bandwidth">Banda Larga</string>
+    <string name="title_activity_confirm_transaction">Confirmar Transação</string>
+    <string name="failed">Falhou</string>
+
+    <string name="hello_blank_fragment">Olá fragmento em branco</string>
+    <string name="attention">Atenção</string>
+    <string name="transaction_will_cost">Transação custará</string>
+    <string name="loading">Carregando…</string>
+    <string name="title_activity_issue_token">Criar Token</string>
+    <string name="selected_wallet_key">selected_wallet_key</string>
+    <string name="wallet_name_key">wallet_name_key</string>
+    <string name="is_watch_only_setup_key">is_watch_only_setup_key</string>
+    <string name="wallets_key">wallets_key</string>
+    <string name="title_activity_select_wallet">Selecionar Carteira</string>
+    <string name="wallet_address_key">wallet_address_key</string>
+    <string name="no_wallet_selected">Nenhuma carteira selecionada</string>
+    <string name="could_not_copy">Não foi possível copiar, nenhuma carteira selecionada</string>
+    <string name="tab_title_history">Histórico</string>
+    <string name="info_history">* Histórico contém apenas apeas transações enviadas com sucesso através da Tron Wallet</string>
+
+    <string name="title_activity_transaction_viewer">Transação</string>
+    <string name="confirmed">Confirmado</string>
+    <string name="unconfirmed">Não confirmado</string>
+    <string name="unknown">Desconhecido</string>
+
+    <string name="title_about">Sobre</string>
+
+    <string name="tab_wallet">Carteira</string>
+    <string name="tab_settings">Configurações</string>
+    <string name="tab_block_explorer">Explorador de Blocos</string>
+
+    <string name="btn_about">Sobre</string>
+    <string name="btn_select_wallet">Selecionar Carteira</string>
+
+    <string name="full_node">Nó Inteiro</string>
+    <string name="node_ip">IP do Nó (p. ex. 47.254.16.55)</string>
+    <string name="node_port">Porta do Nó (p. ex. 50051)</string>
+    <string name="btn_reset">RESETAR</string>
+    <string name="btn_save_connect">SALVAR E CONECTAR</string>
+    <string name="solidity_node">Nó Solidity</string>
+</resources>

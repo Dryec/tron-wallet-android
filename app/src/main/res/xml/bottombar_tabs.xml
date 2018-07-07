@@ -3,16 +3,16 @@
     <tab
         id="@+id/tab_block_explorer"
         icon="@drawable/ic_view_module_black_24px"
-        title="Block Explorer"
+        title="@string/tab_block_explorer"
         barColorWhenSelected="#a62f2c"/>
     <tab
         id="@+id/tab_wallet"
         icon="@drawable/ic_account_balance_wallet_black_24px"
-        title="Wallet"
+        title="@string/tab_wallet"
         barColorWhenSelected="#a22b28" />
     <tab
         id="@+id/tab_settings"
         icon="@drawable/ic_settings_black_24dp"
-        title="Settings"
+        title="@string/tab_settings"
         barColorWhenSelected="#a62f2c" />
 </tabs>
