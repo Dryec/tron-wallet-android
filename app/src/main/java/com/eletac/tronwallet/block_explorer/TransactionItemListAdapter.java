@@ -281,9 +281,26 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
 
                 mTransactionFrom_TextView.setText(from);
                 mTransactionTo_TextView.setText(to);
-                mTransactionTimestamp_TextView.setText(java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT,java.text.DateFormat.SHORT).format(new Date(transaction.getRawData().getTimestamp())));
                 mTransactionAmount_TextView.setText((amount != -1 ? numberFormat.format(amount) : "") + " " + amount_prefix);
                 mTransactionAsset_TextView.setText(contract_desc);
+
+                long timestamp = transaction.getRawData().getTimestamp();
+                if(timestamp == 0) {
+                    for (Protocol.Block block : BlockExplorerUpdater.getBlocks()) {
+
+                        for(Protocol.Transaction blockTransaction : block.getTransactionsList()) {
+                            if(blockTransaction.equals(transaction)) {
+                                timestamp = block.getBlockHeader().getRawData().getTimestamp();
+                                break;
+                            }
+                        }
+                        if(timestamp != 0) {
+                            break;
+                        }
+                    }
+
+                }
+                mTransactionTimestamp_TextView.setText(java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT,java.text.DateFormat.SHORT).format(new Date(timestamp)));
             }
         }
 
