@@ -25,7 +25,7 @@
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="About">
+            app:title="@string/title_about">
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

@@ -19,7 +19,7 @@
         <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Settings" />
+            android:text="@string/title_settings" />
 
     </android.support.design.widget.TabLayout>
 
@@ -50,7 +50,7 @@
                     android:layout_width="0dp"
                     android:layout_height="70dp"
                     android:backgroundTint="#323232"
-                    android:text="Select Wallet"
+                    android:text="@string/btn_select_wallet"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
@@ -62,7 +62,7 @@
                     android:layout_width="0dp"
                     android:layout_height="70dp"
                     android:backgroundTint="#323232"
-                    android:text="About"
+                    android:text="@string/btn_about"
                     android:textSize="16sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
