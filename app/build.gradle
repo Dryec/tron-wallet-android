@@ -4,8 +4,8 @@ apply plugin: 'com.google.protobuf'
 android {
     compileSdkVersion 27
     defaultConfig {
-        versionCode 29
-        versionName "1.1.4.4"
+        versionCode 30
+        versionName "1.1.5.1"
         applicationId "com.eletac.tronwallet"
         minSdkVersion 21
         targetSdkVersion 27
