@@ -138,11 +138,21 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
         android:backgroundTint="@color/colorAccent"
         android:text="Open in Tronscan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/TransactionViewer_copy_tronscan_button" />
+
+    <ImageButton
+        android:id="@+id/TransactionViewer_copy_tronscan_button"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="@color/colorAccent"
+        android:src="@drawable/outline_file_copy_24"
+        app:layout_constraintBottom_toBottomOf="@+id/TransactionViewer_open_tronscan_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/TransactionViewer_open_tronscan_button" />
 
 </android.support.constraint.ConstraintLayout>

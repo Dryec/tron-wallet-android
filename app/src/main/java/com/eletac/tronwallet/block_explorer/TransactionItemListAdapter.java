@@ -29,6 +29,7 @@ import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -286,17 +287,21 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
 
                 long timestamp = transaction.getRawData().getTimestamp();
                 if(timestamp == 0) {
-                    for (Protocol.Block block : BlockExplorerUpdater.getBlocks()) {
-
-                        for(Protocol.Transaction blockTransaction : block.getTransactionsList()) {
-                            if(blockTransaction.equals(transaction)) {
-                                timestamp = block.getBlockHeader().getRawData().getTimestamp();
+                    try {
+                        for (Protocol.Block block : BlockExplorerUpdater.getBlocks()) {
+                            for (Protocol.Transaction blockTransaction : block.getTransactionsList()) {
+                                if (blockTransaction.equals(transaction)) {
+                                    timestamp = block.getBlockHeader().getRawData().getTimestamp();
+                                    break;
+                                }
+                            }
+                            if (timestamp != 0) {
                                 break;
                             }
                         }
-                        if(timestamp != 0) {
-                            break;
-                        }
+                    }
+                    catch (ConcurrentModificationException e) {
+                        e.printStackTrace();
                     }
 
                 }

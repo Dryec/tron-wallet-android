@@ -26,6 +26,7 @@ import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.TronWalletApplication;
 import com.eletac.tronwallet.Utils;
+import com.eletac.tronwallet.block_explorer.TransactionViewerActivity;
 import com.eletac.tronwallet.block_explorer.contract.ContractLoaderFragment;
 import com.eletac.tronwallet.database.Transaction;
 import com.eletac.tronwallet.wallet.AccountUpdater;
@@ -270,6 +271,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                 progressDialog.dismiss();
 
                 AccountUpdater.singleShot(0);
+                Protocol.Transaction transactionBackup = mTransactionSigned;
                 LovelyStandardDialog dialog = new LovelyStandardDialog(ConfirmTransactionActivity.this, LovelyStandardDialog.ButtonLayout.HORIZONTAL)
                         .setTopColorRes(R.color.colorPrimary)
                         .setButtonsColor(Color.WHITE)
@@ -278,12 +280,25 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.ok, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+                                if(sent) {
+                                    Intent intent = new Intent(ConfirmTransactionActivity.this, TransactionViewerActivity.class);
+                                    intent.putExtra(TransactionViewerActivity.TRANSACTION_DATA, transactionBackup.toByteArray());
+                                    startActivity(intent);
+                                }
                                 finish();
                             }
                         });
                 if(!sent) {
                     dialog.setMessage(getString(R.string.try_later));
                 } else {
+                    dialog.setMessage("View Transaction?");
+                    dialog.setNegativeButton("No", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finish();
+                        }
+                    });
+
                     Intent transactionSentIntent = new Intent(TRANSACTION_SENT);
                     LocalBroadcastManager.getInstance(ConfirmTransactionActivity.this).sendBroadcast(transactionSentIntent);
                 }

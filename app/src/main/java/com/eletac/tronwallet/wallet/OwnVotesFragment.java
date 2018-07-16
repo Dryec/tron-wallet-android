@@ -29,6 +29,7 @@ import org.tron.walletserver.WalletManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class OwnVotesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -141,13 +142,19 @@ public class OwnVotesFragment extends Fragment implements SwipeRefreshLayout.OnR
     private void loadVotedWitnesses() {
         mVotedWitnesses.clear();
         for(Protocol.Vote vote : mAccount.getVotesList()) {
-            for(Protocol.Witness witness : mWitnesses) {
-                try {
-                    if (Arrays.equals(vote.getVoteAddress().toByteArray(), witness.getAddress().toByteArray())) {
-                        mVotedWitnesses.add(witness);
-                        break;
+            try {
+                for (Protocol.Witness witness : mWitnesses) {
+                    try {
+                        if (Arrays.equals(vote.getVoteAddress().toByteArray(), witness.getAddress().toByteArray())) {
+                            mVotedWitnesses.add(witness);
+                            break;
+                        }
+                    } catch (NullPointerException ignore) {
                     }
-                }  catch (NullPointerException ignore) {}
+                }
+            }
+            catch (ConcurrentModificationException e) {
+                e.printStackTrace();
             }
         }
 

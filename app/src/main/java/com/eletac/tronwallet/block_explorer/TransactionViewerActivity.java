@@ -18,6 +18,7 @@ import android.text.format.DateUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,6 +50,7 @@ public class TransactionViewerActivity extends AppCompatActivity {
     private CardView mConfirmed_CardView;
     private ProgressBar mLoadingConfirmation_ProgressBar;
     private Button mOpenTronscan_Button;
+    private ImageButton mCopyTronscan_Button;
 
     private Protocol.Transaction mTransaction;
     private Handler mUpdateConfirmationHandler;
@@ -68,6 +70,7 @@ public class TransactionViewerActivity extends AppCompatActivity {
         mConfirmed_CardView = findViewById(R.id.TransactionViewer_confirmation_CardView);
         mLoadingConfirmation_ProgressBar = findViewById(R.id.TransactionViewer_loading_confirmation_progressBar);
         mOpenTronscan_Button = findViewById(R.id.TransactionViewer_open_tronscan_button);
+        mCopyTronscan_Button = findViewById(R.id.TransactionViewer_copy_tronscan_button);
 
         Bundle extras = getIntent().getExtras();
         try {
@@ -117,6 +120,18 @@ public class TransactionViewerActivity extends AppCompatActivity {
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
                 }
+            }
+        });
+
+        mCopyTronscan_Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("Tronscan_TX", "https://tronscan.org/#/transaction/"+getTxID());
+                clipboard.setPrimaryClip(clip);
+
+                Toast.makeText(TransactionViewerActivity.this, getString(R.string.copy_success), Toast.LENGTH_SHORT).show();
             }
         });
 

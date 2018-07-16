@@ -696,8 +696,12 @@ public class WalletManager {
         int maxTries = 5;
         int tries = 0;
         while ((confirmedTransaction == null || !confirmedTransaction.hasRawData()) && tries <= maxTries) {
-            confirmedTransaction = WalletManager.getTransactionById(txID, true);
-            tries++;
+            try {
+                confirmedTransaction = WalletManager.getTransactionById(txID, true);
+                tries++;
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
 
         return confirmedTransaction.hasRawData() && txID.equals(Hex.toHexString(Hash.sha256(confirmedTransaction.getRawData().toByteArray())));
