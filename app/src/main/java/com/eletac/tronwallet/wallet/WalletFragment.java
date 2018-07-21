@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -65,6 +66,7 @@ public class WalletFragment extends Fragment {
     private TextView mAccountName_TextView;
     private ImageView mEditName_ImageView;
     private TextView mPubAccountNameInfo_TextView;
+    private CardView mTokenHeader_CardView;
 
     private Protocol.Account mLatestAccountData;
     private List<Token> mTokens;
@@ -157,6 +159,7 @@ public class WalletFragment extends Fragment {
         mAccountName_TextView = view.findViewById(R.id.Wallet_account_name_textView);
         mEditName_ImageView = view.findViewById(R.id.Wallet_edit_name_imageView);
         mPubAccountNameInfo_TextView = view.findViewById(R.id.Wallet_pub_account_name_info_textView);
+        mTokenHeader_CardView = view.findViewById(R.id.Wallet_token_header_cardView);
 
         mTRX_balance_TextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -356,6 +359,10 @@ public class WalletFragment extends Fragment {
         mTokens_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         mTokens_RecyclerView.setAdapter(mTokensAdapter);
 
+        mTokenHeader_CardView.setAlpha(0);
+
+        mTokens_RecyclerView.setAlpha(0);
+
         onAccountUpdated();
     }
 
@@ -444,14 +451,32 @@ public class WalletFragment extends Fragment {
             AsyncJob.doInBackground(() -> {
                 Map<String, Long> assets = mLatestAccountData.getAssetMap();
 
+                boolean anyTokenBalance = false;
                 List<Token> tokens = new ArrayList<>();
                 for (Map.Entry<String, Long> asset : assets.entrySet()) {
                     tokens.add(new Token(asset.getKey(), asset.getValue()));
+
+                    if(asset.getValue() > 0) {
+                        anyTokenBalance = true;
+                    }
                 }
+
+                boolean finalAnyTokenBalance = anyTokenBalance;
                 AsyncJob.doOnMainThread(() -> {
                     mTokens.clear();
                     mTokens.addAll(tokens);
                     mTokensAdapter.notifyDataSetChanged();
+
+
+                    int animDuration = 500;
+                    int startDelay = 250;
+                    if(!mTokens.isEmpty() && finalAnyTokenBalance) {
+                        mTokenHeader_CardView.animate().alpha(1).setDuration(animDuration).setStartDelay(startDelay).start();
+                        mTokens_RecyclerView.animate().alpha(1).setDuration(animDuration).setStartDelay(startDelay).start();
+                    } else {
+                        mTokenHeader_CardView.animate().alpha(0).setDuration(animDuration).setStartDelay(startDelay).start();
+                        mTokens_RecyclerView.animate().alpha(0).setDuration(animDuration).setStartDelay(startDelay).start();
+                    }
                 });
             });
         }
