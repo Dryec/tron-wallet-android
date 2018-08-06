@@ -65,7 +65,7 @@
                             android:id="@+id/Freeze_amount_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Freeze Amount"
+                            android:hint="@string/freeze_amount"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -75,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="New frozen TRX:"
+                        android:text="@string/new_frozen_trx_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/Freeze_amount_seekBar" />
@@ -86,7 +86,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="New TP:"
+                        android:text="@string/new_tp_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView30" />
@@ -144,7 +144,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:backgroundTint="@android:color/holo_blue_dark"
-                        android:text="Freeze"
+                        android:text="@string/freeze"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -205,7 +205,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="Bandwidth:"
+                        android:text="@string/bandwidth_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView23" />
@@ -216,7 +216,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="Current TP:"
+                        android:text="@string/current_tp_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView26" />
@@ -237,7 +237,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="Frozen TRX:"
+                        android:text="@string/frozen_trx_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -259,7 +259,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="Expires all:"
+                        android:text="@string/expires_all_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView24" />

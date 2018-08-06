@@ -74,7 +74,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle("Saved new node connection")
+                            .setTitle(R.string.saved_new_node_connection)
                             .show();
 
                     if(!mIsColdWallet) {
@@ -84,7 +84,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_error_white_24px)
-                            .setTitle("Invalid IP or Port")
+                            .setTitle(R.string.invalid_ip_or_port)
                             .show();
                 }
             }
@@ -106,7 +106,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                 new LovelyInfoDialog(SettingConnectionActivity.this)
                         .setTopColorRes(R.color.colorPrimary)
                         .setIcon(R.drawable.ic_info_white_24px)
-                        .setTitle("Node connection reset to default")
+                        .setTitle(R.string.node_connection_reset_to_default)
                         .show();
 
                 if(!mIsColdWallet) {
@@ -139,7 +139,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle("Saved new solidity node connection")
+                            .setTitle(R.string.saved_new_solidity_node_connection)
                             .show();
 
                     WalletManager.initGRPC();
@@ -147,7 +147,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                     new LovelyInfoDialog(SettingConnectionActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_error_white_24px)
-                            .setTitle("Invalid IP or Port")
+                            .setTitle(R.string.invalid_ip_or_port)
                             .show();
                 }
             }
@@ -169,7 +169,7 @@ public class SettingConnectionActivity extends AppCompatActivity {
                 new LovelyInfoDialog(SettingConnectionActivity.this)
                         .setTopColorRes(R.color.colorPrimary)
                         .setIcon(R.drawable.ic_info_white_24px)
-                        .setTitle("Solidity node connection reset to default")
+                        .setTitle(R.string.solidity_node_connection_reset_to_default)
                         .show();
 
                 WalletManager.initGRPC();

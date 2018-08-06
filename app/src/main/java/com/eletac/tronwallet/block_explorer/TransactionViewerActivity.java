@@ -76,7 +76,7 @@ public class TransactionViewerActivity extends AppCompatActivity {
         try {
             mTransaction = Protocol.Transaction.parseFrom(extras.getByteArray(TRANSACTION_DATA));
         } catch (InvalidProtocolBufferException | DecoderException | NullPointerException ignored) {
-            Toast.makeText(this, "Couldn't parse transaction", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.could_not_parse_transaction), Toast.LENGTH_LONG).show();
             finish();
             return;
         }

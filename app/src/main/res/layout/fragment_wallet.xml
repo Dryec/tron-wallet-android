@@ -189,7 +189,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Tron Power"
+                android:text="@string/tron_power"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:visibility="visible"
@@ -205,7 +205,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center"
-                android:text="Bandwidth"
+                android:text="@string/bandwidth"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:visibility="visible"
@@ -317,7 +317,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="For security reasons you should setup a public account name"
+                    android:text="@string/for_security_reasons_you_should_setup_a_public_account_name"
                     android:textColor="@color/colorAccent"
                     android:textSize="12sp" />
 

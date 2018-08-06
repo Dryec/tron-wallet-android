@@ -96,7 +96,7 @@ public class ParticipateAssetIssueContractFragment extends ContractFragment {
                     }
                 });
             } else {
-                mAmountTextView.setText("cannot load in cold wallet");
+                mAmountTextView.setText(R.string.cannot_load_in_cold_wallet);
             }
         }
     }

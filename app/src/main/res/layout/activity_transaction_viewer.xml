@@ -53,7 +53,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="Transaction ID"
+                    android:text="@string/transaction_id"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="Timestamp"
+                    android:text="@string/timestamp"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     app:layout_constraintStart_toStartOf="parent"
@@ -114,7 +114,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="2dp"
                 android:clickable="true"
-                android:text="Unknown"
+                android:text="@string/unknown"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
         </android.support.v7.widget.CardView>
@@ -139,7 +139,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:backgroundTint="@color/colorAccent"
-        android:text="Open in Tronscan"
+        android:text="@string/open_in_tronscan"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/TransactionViewer_copy_tronscan_button" />

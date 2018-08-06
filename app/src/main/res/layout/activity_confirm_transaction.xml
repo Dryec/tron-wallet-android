@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Current Bandwidth:"
+                android:text="@string/current_bandwidth_colon"
                 android:textColor="@android:color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -40,7 +40,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="Bandwidth Cost:"
+                android:text="@string/bandwidth_cost_colon"
                 android:textColor="@android:color/white"
                 app:layout_constraintStart_toStartOf="@+id/textView42"
                 app:layout_constraintTop_toBottomOf="@+id/textView42" />
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginTop="4dp"
-                android:text="New Bandwidth:"
+                android:text="@string/new_bandwidth_colon"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/textView43"
@@ -102,7 +102,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
-                    android:text="NOT ENOUGH BANDWIDTH"
+                    android:text="@string/not_enough_bandwidth_caps"
                     android:textColor="@color/colorAccent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -115,7 +115,7 @@
                     android:layout_marginBottom="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:text="Get Bandwidth"
+                    android:text="@string/get_bandwidth"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
@@ -125,7 +125,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="The transaction will cost:"
+                    android:text="@string/the_transaction_will_cost_colon"
                     android:textColor="@android:color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -209,7 +209,7 @@
                     android:id="@+id/ConfirmTrans_password_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
+                    android:hint="@string/password"
                     android:inputType="textPassword" />
             </android.support.design.widget.TextInputLayout>
 
@@ -222,7 +222,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/colorAccent"
-                android:text="Sign"
+                android:text="@string/sign"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"

@@ -291,15 +291,15 @@ public class WalletFragment extends Fragment {
                         .setButtonsColor(Color.WHITE)
                         .setIcon(R.drawable.ic_info_white_24px)
                         .setTitle(R.string.attention)
-                        .setMessage("Your account name is not the same as that of your wallet. It is a publicly visible name and can be used, among other things, to compare transactions in order to verify an account more quickly.\n\nYour account name can only be changed once.\nMake sure you choose the right name.")
+                        .setMessage(R.string.account_name_info)
                         .setPositiveButton(R.string.ok, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 new LovelyTextInputDialog(getContext(), R.style.EditTextTintTheme)
                                         .setTopColorRes(R.color.colorAccent)
-                                        .setTitle("Setup Account Name")
-                                        .setMessage("At least 8 characters and no whitespaces")
-                                        .setHint("Public Name")
+                                        .setTitle(R.string.setup_account_name)
+                                        .setMessage(R.string.account_name_requirements)
+                                        .setHint(R.string.public_name)
                                         .setIcon(R.drawable.baseline_edit_white_24)
                                         .setConfirmButton(R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
                                             @Override
@@ -333,8 +333,8 @@ public class WalletFragment extends Fragment {
                                                                             .setTopColorRes(R.color.colorPrimary)
                                                                             .setButtonsColor(Color.WHITE)
                                                                             .setIcon(R.drawable.ic_info_white_24px)
-                                                                            .setTitle("Invalid Name")
-                                                                            .setMessage("Your name is not valid or already forgiven")
+                                                                            .setTitle(R.string.invalid_name)
+                                                                            .setMessage(R.string.name_not_valid_or_forgiven)
                                                                             .setPositiveButton(R.string.ok, null)
                                                                             .show();
                                                                 }
@@ -454,9 +454,9 @@ public class WalletFragment extends Fragment {
                 boolean anyTokenBalance = false;
                 List<Token> tokens = new ArrayList<>();
                 for (Map.Entry<String, Long> asset : assets.entrySet()) {
-                    tokens.add(new Token(asset.getKey(), asset.getValue()));
 
                     if(asset.getValue() > 0) {
+                        tokens.add(new Token(asset.getKey(), asset.getValue()));
                         anyTokenBalance = true;
                     }
                 }

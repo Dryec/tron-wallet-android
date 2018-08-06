@@ -79,10 +79,10 @@
                 android:id="@+id/Send_amount_textInputLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textView12"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/Send_to_textInputLayout">
 
@@ -91,7 +91,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/amount"
+                    android:gravity="center"
                     android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/Send_fiat_value_textInputLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textView12"
+                app:layout_constraintTop_toBottomOf="@+id/Send_to_textInputLayout">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/Send_fiat_value_editText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:hint="@string/usd"
+                    android:inputType="numberDecimal"
+                    android:textAlignment="center" />
             </android.support.design.widget.TextInputLayout>
 
             <Button
@@ -106,29 +128,53 @@
                 android:text="@string/send"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/Send_available_textView" />
+                app:layout_constraintTop_toBottomOf="@+id/Send_max_fiat_label_textView" />
 
             <TextView
                 android:id="@+id/Send_available_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
+                android:layout_marginStart="4dp"
                 android:clickable="true"
+                android:focusable="true"
                 android:text="0"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/Send_amount_textInputLayout"
-                android:focusable="true" />
+                app:layout_constraintStart_toEndOf="@+id/Send_available_label_textView"
+                app:layout_constraintTop_toTopOf="@+id/Send_available_label_textView" />
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/Send_available_label_textView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/send_available"
-                android:textAlignment="textEnd"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="16dp"
                 android:gravity="end"
-                app:layout_constraintEnd_toStartOf="@+id/Send_available_textView"
+                android:text="@string/max_amount_colon"
+                android:textAlignment="textEnd"
+                app:layout_constraintStart_toStartOf="@+id/Send_amount_textInputLayout"
                 app:layout_constraintTop_toBottomOf="@+id/Send_amount_textInputLayout" />
+
+            <TextView
+                android:id="@+id/Send_max_fiat_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="0"
+                app:layout_constraintStart_toEndOf="@+id/textView56"
+                app:layout_constraintTop_toTopOf="@+id/Send_max_fiat_label_textView" />
+
+            <TextView
+                android:id="@+id/Send_max_fiat_label_textView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="8dp"
+                android:gravity="end"
+                android:text="@string/max_usd_colon"
+                android:textAlignment="textEnd"
+                app:layout_constraintStart_toStartOf="@+id/Send_amount_textInputLayout"
+                app:layout_constraintTop_toBottomOf="@+id/Send_available_label_textView" />
 
             <ImageButton
                 android:id="@+id/Send_qr_button"
@@ -143,6 +189,31 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/Send_assets_spinner_cardView"
                 app:layout_constraintVertical_bias="0.78" />
+
+            <TextView
+                android:id="@+id/textView12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:text="="
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/Send_amount_textInputLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/Send_amount_textInputLayout" />
+
+            <TextView
+                android:id="@+id/textView56"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$"
+                app:layout_constraintBottom_toBottomOf="@+id/Send_max_fiat_textView"
+                app:layout_constraintStart_toStartOf="@+id/Send_available_textView"
+                app:layout_constraintTop_toTopOf="@+id/Send_max_fiat_textView" />
 
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>

@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Details"
+                android:text="@string/details"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Name"
+                    android:hint="@string/name"
                     android:inputType="text" />
             </android.support.design.widget.TextInputLayout>
 
@@ -70,7 +70,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Abbreviation"
+                    android:hint="@string/abbreviation"
                     android:inputType="text" />
             </android.support.design.widget.TextInputLayout>
 
@@ -90,7 +90,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Total Supply"
+                    android:hint="@string/total_supply"
                     android:inputType="numberSigned" />
             </android.support.design.widget.TextInputLayout>
 
@@ -110,7 +110,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Website URL"
+                    android:hint="@string/website_url"
                     android:inputType="text" />
             </android.support.design.widget.TextInputLayout>
 
@@ -132,7 +132,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Description"
+                    android:hint="@string/description"
                     android:inputType="textMultiLine" />
             </android.support.design.widget.TextInputLayout>
 
@@ -162,7 +162,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Exchange Rate"
+                android:text="@string/exchange_rate"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -183,7 +183,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="TRX Amount"
+                    android:hint="@string/trx_amount"
                     android:inputType="numberSigned" />
             </android.support.design.widget.TextInputLayout>
 
@@ -204,7 +204,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Token Amount"
+                    android:hint="@string/token_amount"
                     android:inputType="numberSigned" />
             </android.support.design.widget.TextInputLayout>
 
@@ -227,7 +227,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
-                android:text="1 Token ="
+                android:text="@string/_1_token_equals"
                 app:layout_constraintBottom_toBottomOf="@+id/textView54765"
                 app:layout_constraintEnd_toStartOf="@+id/IssueTokenContract_price_textView"
                 app:layout_constraintTop_toTopOf="@+id/textView54765"
@@ -280,7 +280,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Frozen Supply"
+                android:text="@string/frozen_supply"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -300,7 +300,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Amount"
+                    android:hint="@string/amount"
                     android:inputType="numberSigned" />
             </android.support.design.widget.TextInputLayout>
 
@@ -319,7 +319,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Days"
+                    android:hint="@string/days"
                     android:inputType="numberSigned" />
             </android.support.design.widget.TextInputLayout>
 
@@ -350,7 +350,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Bandwidth Distribution"
+                android:text="@string/bandwidth_distribution"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -371,7 +371,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Total Bandwidth"
+                    android:hint="@string/total_bandwidth"
                     android:inputType="numberSigned" />
             </android.support.design.widget.TextInputLayout>
 
@@ -393,7 +393,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:enabled="false"
-                    android:hint="Bandwidth per Account"
+                    android:hint="@string/bandwidth_per_account"
                     android:inputType="numberSigned" />
             </android.support.design.widget.TextInputLayout>
 
@@ -423,7 +423,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Participation"
+                android:text="@string/participation"
                 android:textColor="@android:color/white"
                 android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"

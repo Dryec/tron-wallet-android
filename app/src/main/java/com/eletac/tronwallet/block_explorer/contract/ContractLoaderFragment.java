@@ -65,41 +65,41 @@ public class ContractLoaderFragment extends ContractFragment {
     private String getContractName(@NonNull Protocol.Transaction.Contract contract) {
         switch (contract.getType()) {
             case AccountCreateContract:
-                return "Account Create Contract";
+                return getString(R.string.account_create_contract);
             case TransferContract:
-                return "Transfer Contract";
+                return getString(R.string.transfer_contract);
             case TransferAssetContract:
-                return "Transfer Asset Contract";
+                return getString(R.string.transfer_asset_contract);
             case VoteAssetContract:
-                return "Vote Asset Contract";
+                return getString(R.string.vote_asset_contract);
             case VoteWitnessContract:
-                return "Vote Witness Contract";
+                return getString(R.string.vote_witness_contract);
             case WitnessCreateContract:
-                return "Witness Create Contract";
+                return getString(R.string.witness_create_contract);
             case AssetIssueContract:
-                return "Asset Issue Contract";
+                return getString(R.string.asset_issue_contract);
             case DeployContract:
-                return "Deploy Contract";
+                return getString(R.string.deploy_contract);
             case WitnessUpdateContract:
-                return "Witness Update Contract";
+                return getString(R.string.witness_update_contract);
             case ParticipateAssetIssueContract:
-                return "Participate Asset Issue Contract";
+                return getString(R.string.participate_asset_issue_contract);
             case AccountUpdateContract:
-                return "Account Update Contract";
+                return getString(R.string.account_update_contract);
             case FreezeBalanceContract:
-                return "Freeze Balance Contract";
+                return getString(R.string.freeze_balance_contract);
             case UnfreezeBalanceContract:
-                return "Unfreeze Balance Contract";
+                return getString(R.string.unfreeze_balance_contract);
             case WithdrawBalanceContract:
-                return "Withdraw Balance Contract";
+                return getString(R.string.withdraw_balance_contract);
             case UnfreezeAssetContract:
-                return "Unfreeze Asset Contract";
+                return getString(R.string.unfreeze_asset_contract);
             case UpdateAssetContract:
-                return "Update Asset Contract";
+                return getString(R.string.update_asset_contract);
             case CustomContract:
-                return "Custom Contract";
+                return getString(R.string.custom_contract);
             case UNRECOGNIZED:
-                return "UNRECOGNIZED";
+                return getString(R.string.unrecognized);
         }
         return "";
     }

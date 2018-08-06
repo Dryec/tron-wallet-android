@@ -61,7 +61,7 @@
                         android:layout_marginTop="8dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Total Supply:"
+                        android:text="@string/total_supply_colon"
                         app:layout_constraintStart_toStartOf="@+id/textView181"
                         app:layout_constraintTop_toBottomOf="@+id/ParticipateAsset_description_textView" />
 
@@ -72,7 +72,7 @@
                         android:layout_marginTop="8dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Issuer:"
+                        android:text="@string/issuer_colon"
                         app:layout_constraintStart_toStartOf="@+id/textView191"
                         app:layout_constraintTop_toBottomOf="@+id/textView191" />
 
@@ -83,7 +83,7 @@
                         android:layout_marginTop="8dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="Start Time:"
+                        android:text="@string/start_time_colon"
                         app:layout_constraintStart_toStartOf="@+id/textView201"
                         app:layout_constraintTop_toBottomOf="@+id/textView201" />
 
@@ -129,7 +129,7 @@
                         android:layout_marginTop="4dp"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:text="End Time:"
+                        android:text="@string/end_time_colon"
                         app:layout_constraintStart_toStartOf="@+id/textView211"
                         app:layout_constraintTop_toBottomOf="@+id/textView211" />
 
@@ -150,7 +150,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Description:"
+                        android:text="@string/description_colon"
                         app:layout_constraintStart_toStartOf="@+id/ParticipateAsset_name_textView"
                         app:layout_constraintTop_toBottomOf="@+id/ParticipateAsset_name_textView" />
 
@@ -174,7 +174,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Price:"
+                        android:text="@string/price_colon"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@+id/textView251"
                         app:layout_constraintTop_toBottomOf="@+id/textView251"
@@ -231,7 +231,7 @@
                             android:id="@+id/ParticipateAsset_amount_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Token Amount"
+                            android:hint="@string/token_amount"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -241,7 +241,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="8dp"
-                        android:text="Costs:"
+                        android:text="@string/costs_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/ParticipateAsset_amount_seekBar" />
@@ -254,7 +254,7 @@
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Spend"
+                        android:text="@string/spend"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -276,7 +276,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
-                        android:text="TRX"
+                        android:text="@string/trx_symbol"
                         android:textColor="@android:color/white"
                         app:layout_constraintBottom_toBottomOf="@+id/ParticipateAsset_cost_textView"
                         app:layout_constraintStart_toEndOf="@+id/ParticipateAsset_cost_textView"

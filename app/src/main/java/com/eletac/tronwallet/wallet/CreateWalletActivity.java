@@ -96,8 +96,8 @@ public class CreateWalletActivity extends AppCompatActivity {
                     new LovelyInfoDialog(CreateWalletActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle("Invalid Name")
-                            .setMessage("Please enter a valid name")
+                            .setTitle(R.string.invalid_name)
+                            .setMessage(R.string.please_enter_a_valid_name)
                             .show();
                     return;
                 }
@@ -105,8 +105,8 @@ public class CreateWalletActivity extends AppCompatActivity {
                     new LovelyInfoDialog(CreateWalletActivity.this)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle("Invalid Name")
-                            .setMessage("You already have an wallet with this name")
+                            .setTitle(R.string.invalid_name)
+                            .setMessage(R.string.you_already_have_an_wallet_with_this_name)
                             .show();
                     return;
                 }

@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:text="Amount:"
+                android:text="@string/amount_colon"
                 android:textColor="@android:color/white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="From:"
+                android:text="@string/from_colon"
                 android:textColor="@android:color/white"
                 app:layout_constraintStart_toStartOf="@+id/textView467771"
                 app:layout_constraintTop_toBottomOf="@+id/textView467771" />
@@ -96,7 +96,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="To:"
+                android:text="@string/to_colon"
                 android:textColor="@android:color/white"
                 app:layout_constraintStart_toStartOf="@+id/textView467771"
                 app:layout_constraintTop_toBottomOf="@+id/TransferAssetContract_from_textView" />

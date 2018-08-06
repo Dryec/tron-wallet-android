@@ -38,7 +38,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Details"
+                        android:text="@string/details"
                         android:textColor="@android:color/white"
                         android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
                             android:id="@+id/IssueToken_name_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Name"
+                            android:hint="@string/name"
                             android:inputType="text" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -77,7 +77,7 @@
                             android:id="@+id/IssueToken_abbr_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Abbreviation"
+                            android:hint="@string/abbreviation"
                             android:inputType="text" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -96,7 +96,7 @@
                             android:id="@+id/IssueToken_supply_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Total Supply"
+                            android:hint="@string/total_supply"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -115,7 +115,7 @@
                             android:id="@+id/IssueToken_url_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Website URL"
+                            android:hint="@string/website_url"
                             android:inputType="text" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -136,7 +136,7 @@
                             android:id="@+id/IssueToken_desc_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Description"
+                            android:hint="@string/description"
                             android:inputType="textMultiLine" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -166,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Exchange Rate"
+                        android:text="@string/exchange_rate"
                         android:textColor="@android:color/white"
                         android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -186,7 +186,7 @@
                             android:id="@+id/IssueToken_trx_amount_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="TRX Amount"
+                            android:hint="@string/trx_amount"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -206,7 +206,7 @@
                             android:id="@+id/IssueToken_token_amount_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Token Amount"
+                            android:hint="@string/token_amount"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -229,7 +229,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="4dp"
-                        android:text="1 Token ="
+                        android:text="@string/_1_token_equals"
                         app:layout_constraintBottom_toBottomOf="@+id/textView54765"
                         app:layout_constraintEnd_toStartOf="@+id/IssueToken_price_textView"
                         app:layout_constraintTop_toTopOf="@+id/textView54765"
@@ -282,7 +282,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Frozen Supply"
+                        android:text="@string/frozen_supply"
                         android:textColor="@android:color/white"
                         android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -301,7 +301,7 @@
                             android:id="@+id/IssueToken_frozen_amount_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Amount"
+                            android:hint="@string/amount"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -319,7 +319,7 @@
                             android:id="@+id/IssueToken_frozen_days_editText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Days"
+                            android:hint="@string/days"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -350,7 +350,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Bandwidth Distribution"
+                        android:text="@string/bandwidth_distribution"
                         android:textColor="@android:color/white"
                         android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -371,7 +371,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:hint="Total Bandwidth"
+                            android:hint="@string/total_bandwidth"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -393,7 +393,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="0"
-                            android:hint="Bandwidth per Account"
+                            android:hint="@string/bandwidth_per_account"
                             android:inputType="numberSigned" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -423,7 +423,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
-                        android:text="Participation"
+                        android:text="@string/participation"
                         android:textColor="@android:color/white"
                         android:textSize="24sp"
                         app:layout_constraintStart_toStartOf="parent"
@@ -435,7 +435,7 @@
                         android:layout_height="40dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:text="Set Start"
+                        android:text="@string/set_start"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView5411123" />
 
@@ -444,7 +444,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_marginTop="8dp"
-                        android:text="Set End"
+                        android:text="@string/set_end"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/IssueToken_set_start_button"
                         app:layout_constraintHorizontal_bias="0.0"
@@ -503,7 +503,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
-                android:text="Creating a token will cost 1024 TRX.\nAfter issuing the token your account will receive the amount of tokens equal to the total supply.\nWhen other users exchange their TRX for tokens then the tokens will be withdrawn from your account and you will receive TRX equal to the specified exchange rate."
+                android:text="@string/create_token_info"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -518,7 +518,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:backgroundTint="@color/colorPrimary"
-                android:text="Create Token"
+                android:text="@string/create_token"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

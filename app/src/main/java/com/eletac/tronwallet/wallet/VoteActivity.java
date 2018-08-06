@@ -170,8 +170,8 @@ public class VoteActivity extends AppCompatActivity {
             new LovelyStandardDialog(VoteActivity.this)
                     .setTopColorRes(R.color.colorPrimary)
                     .setIcon(R.drawable.ic_info_white_24px)
-                    .setTitle("Missing Votes")
-                    .setMessage("To get votes you have to freeze some TRX\n\n1 TRX = 1 Vote")
+                    .setTitle(R.string.missing_votes)
+                    .setMessage(R.string.to_get_votes_you_have_to_freeze_trx)
                     .setPositiveButton(R.string.freeze, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -180,7 +180,7 @@ public class VoteActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     })
-                    .setNegativeButton("Cancel", null)
+                    .setNegativeButton(R.string.cancel, null)
                     .show();
         }
     }

@@ -222,27 +222,27 @@ public class IssueTokenActivity extends AppCompatActivity {
                 String failedMessage = "";
 
                 if(name.isEmpty()) {
-                    failedMessage = "Missing name";
+                    failedMessage = getString(R.string.missing_name);
                 } else if(abbr.isEmpty()) {
-                    failedMessage = "Missing abbreviation";
+                    failedMessage = getString(R.string.missing_abbreviation);
                 } else if(url.isEmpty()) {
-                    failedMessage = "Missing URL";
+                    failedMessage = getString(R.string.missing_url);
                 } else if(desc.isEmpty()) {
-                    failedMessage = "Missing description";
+                    failedMessage = getString(R.string.missing_description);
                 } else if(s_supply.isEmpty()) {
-                    failedMessage = "Missing supply";
+                    failedMessage = getString(R.string.missing_supply);
                 } else if(s_trx_amount.isEmpty()) {
-                    failedMessage = "Missing TRX exchange amount";
+                    failedMessage = getString(R.string.missing_trx_exchange_amount);
                 } else if(s_token_amount.isEmpty()) {
-                    failedMessage = "Missing token exchange amount";
+                    failedMessage = getString(R.string.missing_token_exchange_amount);
                 } else if(!s_frozen_amount.isEmpty() && s_frozen_days.isEmpty()) {
-                    failedMessage = "Missing frozen days";
+                    failedMessage = getString(R.string.missing_frozen_days);
                 } else if(!s_frozen_days.isEmpty() && s_frozen_amount.isEmpty()) {
-                    failedMessage = "Missing frozen amount";
+                    failedMessage = getString(R.string.missing_frozen_amount);
                 } else if(s_total_bandwidth_amount.isEmpty()) {
-                    failedMessage = "Missing total bandwidth";
+                    failedMessage = getString(R.string.missing_total_bandwidth);
                 } else if(s_bandwidth_per_account.isEmpty()) {
-                    failedMessage = "Missing bandwidth per account";
+                    failedMessage = getString(R.string.missing_bandwidth_per_account);
                 }
 
                 if(failedMessage.isEmpty()) {
@@ -253,21 +253,21 @@ public class IssueTokenActivity extends AppCompatActivity {
                     bandwidthPerAccount = Long.parseLong(s_bandwidth_per_account);
 
                     if(supply <= 0) {
-                        failedMessage = "Supply to small";
+                        failedMessage = getString(R.string.supply_to_small);
                     } else if(trxAmount <= 0 || tokenAmount <= 0) {
-                        failedMessage = "Invalid exchange rate";
+                        failedMessage = getString(R.string.invalid_exchange_rate);
                     } else if(bandwidthPerAccount > totalBandwidth) {
-                        failedMessage = "Bandwidth per account can't be greater than the total available bandwidth";
+                        failedMessage = getString(R.string.bandwidth_can_not_be_greater_than_total);
                     } else if(start <= System.currentTimeMillis()) {
-                        failedMessage = "Start should be in the future";
+                        failedMessage = getString(R.string.start_should_be_in_the_future);
                     } else if(end <= start) {
-                        failedMessage = "End should be after start";
+                        failedMessage = getString(R.string.end_should_be_after_start);
                     }
 
                     Protocol.Account account = Utils.getAccount(IssueTokenActivity.this, wallet.getWalletName());
 
                     if(account.getBalance()/1000000D < 1024.D) {
-                        failedMessage = "Not enough TRX\nNeeded: 1024 TRX";
+                        failedMessage = getString(R.string.not_enough_trx) + "\n" + getString(R.string.need_for_issuing);
                     }
                 }
 
@@ -317,7 +317,7 @@ public class IssueTokenActivity extends AppCompatActivity {
                         .setButtonsColor(Color.WHITE)
                         .setIcon(R.drawable.ic_info_white_24px)
                         .setTitle(R.string.attention)
-                        .setMessage("Creating a token costs 1024 TRX and will be consumed when the transaction is sent to the network and approved.\nContinue only if you are aware of this.")
+                        .setMessage(R.string.issue_token_information_message)
                         .setPositiveButton(R.string.ok, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

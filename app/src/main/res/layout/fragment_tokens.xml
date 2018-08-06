@@ -112,7 +112,7 @@
                     android:layout_height="36dp"
                     android:layout_marginEnd="8dp"
                     android:backgroundTint="#B71C1C"
-                    android:text="Create"
+                    android:text="@string/create"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

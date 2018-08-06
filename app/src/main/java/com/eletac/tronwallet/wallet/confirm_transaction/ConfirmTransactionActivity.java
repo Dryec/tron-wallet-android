@@ -121,20 +121,20 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
             mExtraBytes = extras.getByteArray(TRANSACTION_DATA2_EXTRA);
             mTransactionUnsigned = Protocol.Transaction.parseFrom(mTransactionBytes);
         } catch (InvalidProtocolBufferException | DecoderException | NullPointerException ignored) {
-            Toast.makeText(this, "Couldn't parse transaction", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.could_not_parse_transaction, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         if(mTransactionUnsigned.getRawData().getContractCount() == 0) {
-            Toast.makeText(this, "No valid contract, check your input.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.no_valid_contract_check_input, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
         mWallet = WalletManager.getSelectedWallet();
         if(mWallet == null) {
-            Toast.makeText(this, "No wallet selected", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.no_wallet_selected, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -206,7 +206,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                                 .setTopColorRes(R.color.colorPrimary)
                                 .setIcon(R.drawable.ic_error_white_24px)
                                 .setTitle(R.string.failed)
-                                .setMessage("Couldn't open wallet")
+                                .setMessage(R.string.could_not_open_wallet)
                                 .show();
                     }
                 }
@@ -291,8 +291,8 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                 if(!sent) {
                     dialog.setMessage(getString(R.string.try_later));
                 } else {
-                    dialog.setMessage("View Transaction?");
-                    dialog.setNegativeButton("No", new View.OnClickListener() {
+                    dialog.setMessage(R.string.view_transaction_question);
+                    dialog.setNegativeButton(R.string.no, new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             finish();

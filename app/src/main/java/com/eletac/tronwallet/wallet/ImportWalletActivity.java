@@ -222,16 +222,16 @@ public class ImportWalletActivity extends AppCompatActivity {
                 new LovelyInfoDialog(ImportWalletActivity.this)
                         .setTopColorRes(R.color.colorPrimary)
                         .setIcon(R.drawable.ic_info_white_24px)
-                        .setTitle("Invalid Name")
-                        .setMessage("Please enter a valid name")
+                        .setTitle(R.string.invalid_name)
+                        .setMessage(R.string.please_enter_a_valid_name)
                         .show();
                 return;
             } else if(WalletManager.existWallet(name)) {
                 new LovelyInfoDialog(ImportWalletActivity.this)
                         .setTopColorRes(R.color.colorPrimary)
                         .setIcon(R.drawable.ic_info_white_24px)
-                        .setTitle("Invalid Name")
-                        .setMessage("You already have an wallet with this name")
+                        .setTitle(R.string.invalid_name)
+                        .setMessage(R.string.you_already_have_an_wallet_with_this_name)
                         .show();
                 return;
             }
@@ -331,12 +331,12 @@ public class ImportWalletActivity extends AppCompatActivity {
         }
 
         if(!WalletManager.isNameValid(name)) {
-            dialog.setTitle("Invalid Name")
-                    .setMessage("Please enter a valid name");
+            dialog.setTitle(R.string.invalid_name)
+                    .setMessage(R.string.please_enter_a_valid_name);
             inputInvalid = true;
         } else if(WalletManager.existWallet(name)) {
-            dialog.setTitle("Invalid Name")
-                    .setMessage("You already have an wallet with this name");
+            dialog.setTitle(R.string.invalid_name)
+                    .setMessage(R.string.you_already_have_an_wallet_with_this_name);
             inputInvalid = true;
         } else if (!WalletManager.isPasswordValid(password)) {
             dialog.setMessage(R.string.create_wallet_inv_password_dialog_message)
