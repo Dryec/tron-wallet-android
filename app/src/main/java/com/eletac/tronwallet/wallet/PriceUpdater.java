@@ -33,6 +33,7 @@ public class PriceUpdater {
     private static Handler mTaskHandler;
     private static PriceUpdaterRunnable mPriceUpdaterRunnable;
 
+    private static Price mTRX_price;
 
     private static boolean mRunning;
 
@@ -73,6 +74,10 @@ public class PriceUpdater {
         }
     }
 
+    public static Price getTRX_price() {
+        return mTRX_price;
+    }
+
     private static class PriceUpdaterRunnable implements Runnable {
 
         @Override
@@ -96,6 +101,8 @@ public class PriceUpdater {
                         @Override
                         public void doInUIThread() {
                             Log.i("PRICE_UPDATER", "Prices updated");
+
+                            mTRX_price = finalPrice;
 
                             Intent pricesUpdatedIntent = new Intent(PRICES_UPDATED);
                             // Load tron just for now

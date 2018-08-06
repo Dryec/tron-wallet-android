@@ -1,10 +1,10 @@
 package com.eletac.tronwallet;
 
 public class Price {
-    private float price;
-    private float change_1h;
-    private float change_24h;
-    private float change_7d;
+    private float price = 0.f;
+    private float change_1h = 0.f;
+    private float change_24h = 0.f;
+    private float change_7d = 0.f;
 
     public float getPrice() {
         return price;

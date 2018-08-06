@@ -17,6 +17,8 @@ import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletManager;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -181,5 +183,13 @@ public class Utils {
     public static long getAccountAssetAmount(Protocol.Account account, String assetName) {
         Map<String, Long> assets = account.getAssetMap();
         return assets.containsKey(assetName) ? assets.get(assetName) : 0;
+    }
+
+    public static double round(double value, int places, RoundingMode mode) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.setScale(places, mode);
+        return bd.doubleValue();
     }
 }

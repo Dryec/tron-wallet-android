@@ -10,7 +10,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.text.Editable;
 import android.text.InputFilter;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.CaptureActivityPortrait;
 import com.eletac.tronwallet.InputFilterMinMax;
+import com.eletac.tronwallet.Price;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
@@ -37,7 +40,10 @@ import org.tron.protos.Protocol;
 import org.tron.walletserver.Wallet;
 import org.tron.walletserver.WalletManager;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
@@ -49,10 +55,18 @@ public class SendFragment extends Fragment {
     private ImageButton mQR_Button;
     private EditText mTo_EditText;
     private EditText mAmount_EditText;
+    private TextView mAvailableLabel_TextView;
     private TextView mAvailable_TextView;
     private TextView mAsset_TextView;
+    private EditText mAmountFiat_EditText;
+    private TextView mAvailableFiatLabel_TextView;
+    private TextView mAvailableFiat_TextView;
+    private TextView mAmountEqualFiat_TextView;
 
     private Wallet mWallet;
+    private Price mPrice;
+
+    private boolean mIsUpdatingAmount = false;
 
     private AccountUpdatedBroadcastReceiver mAccountUpdatedBroadcastReceiver;
 
@@ -113,10 +127,14 @@ public class SendFragment extends Fragment {
         mTo_EditText = view.findViewById(R.id.Send_to_editText);
         mAmount_EditText = view.findViewById(R.id.Send_amount_editText);
         mAvailable_TextView = view.findViewById(R.id.Send_available_textView);
+        mAvailableLabel_TextView = view.findViewById(R.id.Send_available_label_textView);
         mAsset_TextView = view.findViewById(R.id.Send_asset_textView);
         mSend_Button = view.findViewById(R.id.Send_send_button);
         mQR_Button = view.findViewById(R.id.Send_qr_button);
-
+        mAmountFiat_EditText = view.findViewById(R.id.Send_fiat_value_editText);
+        mAvailableFiat_TextView = view.findViewById(R.id.Send_max_fiat_textView);
+        mAvailableFiatLabel_TextView = view.findViewById(R.id.Send_max_fiat_label_textView);
+        mAmountEqualFiat_TextView = view.findViewById(R.id.Send_amount_fiat_equal_textView);
 
         updateAssetsSpinner();
 
@@ -126,6 +144,7 @@ public class SendFragment extends Fragment {
                 mAmount_EditText.setEnabled(true);
 
                 updateAvailableAmount();
+                updateFiatPrice();
             }
 
             @Override
@@ -134,12 +153,33 @@ public class SendFragment extends Fragment {
             }
         });
 
-        mAvailable_TextView.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener setAmountToAvailableClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAmount_EditText.setText(mAvailable_TextView.getText());
+                NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+                try {
+                    mAmount_EditText.setText(String.valueOf(numberFormat.parse(mAvailable_TextView.getText().toString()).doubleValue()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
-        });
+        };
+        mAvailable_TextView.setOnClickListener(setAmountToAvailableClickListener);
+        mAvailableLabel_TextView.setOnClickListener(setAmountToAvailableClickListener);
+
+        View.OnClickListener setFiatAmountToAvailableClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+                try {
+                    mAmountFiat_EditText.setText(String.valueOf(numberFormat.parse(mAvailableFiat_TextView.getText().toString()).doubleValue()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        mAvailableFiat_TextView.setOnClickListener(setFiatAmountToAvailableClickListener);
+        mAvailableFiatLabel_TextView.setOnClickListener(setFiatAmountToAvailableClickListener);
 
         mSend_Button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -247,6 +287,41 @@ public class SendFragment extends Fragment {
                 integrator.initiateScan();
             }
         });
+
+
+        mAmount_EditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateFiatPrice();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mAmountFiat_EditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                updateAssetAmount();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     private void updateAvailableAmount() {
@@ -269,13 +344,58 @@ public class SendFragment extends Fragment {
             mAvailable_TextView.setText(numberFormat.format(assetAmount));
 
             try {
-                if (Long.valueOf(mAmount_EditText.getText().toString()) > assetAmount)
+                if (Double.valueOf(mAmount_EditText.getText().toString()) > assetAmount) {
                     mAmount_EditText.setText(String.valueOf(assetAmount));
-            } catch (NumberFormatException ignored) {
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
             }
+
+            mPrice = selectedPosition == 0 ? PriceUpdater.getTRX_price() : new Price(); // TODO load other asset prices (need to wait for first asset on exchanges)
+            numberFormat.setMaximumFractionDigits(3);
+            numberFormat.setRoundingMode(RoundingMode.DOWN);
+            mAvailableFiat_TextView.setText(numberFormat.format(mPrice.getPrice()*assetAmount));
+            mAmountFiat_EditText.setFilters(new InputFilter[]{new InputFilterMinMax(0, Utils.round(mPrice.getPrice()*assetAmount, 3, RoundingMode.DOWN))});
         }
     }
 
+    private void updateAssetAmount() {
+        if(mIsUpdatingAmount) {
+            return;
+        }
+        mIsUpdatingAmount = true;
+        String fiatAmountText = mAmountFiat_EditText.getText().toString();
+
+        if(!fiatAmountText.equals("")) {
+            double fiat_amount = Double.parseDouble(fiatAmountText);
+            try {
+                mAmount_EditText.setText(String.valueOf(Utils.round(fiat_amount / mPrice.getPrice(), 3, RoundingMode.DOWN)));
+            } catch (NumberFormatException ignored) {
+            }
+        } else {
+            mAmount_EditText.setText("");
+        }
+        mIsUpdatingAmount = false;
+    }
+
+    private void updateFiatPrice() {
+        if(mIsUpdatingAmount) {
+            return;
+        }
+        mIsUpdatingAmount = true;
+        String assetAmountText = mAmount_EditText.getText().toString();
+
+        if(!assetAmountText.equals("")) {
+            double asset_amount = Double.parseDouble(assetAmountText);
+            try {
+                mAmountFiat_EditText.setText(String.valueOf(Utils.round(asset_amount * mPrice.getPrice(), 3, RoundingMode.DOWN)));
+            } catch (NumberFormatException ignored) {
+            }
+        } else {
+            mAmountFiat_EditText.setText("");
+        }
+        mIsUpdatingAmount = false;
+    }
 
     private void updateAssetsSpinner() {
         int position = mAssets_Spinner.getSelectedItemPosition();
@@ -306,7 +426,7 @@ public class SendFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateAssetsSpinner();
+            //updateAssetsSpinner();
             updateAvailableAmount();
         }
     }

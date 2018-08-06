@@ -82,7 +82,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
-                app:layout_constraintEnd_toStartOf="@+id/textView12"
+                app:layout_constraintEnd_toStartOf="@+id/Send_amount_fiat_equal_textView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/Send_to_textInputLayout">
 
@@ -102,8 +102,9 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textView12"
+                app:layout_constraintStart_toEndOf="@+id/Send_amount_fiat_equal_textView"
                 app:layout_constraintTop_toBottomOf="@+id/Send_to_textInputLayout">
 
                 <android.support.design.widget.TextInputEditText
@@ -191,7 +192,7 @@
                 app:layout_constraintVertical_bias="0.78" />
 
             <TextView
-                android:id="@+id/textView12"
+                android:id="@+id/Send_amount_fiat_equal_textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -201,6 +202,7 @@
                 android:text="="
                 android:textColor="@android:color/white"
                 android:textStyle="bold"
+                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@+id/Send_amount_textInputLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
