@@ -93,4 +93,36 @@
         app:layout_constraintTop_toBottomOf="@+id/textView27"
         app:layout_constraintVertical_bias="0.13999999" />
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="64dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="64dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/textView29"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView33">
+
+        <ImageView
+            android:id="@+id/imageView14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/tron_society_logo_white"
+            tools:layout_editor_absoluteX="30dp"
+            tools:layout_editor_absoluteY="391dp" />
+
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/hummingpay_logo"
+            tools:layout_editor_absoluteX="266dp"
+            tools:layout_editor_absoluteY="483dp" />
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
