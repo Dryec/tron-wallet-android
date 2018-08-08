@@ -1,39 +1,6 @@
 <resources>
 
     <!--> NO TRANSLATION <-->
-    <string name="fullnode_ip">54.236.37.243</string>
-    <string name="fullnode_port">50051</string>
-    <string name="soliditynode_ip">39.105.66.80</string>
-    <string name="soliditynode_port">50051</string>
-
-    <string name="app_name">Tron Wallet</string>
-    <string name="app_version">v1.1.5.1</string>
-
-    <string name="preference_file_key">com.eletac.tronwallet.wallet_preferences</string>
-    <string name="pwd_key">pwd_key</string>
-    <string name="priv_key">priv_key</string>
-    <string name="pub_key">pub_key</string>
-    <string name="is_cold_wallet_key">is_cold_wallet_key</string>
-    <string name="preference_account_file_key">com.eletac.tronwallet.wallet_account_preferences</string>
-    <string name="name_key">name_key</string>
-    <string name="balance_key">balance_key</string>
-    <string name="latest_operation_time_key">latest_operation_time_key</string>
-    <string name="assets_key">assets_key</string>
-    <string name="public_address_raw">public_address_raw</string>
-    <string name="is_public_address_only">is_public_address_only</string>
-    <string name="votes_key">votes_key</string>
-    <string name="create_time_key">create_time_key</string>
-    <string name="address_key">address_key</string>
-    <string name="frozen_key">frozen_key</string>
-    <string name="bandwidth_key">bandwidth_key</string>
-    <string name="ip_key">ip</string>
-    <string name="port_key">port</string>
-    <string name="ip_sol_key">ip_sol</string>
-    <string name="port_sol_key">port_sol</string>
-    <string name="net_limit_key">net_limit_key</string>
-    <string name="net_used_key">net_used_key</string>
-    <string name="net_free_limit_key">net_free_limit_key</string>
-    <string name="net_free_used_key">net_free_used_key</string>
     <!--> NO TRANSLATION <-->
 
     <string name="title_wallet">Carteira</string>
