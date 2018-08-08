@@ -268,7 +268,7 @@
     <string name="setup_account_name">Setup Account Name</string>
     <string name="account_name_requirements">At least 8 characters and no whitespaces</string>
     <string name="public_name">Public Name</string>
-    <string name="name_not_valid_or_forgiven">Your name is not valid or already forgiven</string>
+    <string name="name_not_valid_or_forgiven">Your name is not valid or already in use</string>
     <string name="missing_votes">Missing Votes</string>
     <string name="to_get_votes_you_have_to_freeze_trx">To get votes you have to freeze some TRX\n\n1 TRX = 1 Vote</string>
     <string name="saved_new_node_connection">Saved new node connection</string>
