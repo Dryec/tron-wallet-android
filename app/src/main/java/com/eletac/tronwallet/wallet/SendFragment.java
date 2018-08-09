@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,8 @@ import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -78,8 +81,42 @@ public class SendFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
-            if(result.getContents() != null) {
-                mTo_EditText.setText(result.getContents());
+            String content = result.getContents();
+            if(content != null) {
+                List<String> contentParts = Arrays.asList(content.split(":"));
+
+                switch (contentParts.size()) {
+                    case 1: {
+                        mTo_EditText.setText(content);
+                        break;
+                    }
+                    case 2: {
+                        mTo_EditText.setText(contentParts.get(0));
+                        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+                        try {
+                            double amount = numberFormat.parse(contentParts.get(1)).doubleValue();
+                            mAmount_EditText.setText(String.valueOf(amount));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                    case 3: {
+                        String asset = contentParts.get(0);
+
+                        mTo_EditText.setText(contentParts.get(1));
+                        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
+                        try {
+                            double amount = numberFormat.parse(contentParts.get(2)).doubleValue();
+                            mAmount_EditText.setText(String.valueOf(amount));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                    default:
+                        mTo_EditText.setText(content);
+                }
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
