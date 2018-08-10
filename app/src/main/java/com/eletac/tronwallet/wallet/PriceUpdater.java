@@ -75,7 +75,7 @@ public class PriceUpdater {
     }
 
     public static Price getTRX_price() {
-        return mTRX_price;
+        return mTRX_price != null ? mTRX_price : new Price();
     }
 
     private static class PriceUpdaterRunnable implements Runnable {
