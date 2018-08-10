@@ -36,6 +36,8 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.Wallet;
@@ -83,39 +85,84 @@ public class SendFragment extends Fragment {
         if(result != null) {
             String content = result.getContents();
             if(content != null) {
-                List<String> contentParts = Arrays.asList(content.split(":"));
+                NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
-                switch (contentParts.size()) {
-                    case 1: {
-                        mTo_EditText.setText(content);
-                        break;
-                    }
-                    case 2: {
-                        mTo_EditText.setText(contentParts.get(0));
-                        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-                        try {
-                            double amount = numberFormat.parse(contentParts.get(1)).doubleValue();
-                            mAmount_EditText.setText(String.valueOf(amount));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    }
-                    case 3: {
-                        String asset = contentParts.get(0);
+                String asset = "";
+                String address = "";
+                double amount = 0;
 
-                        mTo_EditText.setText(contentParts.get(1));
-                        NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
-                        try {
-                            double amount = numberFormat.parse(contentParts.get(2)).doubleValue();
-                            mAmount_EditText.setText(String.valueOf(amount));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        break;
+                boolean setAmount = false;
+
+                JSONObject jsonObject = null;
+                try {
+                    jsonObject = new JSONObject(content);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                // {“token”:“TRX”, “address”:“TJo2xFo14Rnx9vvMSm1kRTQhVHPW4KPQ76", “amount”: “12"}
+                if(jsonObject != null) {
+                    try {
+                        asset = jsonObject.has("asset") ? jsonObject.getString("asset") : (jsonObject.has("token") ? jsonObject.getString("token") : "");
+                        address = jsonObject.has("address") ? jsonObject.getString("address") : "";
+
+                        amount = jsonObject.getDouble("amount");
+                        setAmount = true;
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    default:
-                        mTo_EditText.setText(content);
+                } else {
+                    List<String> contentParts = Arrays.asList(content.split(":"));
+
+                    switch (contentParts.size()) {
+                        // address
+                        case 1: {
+                            address = content;
+                            break;
+                        }
+                        // tron:address?amount=xx   or  address:amount
+                        case 2: {
+
+                            try {
+                                if(contentParts.get(1).contains("?")) {
+                                    List<String> parts = Arrays.asList(contentParts.get(1).split("\\?"));
+
+                                    address = parts.isEmpty() ? "" : parts.get(0);
+
+                                    String part2 = contentParts.get(1);
+                                    if(part2.contains("amount=")) {
+                                        List<String> amountParts = Arrays.asList(part2.split("amount="));
+                                        amount = numberFormat.parse(amountParts.get(parts.size()-1)).doubleValue();
+                                        setAmount = true;
+                                    }
+                                } else {
+                                    address = contentParts.get(0);
+                                    amount = numberFormat.parse(contentParts.get(1)).doubleValue();
+                                    setAmount = true;
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                        case 3: {
+                            asset = contentParts.get(0);
+                            address = contentParts.get(1);
+
+                            try {
+                                amount = numberFormat.parse(contentParts.get(2)).doubleValue();
+                                setAmount = true;
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                        default:
+                    }
+                }
+                mTo_EditText.setText(address);
+                if (setAmount) {
+                    mAmount_EditText.setText(String.valueOf(amount));
                 }
             }
         } else {
