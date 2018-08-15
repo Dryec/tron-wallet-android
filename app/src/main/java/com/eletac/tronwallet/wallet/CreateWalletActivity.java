@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -15,6 +16,7 @@ import android.widget.Switch;
 import com.eletac.tronwallet.R;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
+import com.yarolegovich.lovelydialog.LovelyTextInputDialog;
 
 import org.tron.walletserver.DuplicateNameException;
 import org.tron.walletserver.InvalidNameException;
@@ -129,27 +131,53 @@ public class CreateWalletActivity extends AppCompatActivity {
                         .setPositiveButton(android.R.string.ok, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                try {
 
-                                    Wallet wallet = new Wallet(true);
-                                    wallet.setWalletName(name);
-                                    wallet.setColdWallet(coldWallet);
+                                new LovelyTextInputDialog(CreateWalletActivity.this, R.style.EditTextTintTheme)
+                                        .setTopColorRes(R.color.colorPrimary)
+                                        .setIcon(R.drawable.ic_info_white_24px)
+                                        .setTitle("Confirm your password")
+                                        .setHint(R.string.password)
+                                        .setInputType(InputType.TYPE_CLASS_TEXT |
+                                                InputType.TYPE_TEXT_VARIATION_PASSWORD)
+                                        .setConfirmButtonColor(Color.WHITE)
+                                        .setConfirmButton(R.string.ok, new LovelyTextInputDialog.OnTextInputConfirmListener() {
+                                            @Override
+                                            public void onTextInputConfirmed(String text) {
+                                                if (text.equals(password)) {
+                                                    try {
 
-                                    WalletManager.store(wallet, password);
-                                    WalletManager.selectWallet(name);
+                                                        Wallet wallet = new Wallet(true);
+                                                        wallet.setWalletName(name);
+                                                        wallet.setColdWallet(coldWallet);
 
-                                } catch (DuplicateNameException | InvalidPasswordException | InvalidNameException e) {
-                                    // Should be already checked above
-                                    e.printStackTrace();
-                                    return;
-                                }
+                                                        WalletManager.store(wallet, password);
+                                                        WalletManager.selectWallet(name);
 
-                                Intent intent = new Intent(CreateWalletActivity.this, AccountActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.putExtra("name", name);
-                                intent.putExtra("password", password);
-                                intent.putExtra("freshly_created", true);
-                                startActivity(intent);
+                                                    } catch (DuplicateNameException | InvalidPasswordException | InvalidNameException e) {
+                                                        // Should be already checked above
+                                                        e.printStackTrace();
+                                                        return;
+                                                    }
+
+                                                    Intent intent = new Intent(CreateWalletActivity.this, AccountActivity.class);
+                                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                    intent.putExtra("name", name);
+                                                    intent.putExtra("password", password);
+                                                    intent.putExtra("freshly_created", true);
+                                                    startActivity(intent);
+                                                } else {
+                                                    new LovelyInfoDialog(CreateWalletActivity.this)
+                                                            .setTopColorRes(R.color.colorPrimary)
+                                                            .setIcon(R.drawable.ic_error_white_24px)
+                                                            .setTitle("Password does not match")
+                                                            .setMessage("Try again")
+                                                            .show();
+                                                }
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.cancel, null)
+                                        .show();
+
                             }
                         })
                         .setNegativeButton(android.R.string.cancel, null)
