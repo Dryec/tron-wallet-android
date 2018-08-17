@@ -7,7 +7,7 @@
     <string name="soliditynode_port" translatable="false">50051</string>
 
     <string name="app_name" translatable="false">Tron Wallet</string>
-    <string name="app_version" translatable="false">v1.1.7.4</string>
+    <string name="app_version" translatable="false">v1.1.8.0</string>
 
     <string name="preference_file_key" translatable="false">com.eletac.tronwallet.wallet_preferences</string>
     <string name="pwd_key" translatable="false">pwd_key</string>
