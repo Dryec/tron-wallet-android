@@ -368,7 +368,7 @@ public class ImportWalletActivity extends AppCompatActivity {
                     new LovelyTextInputDialog(ImportWalletActivity.this, R.style.EditTextTintTheme)
                             .setTopColorRes(R.color.colorPrimary)
                             .setIcon(R.drawable.ic_info_white_24px)
-                            .setTitle("Confirm your password")
+                            .setTitle(R.string.confirm_your_password)
                             .setHint(R.string.password)
                             .setInputType(InputType.TYPE_CLASS_TEXT |
                                     InputType.TYPE_TEXT_VARIATION_PASSWORD)
