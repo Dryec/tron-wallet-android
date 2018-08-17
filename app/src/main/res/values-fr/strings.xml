@@ -363,5 +363,6 @@
     <string name="timestamp">Timestamp</string>
     <string name="open_in_tronscan">Ouvrir dans Tronscan</string>
     <string name="name_colon">Nom:</string>
+    <string name="confirm_your_password">Confirm your password</string>
 
 </resources>

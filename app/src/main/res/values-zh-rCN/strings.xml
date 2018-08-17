@@ -362,5 +362,6 @@
     <string name="timestamp">时间戳</string>
     <string name="open_in_tronscan">在Tronscan中打开</string>
     <string name="name_colon">名称：</string>
+    <string name="confirm_your_password">Confirm your password</string>
 
 </resources>
