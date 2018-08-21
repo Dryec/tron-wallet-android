@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
     <!--> NO TRANSLATION <-->
@@ -181,11 +180,11 @@
     <string name="tron_wallet_description">Tron Wallet是Tron网络的多功能钱包。</string>
     <string name="copyright">©2018 Marius Gill保留所有权利</string>
     <string name="title_activity_participate_asset">参与</string>
-    <string name="confirm_spending">确认支出</string>
-    <string name="spending_failed">支出失败</string>
-    <string name="spending">支出中</string>
-    <string name="spend">支出</string>
-    <string name="spending_successfully">支出成功</string>
+    <string name="confirm_spending">确认参与</string>
+    <string name="spending_failed">参与失败</string>
+    <string name="spending">参与中</string>
+    <string name="spend">参与</string>
+    <string name="spending_successfully">参与成功</string>
     <string name="tron_power_short">TP</string>
 
     <string name="not_enough_bandwidth">没有足够的带宽</string>
@@ -211,7 +210,7 @@
     <string name="info_history">*历史记录仅包含通过Tron Wallet成功发送的交易</string>
     <string name="title_activity_transaction_viewer">交易</string>
     <string name="confirmed">确认的</string>
-    <string name="unconfirmed">没有确认的</string>
+    <string name="unconfirmed">未确认的</string>
     <string name="unknown">未知的</string>
 
     <string name="title_about">关于</string>
@@ -223,12 +222,12 @@
     <string name="btn_about">关于</string>
     <string name="btn_select_wallet">选择钱包</string>
 
-    <string name="full_node">全节点</string>
+    <string name="full_node">full node</string>
     <string name="node_ip">节点IP (e.g. 47.254.16.55)</string>
     <string name="node_port">节点端口 (e.g. 50051)</string>
-    <string name="btn_reset">重启</string>
+    <string name="btn_reset">重置</string>
     <string name="btn_save_connect">保存并连接</string>
-    <string name="solidity_node">Solidity节点</string>
+    <string name="solidity_node">Soliditynode</string>
     <string name="invalid_name">无效用户名</string>
     <string name="please_enter_a_valid_name">请输入一个有效用户名</string>
     <string name="you_already_have_an_wallet_with_this_name">您已经拥有一个该用户名的钱包</string>
@@ -237,8 +236,8 @@
     <string name="account_name_requirements">至少8个字符，没有空格</string>
     <string name="public_name">公共名称</string>
     <string name="name_not_valid_or_forgiven">您的用户名无效或已在使用中</string>
-    <string name="missing_votes">丢失投票</string>
-    <string name="to_get_votes_you_have_to_freeze_trx">要获得投票，你必须冻结一些TRX\n\n1 TRX = 1票</string>
+    <string name="missing_votes">未获得投票权</string>
+    <string name="to_get_votes_you_have_to_freeze_trx">要获得投票权，你必须冻结一些TRX\n\n1 TRX = 1票</string>
     <string name="saved_new_node_connection">保存新节点连接</string>
     <string name="invalid_ip_or_port">无效的IP或端口</string>
     <string name="saved_new_solidity_node_connection">保存了新的solidity节点连接</string>
@@ -339,9 +338,9 @@
     <string name="to_colon">至：</string>
     <string name="token_colon">通证：</string>
     <string name="cost_colon">成本：</string>
-    <string name="details">细节</string>
-    <string name="name">用户名</string>
-    <string name="abbreviation">缩写</string>
+    <string name="details">详情</string>
+    <string name="name">通证名称</string>
+    <string name="abbreviation">通证缩写</string>
     <string name="total_supply">总发行量</string>
     <string name="website_url">网址</string>
     <string name="description">描述</string>
