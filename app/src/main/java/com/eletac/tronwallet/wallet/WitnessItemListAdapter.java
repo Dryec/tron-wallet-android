@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
@@ -94,6 +95,9 @@ public class WitnessItemListAdapter extends RecyclerView.Adapter<WitnessItemList
         private TextView mMissed_TextView;
         private EditText mVoteNumber_EditText;
 
+        private TextView mTronSocietyAd_TextView;
+        private ImageView mTronSocietyAdBorder_ImageView;
+
         private Protocol.Witness mWitness;
 
         private TextWatcher mTextWatcher;
@@ -110,6 +114,8 @@ public class WitnessItemListAdapter extends RecyclerView.Adapter<WitnessItemList
             mProduced_TextView = itemView.findViewById(R.id.Witness_produced_textView);
             mMissed_TextView = itemView.findViewById(R.id.Witness_missed_textView);
             mVoteNumber_EditText = itemView.findViewById(R.id.Witness_votes_editText);
+            mTronSocietyAd_TextView = itemView.findViewById(R.id.Witness_tron_society_ad_textView);
+            mTronSocietyAdBorder_ImageView = itemView.findViewById(R.id.Witness_tron_society_ad_border_imageView);
 
             mVoteNumber_EditText.setVisibility(mShowVoteEditText ? View.VISIBLE : View.GONE);
 
@@ -172,6 +178,10 @@ public class WitnessItemListAdapter extends RecyclerView.Adapter<WitnessItemList
             mLastBlock_TextView.setText(numberFormat.format(witness.getLatestBlockNum()));
             mProduced_TextView.setText(numberFormat.format(witness.getTotalProduced()));
             mMissed_TextView.setText(numberFormat.format(witness.getTotalMissed()));
+
+            boolean isTronSociety = WalletManager.encode58Check(witness.getAddress().toByteArray()).equals("TQwqK8LhHGria5gkkfCVqQfE5mSwpvdp3B");
+            mTronSocietyAd_TextView.setVisibility(mShowVoteEditText ? (isTronSociety ? View.VISIBLE : View.GONE) : View.GONE);
+            mTronSocietyAdBorder_ImageView.setVisibility(mShowVoteEditText ? (isTronSociety ? View.VISIBLE : View.GONE) : View.GONE);
 
             if(mShowVoteEditText) {
                 mVoteNumber_EditText.removeTextChangedListener(mTextWatcher);
