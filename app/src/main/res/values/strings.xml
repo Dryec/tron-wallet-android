@@ -3,11 +3,11 @@
     <!--> NO TRANSLATION <-->
     <string name="fullnode_ip" translatable="false">54.236.37.243</string>
     <string name="fullnode_port" translatable="false">50051</string>
-    <string name="soliditynode_ip" translatable="false">39.105.66.80</string>
+    <string name="soliditynode_ip" translatable="false">47.89.187.247</string>
     <string name="soliditynode_port" translatable="false">50051</string>
 
     <string name="app_name" translatable="false">Tron Wallet</string>
-    <string name="app_version" translatable="false">v1.1.8.1</string>
+    <string name="app_version" translatable="false">v1.1.9.4</string>
 
     <string name="preference_file_key" translatable="false">com.eletac.tronwallet.wallet_preferences</string>
     <string name="pwd_key" translatable="false">pwd_key</string>
@@ -34,6 +34,8 @@
     <string name="net_used_key" translatable="false">net_used_key</string>
     <string name="net_free_limit_key" translatable="false">net_free_limit_key</string>
     <string name="net_free_used_key" translatable="false">net_free_used_key</string>
+    <string name="energy_limit_key" translatable="false">energy_limit_key</string>
+    <string name="energy_used_key" translatable="false">energy_used_key</string>
     <!--> NO TRANSLATION <-->
 
     <string name="title_wallet">Wallet</string>

@@ -20,9 +20,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,10 +39,12 @@ import com.eletac.tronwallet.block_explorer.BlockExplorerUpdater;
 import com.eletac.tronwallet.block_explorer.TransactionItemListAdapter;
 import com.eletac.tronwallet.database.Transaction;
 import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
+import com.google.protobuf.ByteString;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.Wallet;
@@ -56,11 +60,12 @@ public class TransactionHistoryFragment extends Fragment implements SwipeRefresh
 
     private RecyclerView mTransactions_RecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Switch mSentReceivedSwitch;
 
     private LinearLayoutManager mLayoutManager;
     private TransactionItemListAdapter mTransactionsItemListAdapter;
 
-    private List<Protocol.Transaction> mTransactions;
+    private List<GrpcAPI.TransactionExtention> mTransactions;
     private Wallet mWallet;
 
     private TransactionSentBroadcastReceiver mTransactionSentBroadcastReceiver;
@@ -80,7 +85,6 @@ public class TransactionHistoryFragment extends Fragment implements SwipeRefresh
 
         mWallet = WalletManager.getSelectedWallet();
         mTransactions = new ArrayList<>();
-        loadTransactions();
         mTransactionsItemListAdapter = new TransactionItemListAdapter(getContext(), mTransactions);
 
         mTransactionSentBroadcastReceiver = new TransactionSentBroadcastReceiver();
@@ -116,6 +120,7 @@ public class TransactionHistoryFragment extends Fragment implements SwipeRefresh
         super.onViewCreated(view, savedInstanceState);
 
         mTransactions_RecyclerView = view.findViewById(R.id.TransactionHistory_transactions_recyclerView);
+        mSentReceivedSwitch = view.findViewById(R.id.TransactionHistory_SentReceived_switch);
         //mSwipeRefreshLayout = view.findViewById(R.id.TransactionHistory_swipe_container);
 
         //mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -127,6 +132,14 @@ public class TransactionHistoryFragment extends Fragment implements SwipeRefresh
         mTransactions_RecyclerView.setHasFixedSize(true);
         mTransactions_RecyclerView.setLayoutManager(mLayoutManager);
         mTransactions_RecyclerView.setAdapter(mTransactionsItemListAdapter);
+
+        mSentReceivedSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                loadTransactions();
+            }
+        });
+        loadTransactions();
     }
 
     @Override
@@ -140,9 +153,29 @@ public class TransactionHistoryFragment extends Fragment implements SwipeRefresh
             public void doOnBackground() {
                 List<Transaction> dbTransactions = TronWalletApplication.getDatabase().transactionDao().getAllTransactions();
 
+                GrpcAPI.AccountPaginated.Builder builder = GrpcAPI.AccountPaginated.newBuilder();
+                builder.setAccount(Protocol.Account.newBuilder().setAddress(ByteString.copyFrom(WalletManager.decodeFromBase58Check(mWallet.getAddress()))).build());
+                builder.setLimit(-1);
+                builder.setOffset(0);
+
+                GrpcAPI.TransactionListExtention transactionsExtention = null;
+
+                try {
+
+                    if (!mSentReceivedSwitch.isChecked()) {
+                        transactionsExtention = WalletManager.getTransactionsFromThis(WalletManager.decodeFromBase58Check(mWallet.getAddress()), 0, 1000);
+                    } else {
+                        transactionsExtention = WalletManager.getTransactionsToThis(WalletManager.decodeFromBase58Check(mWallet.getAddress()), 0, 1000);
+                    }
+                } catch (Exception ignore) {
+
+                }
+                //GrpcAPI.TransactionListExtention toTransactions = WalletManager.getTransactionsToThis(WalletManager.decodeFromBase58Check(mWallet.getAddress()), 0, -1);
+                //GrpcAPI.TransactionListExtention fromTransactions = WalletManager.getTransactionsFromThis(WalletManager.decodeFromBase58Check(mWallet.getAddress()), 0, -1);
+
                 // TODO load and compare with transactions from node if possible
 
-                List<Protocol.Transaction> transactions = new ArrayList<>();
+                /*List<Protocol.Transaction> transactions = new ArrayList<>();
                 for(Transaction dbTransaction : dbTransactions) {
                     if(dbTransaction.senderAddress.equals(mWallet.getAddress())) {
                         transactions.add(dbTransaction.transaction);
@@ -152,10 +185,29 @@ public class TransactionHistoryFragment extends Fragment implements SwipeRefresh
                     @Override
                     public void doInUIThread() {
                         mTransactions.clear();
-                        mTransactions.addAll(transactions);
+                        for(Protocol.Transaction transaction : transactions) {
+                            GrpcAPI.TransactionExtention.Builder builder = GrpcAPI.TransactionExtention.newBuilder();
+                            builder.setTransaction(transaction);
+                            mTransactions.add(builder.build());
+                        }
                         mTransactionsItemListAdapter.notifyDataSetChanged();
                     }
-                });
+                });*/
+
+                if (transactionsExtention != null) {
+                    GrpcAPI.TransactionListExtention finalTransactionsExtention = transactionsExtention;
+                    AsyncJob.doOnMainThread(new AsyncJob.OnMainThreadJob() {
+                        @Override
+                        public void doInUIThread() {
+                            mTransactions.clear();
+                            List<GrpcAPI.TransactionExtention> t = finalTransactionsExtention.getTransactionList();
+                            mTransactions.addAll(t);
+                            mTransactionsItemListAdapter.notifyDataSetChanged();
+                            mTransactions_RecyclerView.scrollToPosition(0);
+                        }
+                    });
+                }
+
             }
         });
     }

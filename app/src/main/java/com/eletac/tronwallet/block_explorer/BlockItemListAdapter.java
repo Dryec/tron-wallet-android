@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.eletac.tronwallet.R;
 
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.WalletManager;
 
@@ -21,7 +22,7 @@ import java.util.List;
 public class BlockItemListAdapter extends RecyclerView.Adapter<BlockItemListAdapter.BlockItemViewHolder> {
 
     private Context mContext;
-    private List<Protocol.Block> mBlocks;
+    private List<GrpcAPI.BlockExtention> mBlocks;
     private Handler mUpdateElapsedTimeHandler;
     private List<BlockItemViewHolder> mViewHolders;
     private Runnable mUpdateElapsedTimeRunnable = new Runnable() {
@@ -43,7 +44,7 @@ public class BlockItemListAdapter extends RecyclerView.Adapter<BlockItemListAdap
         }
     };
 
-    public BlockItemListAdapter(Context context, List<Protocol.Block> blocks) {
+    public BlockItemListAdapter(Context context, List<GrpcAPI.BlockExtention> blocks) {
         mContext = context;
         mBlocks = blocks;
         mViewHolders = new ArrayList<>();
@@ -85,7 +86,7 @@ public class BlockItemListAdapter extends RecyclerView.Adapter<BlockItemListAdap
         private TextView mBlockTransactionsAmount_TextView;
         private TextView mBlockProducerAddress_TextView;
 
-        private Protocol.Block mBlock;
+        private GrpcAPI.BlockExtention mBlock;
 
         public BlockItemViewHolder(View itemView) {
             super(itemView);
@@ -97,7 +98,7 @@ public class BlockItemListAdapter extends RecyclerView.Adapter<BlockItemListAdap
             mBlockProducerAddress_TextView = itemView.findViewById(R.id.Block_producer_address_textView);
         }
 
-        public void bind(Protocol.Block block) {
+        public void bind(GrpcAPI.BlockExtention block) {
             mBlock = block;
 
             String blockNumberStr = "#"+String.valueOf(block.getBlockHeader().getRawData().getNumber());

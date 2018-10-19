@@ -6,13 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".wallet.TransactionHistoryFragment">
 
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView53"
+    <Switch
+        android:id="@+id/TransactionHistory_SentReceived_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:checked="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollView3"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/TransactionHistory_SentReceived_switch">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,16 +54,26 @@
     </ScrollView>
 
     <TextView
-        android:id="@+id/textView53"
-        android:layout_width="0dp"
+        android:id="@+id/textView12"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Sent"
+        app:layout_constraintBottom_toBottomOf="@+id/TransactionHistory_SentReceived_switch"
+        app:layout_constraintEnd_toStartOf="@+id/TransactionHistory_SentReceived_switch"
+        app:layout_constraintTop_toTopOf="@+id/TransactionHistory_SentReceived_switch" />
+
+    <TextView
+        android:id="@+id/textView58"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
-        android:text="@string/info_history"
-        android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="8dp"
+        android:text="Received"
+        app:layout_constraintBottom_toBottomOf="@+id/TransactionHistory_SentReceived_switch"
+        app:layout_constraintStart_toEndOf="@+id/TransactionHistory_SentReceived_switch"
+        app:layout_constraintTop_toTopOf="@+id/TransactionHistory_SentReceived_switch" />
 </android.support.constraint.ConstraintLayout>

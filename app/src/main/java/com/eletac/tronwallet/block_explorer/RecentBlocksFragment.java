@@ -27,6 +27,7 @@ import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.WrapContentLinearLayoutManager;
 
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
 import org.w3c.dom.Text;
 
@@ -45,7 +46,7 @@ public class RecentBlocksFragment extends Fragment implements SwipeRefreshLayout
 
     private BlocksUpdatedBroadcastReceiver mBlocksUpdatedBroadcastReceiver;
 
-    private List<Protocol.Block> mBlocks;
+    private List<GrpcAPI.BlockExtention> mBlocks;
 
     public RecentBlocksFragment() {
         // Required empty public constructor

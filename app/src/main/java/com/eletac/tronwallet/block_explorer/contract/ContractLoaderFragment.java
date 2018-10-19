@@ -62,7 +62,7 @@ public class ContractLoaderFragment extends ContractFragment {
         // TODO animate
     }
 
-    private String getContractName(@NonNull Protocol.Transaction.Contract contract) {
+    public String getContractName(@NonNull Protocol.Transaction.Contract contract) {
         switch (contract.getType()) {
             case AccountCreateContract:
                 return getString(R.string.account_create_contract);
@@ -78,8 +78,6 @@ public class ContractLoaderFragment extends ContractFragment {
                 return getString(R.string.witness_create_contract);
             case AssetIssueContract:
                 return getString(R.string.asset_issue_contract);
-            case DeployContract:
-                return getString(R.string.deploy_contract);
             case WitnessUpdateContract:
                 return getString(R.string.witness_update_contract);
             case ParticipateAssetIssueContract:
@@ -126,8 +124,6 @@ public class ContractLoaderFragment extends ContractFragment {
                 break;
             case AssetIssueContract:
                 fragment = AssetIssueContractFragment.newInstance();
-                break;
-            case DeployContract:
                 break;
             case WitnessUpdateContract:
                 break;

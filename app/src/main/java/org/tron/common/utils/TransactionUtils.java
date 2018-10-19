@@ -91,9 +91,6 @@ public class TransactionUtils {
         case ParticipateAssetIssueContract:
           owner = unpackContract(contract, org.tron.protos.Contract.ParticipateAssetIssueContract.class).getOwnerAddress();
           break;
-        case DeployContract:
-          owner = unpackContract(contract, org.tron.protos.Contract.DeployContract.class).getOwnerAddress();
-          break;
         case AccountUpdateContract:
           owner = unpackContract(contract, org.tron.protos.Contract.AccountUpdateContract.class).getOwnerAddress();
           break;
@@ -111,6 +108,45 @@ public class TransactionUtils {
           break;
         case UpdateAssetContract:
           owner = unpackContract(contract, org.tron.protos.Contract.UpdateAssetContract.class).getOwnerAddress();
+          break; // -----
+        case ProposalCreateContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.ProposalCreateContract.class).getOwnerAddress();
+          break;
+        case ProposalApproveContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.ProposalApproveContract.class).getOwnerAddress();
+          break;
+        case ProposalDeleteContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.ProposalDeleteContract.class).getOwnerAddress();
+          break;
+        case SetAccountIdContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.SetAccountIdContract.class).getOwnerAddress();
+          break;
+        //case CustomContract:
+          //owner = unpackContract(contract, org.tron.protos.Contract.CustomContract.class).getOwnerAddress();
+          //break;
+        case CreateSmartContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.CreateSmartContract.class).getOwnerAddress();
+          break;
+        case TriggerSmartContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.TriggerSmartContract.class).getOwnerAddress();
+          break;
+        //case GetContract:
+          //owner = unpackContract(contract, org.tron.protos.Contract.GetContract.class).getOwnerAddress();
+          //break;
+        case UpdateSettingContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.UpdateSettingContract.class).getOwnerAddress();
+          break;
+        case ExchangeCreateContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.ExchangeCreateContract.class).getOwnerAddress();
+          break;
+        case ExchangeInjectContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.ExchangeInjectContract.class).getOwnerAddress();
+          break;
+        case ExchangeWithdrawContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.ExchangeWithdrawContract.class).getOwnerAddress();
+          break;
+        case ExchangeTransactionContract:
+          owner = unpackContract(contract, org.tron.protos.Contract.ExchangeTransactionContract.class).getOwnerAddress();
           break;
         default:
           return null;
@@ -171,7 +207,8 @@ public class TransactionUtils {
     List<Contract> listContract = transaction.getRawData().getContractList();
     for (int i = 0; i < listContract.size(); i++) {
       ECDSASignature signature = myKey.sign(hash);
-      ByteString bsSign = ByteString.copyFrom(signature.toByteArray());
+      byte[] da = signature.toByteArray();
+      ByteString bsSign = ByteString.copyFrom(da);
       transactionBuilderSigned.addSignature(
           bsSign);//Each contract may be signed with a different private key in the future.
     }

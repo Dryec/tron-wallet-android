@@ -94,9 +94,11 @@ public class AccountUpdater {
 
                             Protocol.Account account = WalletManager.queryAccount(address, false);
                             GrpcAPI.AccountNetMessage accountNetMessage = WalletManager.getAccountNet(address);
+                            GrpcAPI.AccountResourceMessage accountResMessage = WalletManager.getAccountRes(address);
 
                             Utils.saveAccount(mContext, selectedWallet.getWalletName(), account);
                             Utils.saveAccountNet(mContext, selectedWallet.getWalletName(), accountNetMessage);
+                            Utils.saveAccountRes(mContext, selectedWallet.getWalletName(), accountResMessage);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

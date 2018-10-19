@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.WrapContentLinearLayoutManager;
 
+import org.tron.api.GrpcAPI;
 import org.tron.protos.Protocol;
 
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class RecentTransactionsFragment extends Fragment {
     private TransactionItemListAdapter mTransactionsItemListAdapter;
 
     private TransactionsUpdatedBroadcastReceiver mTransactionsUpdatedBroadcastReceiver;
-    private List<Protocol.Transaction> mTransactions;
+    private List<GrpcAPI.TransactionExtention> mTransactions;
 
     public RecentTransactionsFragment() {
         // Required empty public constructor

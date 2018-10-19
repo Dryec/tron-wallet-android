@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,7 +19,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -28,8 +31,10 @@ import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.Utils;
 import com.eletac.tronwallet.wallet.confirm_transaction.ConfirmTransactionActivity;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
+import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.tron.api.GrpcAPI;
+import org.tron.protos.Contract;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.Wallet;
 import org.tron.walletserver.WalletManager;
@@ -47,11 +52,17 @@ public class FreezeFragment extends Fragment {
     private TextView mVotesNew_TextView;
     private TextView mBandwidthNow_TextView;
     private TextView mBandwidthNew_TextView;
+    private TextView mEnergyNow_TextView;
     private TextView mExpires_TextView;
+    private TextView mEnergyWarning_TextView;
     private EditText mFreezeAmount_EditText;
     private SeekBar mFreezeAmount_SeekBar;
     private Button mFreeze_Button;
     private Button mUnfreeze_Button;
+    private RadioButton mGainBandwidth_RadioButton;
+    private RadioButton mGainEnergy_RadioButton;
+    private RadioButton mUnfreezeBandwidth_RadioButton;
+    private RadioButton mUnfreezeEnergy_RadioButton;
 
     private Wallet mWallet;
     private Protocol.Account mAccount;
@@ -99,11 +110,29 @@ public class FreezeFragment extends Fragment {
         mVotesNew_TextView = view.findViewById(R.id.Freeze_votes_new_textView);
         mBandwidthNow_TextView = view.findViewById(R.id.Freeze_bandwidth_now_textView);
         mBandwidthNew_TextView = view.findViewById(R.id.Freeze_bandwidth_new_textView);
+        mEnergyNow_TextView = view.findViewById(R.id.Freeze_energy_now_textView);
         mExpires_TextView = view.findViewById(R.id.Freeze_expire_textView);
+        mEnergyWarning_TextView = view.findViewById(R.id.Freeze_energy_warning_textView);
         mFreezeAmount_EditText = view.findViewById(R.id.Freeze_amount_editText);
         mFreezeAmount_SeekBar = view.findViewById(R.id.Freeze_amount_seekBar);
         mFreeze_Button = view.findViewById(R.id.Freeze_button);
         mUnfreeze_Button= view.findViewById(R.id.Freeze_un_button);
+        mGainBandwidth_RadioButton= view.findViewById(R.id.Freeze_bandwidth_radioButton);
+        mGainEnergy_RadioButton= view.findViewById(R.id.Freeze_energy_radioButton);
+        mUnfreezeBandwidth_RadioButton= view.findViewById(R.id.Freeze_un_bandwidth_radioButton);
+        mUnfreezeEnergy_RadioButton= view.findViewById(R.id.Freeze_un_energy_radioButton);
+
+        CompoundButton.OnCheckedChangeListener radio = new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateUI();
+            }
+        };
+
+        mGainBandwidth_RadioButton.setOnCheckedChangeListener(radio);
+        mGainEnergy_RadioButton.setOnCheckedChangeListener(radio);
+        mUnfreezeBandwidth_RadioButton.setOnCheckedChangeListener(radio);
+        mUnfreezeEnergy_RadioButton.setOnCheckedChangeListener(radio);
 
         mFreezeAmount_EditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -169,11 +198,14 @@ public class FreezeFragment extends Fragment {
 
                 mFreeze_Button.setEnabled(false);
                 mFreeze_Button.setText(R.string.loading);
+
                 AsyncJob.doInBackground(() -> {
                     long amount = mFreezeAmount*1000000;
+                    boolean gainBandwidth = mGainBandwidth_RadioButton.isChecked();
+
                     Protocol.Transaction transaction = null;
                     try {
-                        transaction = WalletManager.createFreezeBalanceTransaction(WalletManager.decodeFromBase58Check(mWallet.getAddress()), amount, 3);
+                        transaction = WalletManager.createFreezeBalanceTransaction(WalletManager.decodeFromBase58Check(mWallet.getAddress()), amount, 3, gainBandwidth ? Contract.ResourceCode.BANDWIDTH : Contract.ResourceCode.ENERGY);
                     } catch (Exception ignored) { }
 
                     Protocol.Transaction finalTransaction = transaction;
@@ -216,6 +248,7 @@ public class FreezeFragment extends Fragment {
                 }
 
                 String textBackup = mUnfreeze_Button.getText().toString();
+                boolean unfreezeForBandwidth = mUnfreezeBandwidth_RadioButton.isChecked();
 
                 mUnfreeze_Button.setEnabled(false);
                 mUnfreeze_Button.setText(R.string.loading);
@@ -223,7 +256,7 @@ public class FreezeFragment extends Fragment {
                 AsyncJob.doInBackground(() -> {
                     Protocol.Transaction transaction = null;
                     try {
-                        transaction = WalletManager.createUnfreezeBalanceTransaction(WalletManager.decodeFromBase58Check(mWallet.getAddress()));
+                        transaction = WalletManager.createUnfreezeBalanceTransaction(WalletManager.decodeFromBase58Check(mWallet.getAddress()), unfreezeForBandwidth ? Contract.ResourceCode.BANDWIDTH : Contract.ResourceCode.ENERGY);
                     } catch (Exception ignored) { }
 
                     Protocol.Transaction finalTransaction = transaction;
@@ -272,6 +305,7 @@ public class FreezeFragment extends Fragment {
             mFreezeAmount_SeekBar.setMax((int)(mAccount.getBalance()/1000000L));
 
             GrpcAPI.AccountNetMessage accountNetMessage = Utils.getAccountNet(getContext(), mWallet.getWalletName());
+            GrpcAPI.AccountResourceMessage accountResMessage = Utils.getAccountRes(getContext(), mWallet.getWalletName());
 
             NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.US);
 
@@ -290,6 +324,9 @@ public class FreezeFragment extends Fragment {
             long bandwidth = accountNetMessage.getNetLimit() + accountNetMessage.getFreeNetLimit();
             long bandwidthUsed = accountNetMessage.getNetUsed() + accountNetMessage.getFreeNetUsed();
 
+            long energy = accountResMessage.getEnergyLimit();
+            long energyUsed= accountResMessage.getEnergyUsed();
+
             mFrozenNow_TextView.setText(numberFormat.format(freezed / 1000000));
             mVotesNow_TextView.setText(numberFormat.format(freezed / 1000000));
             mBandwidthNow_TextView.setText(
@@ -299,13 +336,28 @@ public class FreezeFragment extends Fragment {
                             + " ➡ " +
                             numberFormat.format(bandwidth - bandwidthUsed)
             );
+            mEnergyNow_TextView.setText(
+                    numberFormat.format(energyUsed)
+                            + " / " +
+                            numberFormat.format(energy)
+                            + " ➡ " +
+                            numberFormat.format(energy - energyUsed)
+            );
             mExpires_TextView.setText(expire == 0 ? "-" : DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM, Locale.US).format(new Date(expire)));
-            mUnfreeze_Button.setText(String.format(Locale.US, "%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
-            mUnfreeze_Button.setEnabled(unfreezable > 0);
+            if(mUnfreezeBandwidth_RadioButton.isChecked()) {
+                mUnfreeze_Button.setText(String.format(Locale.US, "%s (%d)", getString(R.string.unfreeze), unfreezable / 1000000));
+                mUnfreeze_Button.setEnabled(unfreezable > 0);
+            }
+            else {
+                mUnfreeze_Button.setText((R.string.unfreeze));
+                mUnfreeze_Button.setEnabled(true);
+            }
 
             long newFreeze = (freezed / 1000000L) + mFreezeAmount;
-            mFrozenNew_TextView.setText(numberFormat.format(newFreeze));
-            mVotesNew_TextView.setText(numberFormat.format(newFreeze));
+            boolean gainBandwidth = mGainBandwidth_RadioButton.isChecked();
+            mEnergyWarning_TextView.setVisibility(gainBandwidth ? View.GONE : View.VISIBLE);
+            mFrozenNew_TextView.setText(numberFormat.format(gainBandwidth ? newFreeze : freezed / 1000000L));
+            mVotesNew_TextView.setText(numberFormat.format(gainBandwidth ? newFreeze : freezed / 1000000L));
             mBandwidthNew_TextView.setText(numberFormat.format(mAccount.getNetUsage() + mFreezeAmount)); // not visible anymore
         }
         mUpdatingUI = false;

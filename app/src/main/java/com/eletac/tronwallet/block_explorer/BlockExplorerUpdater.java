@@ -56,8 +56,8 @@ public class BlockExplorerUpdater {
 
     private static ExecutorService mExecutorService;
 
-    private static List<Protocol.Block> mBlocks;
-    private static List<Protocol.Transaction> mTransactions;
+    private static List<GrpcAPI.BlockExtention> mBlocks;
+    private static List<GrpcAPI.TransactionExtention> mTransactions;
     private static List<Protocol.Witness> mWitnesses;
     private static List<GrpcAPI.Node> mNodes;
     private static List<Contract.AssetIssueContract> mTokens;
@@ -159,20 +159,20 @@ public class BlockExplorerUpdater {
                             while(!gotSomeBlocks && blockCount > 0) {
                                 // Load Blocks and transactions
                                 try {
-                                    GrpcAPI.BlockList result = WalletManager.getBlockByLatestNum(blockCount);
+                                    GrpcAPI.BlockListExtention result = WalletManager.getBlockByLatestNum(blockCount);
                                     if (result != null) {
                                         mBlocks.clear();
                                         mBlocks.addAll(result.getBlockList());
-                                        Collections.sort(mBlocks, new Comparator<Protocol.Block>() {
+                                        Collections.sort(mBlocks, new Comparator<GrpcAPI.BlockExtention>() {
                                             @Override
-                                            public int compare(Protocol.Block o1, Protocol.Block o2) {
+                                            public int compare(GrpcAPI.BlockExtention o1, GrpcAPI.BlockExtention o2) {
                                                 return Long.compare(o1.getBlockHeader().getRawData().getNumber(), o2.getBlockHeader().getRawData().getNumber());
                                             }
                                         });
                                     }
 
                                     mTransactions.clear();
-                                    for (Protocol.Block block : mBlocks) {
+                                    for (GrpcAPI.BlockExtention block : mBlocks) {
                                         /*for (Protocol.Transaction transaction : block.getTransactionsList()) {
                                             Protocol.Transaction.Builder builder = transaction.toBuilder();
                                             Protocol.Transaction.raw.Builder rawBuilder = transaction.getRawData().toBuilder();
@@ -312,7 +312,19 @@ public class BlockExplorerUpdater {
                             GrpcAPI.AssetIssueList result = WalletManager.getAssetIssueList(false);
                             if(result != null) {
                                 mTokens.clear();
-                                mTokens.addAll(result.getAssetIssueList());
+
+                                for (Contract.AssetIssueContract token : result.getAssetIssueList())
+                                {
+                                    if(!(token.getName().toStringUtf8().equals("TronWatchmarket") ||
+                                            token.getName().toStringUtf8().equals("TWM")  ||
+                                            token.getName().toStringUtf8().equals("TronWatch")||
+                                            token.getName().toStringUtf8().equals("Tronwatchmarket")))
+                                    {
+                                        mTokens.add(token);
+                                    }
+                                }
+
+                                //mTokens.addAll(result.getAssetIssueList());
                                 Collections.sort(mTokens, new Comparator<Contract.AssetIssueContract>() {
                                     @Override
                                     public int compare(Contract.AssetIssueContract o1, Contract.AssetIssueContract o2) {
@@ -385,11 +397,11 @@ public class BlockExplorerUpdater {
         }
     }
 
-    public static List<Protocol.Block> getBlocks() {
+    public static List<GrpcAPI.BlockExtention> getBlocks() {
         return mBlocks;
     }
 
-    public static List<Protocol.Transaction> getTransactions() {
+    public static List<GrpcAPI.TransactionExtention> getTransactions() {
         return mTransactions;
     }
 

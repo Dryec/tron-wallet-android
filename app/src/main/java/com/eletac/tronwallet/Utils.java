@@ -91,6 +91,33 @@ public class Utils {
         }
     }
 
+    public static void saveAccountRes(Context context, String walletName, GrpcAPI.AccountResourceMessage accountRes) {
+        if (context != null && accountRes != null && WalletManager.existWallet(walletName)) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putLong(context.getString(R.string.energy_limit_key), accountRes.getEnergyLimit());
+            editor.putLong(context.getString(R.string.energy_used_key), accountRes.getEnergyUsed());
+
+            editor.apply();
+        }
+    }
+
+    public static GrpcAPI.AccountResourceMessage getAccountRes(Context context, String walletName) {
+        if(context != null && WalletManager.existWallet(walletName)) {
+            SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
+
+            GrpcAPI.AccountResourceMessage.Builder accountResMessage = GrpcAPI.AccountResourceMessage.newBuilder();
+
+            accountResMessage.setEnergyLimit(sharedPreferences.getLong(context.getString(R.string.energy_limit_key), 0));
+            accountResMessage.setEnergyUsed(sharedPreferences.getLong(context.getString(R.string.energy_used_key), 0));
+
+            return accountResMessage.build();
+        }
+        return GrpcAPI.AccountResourceMessage.getDefaultInstance();
+    }
+
+
     public static GrpcAPI.AccountNetMessage getAccountNet(Context context, String walletName) {
         if(context != null && WalletManager.existWallet(walletName)) {
             SharedPreferences sharedPreferences = context.getSharedPreferences(walletName, Context.MODE_PRIVATE);
@@ -191,5 +218,49 @@ public class Utils {
         BigDecimal bd = new BigDecimal(value);
         bd = bd.setScale(places, mode);
         return bd.doubleValue();
+    }
+
+
+    public static String getContractName(Protocol.Transaction.Contract contract) {
+        if(contract == null)
+            return "";
+
+        switch (contract.getType()) {
+            case AccountCreateContract:
+                return "AccountCreateContract";
+            case TransferContract:
+                return "TransferContract";
+            case TransferAssetContract:
+                return "TransferAssetContract";
+            case VoteAssetContract:
+                return "VoteAssetContract";
+            case VoteWitnessContract:
+                return "VoteWitnessContract";
+            case WitnessCreateContract:
+                return "WitnessCreateContract";
+            case AssetIssueContract:
+                return "AssetIssueContract";
+            case WitnessUpdateContract:
+                return "WitnessUpdateContract";
+            case ParticipateAssetIssueContract:
+                return "ParticipateAssetIssueContract";
+            case AccountUpdateContract:
+                return "AccountUpdateContract";
+            case FreezeBalanceContract:
+                return "FreezeBalanceContract";
+            case UnfreezeBalanceContract:
+                return "UnfreezeBalanceContract";
+            case WithdrawBalanceContract:
+                return "WithdrawBalanceContract";
+            case UnfreezeAssetContract:
+                return "UnfreezeAssetContract";
+            case UpdateAssetContract:
+                return "UpdateAssetContract";
+            case CustomContract:
+                return "CustomContract";
+            case UNRECOGNIZED:
+                return "UNRECOGNIZED";
+        }
+        return "";
     }
 }

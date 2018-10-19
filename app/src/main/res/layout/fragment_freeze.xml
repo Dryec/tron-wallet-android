@@ -92,6 +92,35 @@
                         app:layout_constraintTop_toBottomOf="@+id/textView30" />
 
                     <TextView
+                        android:id="@+id/textView66"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Gain:"
+                        android:textColor="@android:color/white"
+                        app:layout_constraintBottom_toBottomOf="@+id/radioGroup"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/radioGroup" />
+
+                    <TextView
+                        android:id="@+id/Freeze_energy_warning_textView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="- ATTENTION -\nYOU WON'T RECEIVE TRON POWER FOR VOTING."
+                        android:textAlignment="center"
+                        android:textColor="@color/colorAccent"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView66" />
+
+                    <TextView
                         android:id="@+id/textView32"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -142,13 +171,13 @@
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="16dp"
                         android:backgroundTint="@android:color/holo_blue_dark"
                         android:text="@string/freeze"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/Freeze_bandwidth_new_textView" />
+                        app:layout_constraintTop_toBottomOf="@+id/Freeze_energy_warning_textView" />
 
                     <SeekBar
                         android:id="@+id/Freeze_amount_seekBar"
@@ -159,6 +188,35 @@
                         app:layout_constraintEnd_toEndOf="@+id/Freeze_amount_textInputLayout"
                         app:layout_constraintStart_toStartOf="@+id/Freeze_amount_textInputLayout"
                         app:layout_constraintTop_toBottomOf="@+id/Freeze_amount_textInputLayout" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:checkedButton="@+id/Freeze_bandwidth_radioButton"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/textView30"
+                        app:layout_constraintTop_toBottomOf="@+id/Freeze_votes_new_textView">
+
+                        <RadioButton
+                            android:id="@+id/Freeze_bandwidth_radioButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:text="Bandwidth" />
+
+                        <RadioButton
+                            android:id="@+id/Freeze_energy_radioButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="false"
+                            android:text="Energy" />
+                    </RadioGroup>
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>
 
@@ -200,6 +258,16 @@
                         app:layout_constraintTop_toTopOf="@+id/textView24" />
 
                     <TextView
+                        android:id="@+id/Freeze_energy_now_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="15,300,000"
+                        android:textColor="@android:color/white"
+                        app:layout_constraintBottom_toBottomOf="@+id/textView67"
+                        app:layout_constraintStart_toStartOf="@+id/Freeze_votes_now_textView"
+                        app:layout_constraintTop_toTopOf="@+id/textView67" />
+
+                    <TextView
                         android:id="@+id/textView24"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -209,6 +277,17 @@
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/textView23" />
+
+                    <TextView
+                        android:id="@+id/textView67"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:text="Energy:"
+                        android:textColor="@android:color/white"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView24" />
 
                     <TextView
                         android:id="@+id/textView23"
@@ -246,11 +325,11 @@
                         android:id="@+id/Freeze_frozen_now_textView"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="24dp"
+                        android:layout_marginStart="16dp"
                         android:text="5,100,000"
                         android:textColor="@android:color/white"
                         app:layout_constraintBottom_toBottomOf="@+id/textView26"
-                        app:layout_constraintStart_toEndOf="@+id/textView24"
+                        app:layout_constraintStart_toEndOf="@+id/textView26"
                         app:layout_constraintTop_toTopOf="@+id/textView26" />
 
                     <TextView
@@ -258,11 +337,41 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="16dp"
                         android:text="@string/expires_all_colon"
                         android:textColor="@android:color/white"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/textView24" />
+                        app:layout_constraintTop_toBottomOf="@+id/textView67" />
+
+                    <RadioGroup
+                        android:id="@+id/radioGroup2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="16dp"
+                        android:checkedButton="@+id/Freeze_bandwidth_radioButton"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView36">
+
+                        <RadioButton
+                            android:id="@+id/Freeze_un_bandwidth_radioButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="true"
+                            android:text="Bandwidth" />
+
+                        <RadioButton
+                            android:id="@+id/Freeze_un_energy_radioButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:checked="false"
+                            android:text="Energy" />
+                    </RadioGroup>
 
                     <Button
                         android:id="@+id/Freeze_un_button"
@@ -272,13 +381,12 @@
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
                         android:backgroundTint="@android:color/holo_red_dark"
                         android:text="@string/unfreeze"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/Freeze_expire_textView"
+                        app:layout_constraintTop_toBottomOf="@+id/radioGroup2"
                         app:layout_constraintVertical_bias="0.0" />
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.CardView>

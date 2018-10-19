@@ -21,6 +21,7 @@ import com.arasthel.asyncjob.AsyncJob;
 import com.eletac.tronwallet.R;
 
 import org.spongycastle.util.encoders.Hex;
+import org.tron.api.GrpcAPI;
 import org.tron.common.crypto.Hash;
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Contract;
@@ -42,11 +43,11 @@ import io.grpc.StatusRuntimeException;
 public class TransactionItemListAdapter extends RecyclerView.Adapter<TransactionItemListAdapter.TransactionItemViewHolder> {
 
     private Context mContext;
-    private List<Protocol.Transaction> mTransactions;
+    private List<GrpcAPI.TransactionExtention> mTransactions;
     private ExecutorService mExecutorService;
     private List<Protocol.Transaction> mConfirmedTransactions;
 
-    public TransactionItemListAdapter(Context context, List<Protocol.Transaction> transactions) {
+    public TransactionItemListAdapter(Context context, List<GrpcAPI.TransactionExtention> transactions) {
         mContext = context;
         mTransactions = transactions;
         mConfirmedTransactions = new ArrayList<>();
@@ -115,15 +116,15 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
             });
         }
 
-        public void bind(Protocol.Transaction transaction) {
-            mTransaction = transaction;
+        public void bind(GrpcAPI.TransactionExtention transaction) {
+            mTransaction = transaction.getTransaction();
             mFirstConfirmationStateLoaded = false;
 
             mUpdateConfirmationHandler.removeCallbacks(mUpdateConfirmationRunnable);
             mUpdateConfirmationHandler.post(mUpdateConfirmationRunnable);
 
-            if(transaction.getRawData().getContractCount() > 0) {
-                Protocol.Transaction.Contract contract = transaction.getRawData().getContract(0);
+            if(mTransaction.getRawData().getContractCount() > 0) {
+                Protocol.Transaction.Contract contract = mTransaction.getRawData().getContract(0);
 
                 String from = "", to = "", contract_desc = "";
                 String amount_prefix = "";
@@ -196,14 +197,6 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                             to = assetIssueContract.getName().toStringUtf8();
                             amount = assetIssueContract.getTotalSupply();
                             contract_desc = mContext.getString(R.string.token_creation);
-                            break;
-                        case DeployContract:
-                            Log.i("TRANSACTIONS", "DeployContract");
-                            Contract.DeployContract deployContract = TransactionUtils.unpackContract(contract, Contract.DeployContract.class);
-                            from = WalletManager.encode58Check(deployContract.getOwnerAddress().toByteArray());
-                            to = deployContract.getScript().toStringUtf8();
-                            amount = -1;
-                            contract_desc = mContext.getString(R.string.deploy_contract);
                             break;
                         case WitnessUpdateContract:
                             Log.i("TRANSACTIONS", "WitnessUpdateContract");
@@ -285,11 +278,11 @@ public class TransactionItemListAdapter extends RecyclerView.Adapter<Transaction
                 mTransactionAmount_TextView.setText((amount != -1 ? numberFormat.format(amount) : "") + " " + amount_prefix);
                 mTransactionAsset_TextView.setText(contract_desc);
 
-                long timestamp = transaction.getRawData().getTimestamp();
+                long timestamp = mTransaction.getRawData().getTimestamp();
                 if(timestamp == 0) {
                     try {
-                        for (Protocol.Block block : BlockExplorerUpdater.getBlocks()) {
-                            for (Protocol.Transaction blockTransaction : block.getTransactionsList()) {
+                        for (GrpcAPI.BlockExtention block : BlockExplorerUpdater.getBlocks()) {
+                            for (GrpcAPI.TransactionExtention blockTransaction : block.getTransactionsList()) {
                                 if (blockTransaction.equals(transaction)) {
                                     timestamp = block.getBlockHeader().getRawData().getTimestamp();
                                     break;

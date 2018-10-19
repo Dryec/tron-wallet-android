@@ -2,9 +2,11 @@ package org.tron.walletserver;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import com.eletac.tronwallet.R;
 import com.eletac.tronwallet.TronWalletApplication;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.protobuf.ByteString;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,9 +14,7 @@ import org.spongycastle.util.encoders.Hex;
 import org.tron.api.GrpcAPI;
 import org.tron.api.GrpcAPI.AccountNetMessage;
 import org.tron.api.GrpcAPI.AssetIssueList;
-import org.tron.api.GrpcAPI.BlockList;
 import org.tron.api.GrpcAPI.NodeList;
-import org.tron.api.GrpcAPI.TransactionList;
 import org.tron.api.GrpcAPI.WitnessList;
 import org.tron.common.crypto.Hash;
 import org.tron.common.crypto.SymmEncoder;
@@ -152,6 +152,11 @@ public class WalletManager {
             walletEditor.putString(context.getString(R.string.priv_key), privKeyStr);
         }
 
+        Bundle bundle = new Bundle();
+        bundle.putString("address", wallet.getAddress());
+        bundle.putBoolean("is_watch", wallet.isWatchOnly());
+        FirebaseAnalytics.getInstance(context).logEvent("new_wallet", bundle);
+
         walletEditor.commit();
     }
 
@@ -268,20 +273,20 @@ public class WalletManager {
                                                              byte[] owner, long amount) {
         Contract.TransferAssetContract contract = createTransferAssetContract(to, assertName, owner,
                 amount);
-        return rpcCli.createTransferAssetTransaction(contract);
+        return rpcCli.createTransferAssetTransaction(contract).getTransaction();
     }
 
     public static Transaction createParticipateAssetIssueTransaction(byte[] to, byte[] assertName,
                                                                      byte[] owner, long amount) {
         Contract.ParticipateAssetIssueContract contract = createParticipateAssetIssueContract(to, assertName,
                 owner, amount);
-        return rpcCli.createParticipateAssetIssueTransaction(contract);
+        return rpcCli.createParticipateAssetIssueTransaction(contract).getTransaction();
     }
 
     public static Transaction createUpdateAccountTransaction(byte[] addressBytes, String accountName) {
         Contract.AccountUpdateContract contract = createAccountUpdateContract(ByteArray.fromString(accountName),
                 addressBytes);
-        return rpcCli.createTransaction(contract);
+        return rpcCli.createTransaction(contract).getTransaction();
     }
 
     public static boolean broadcastTransaction(Transaction transaction) {
@@ -291,18 +296,18 @@ public class WalletManager {
 
     public static Transaction createWitnessTransaction(byte[] owner, byte[] url) {
         Contract.WitnessCreateContract contract = createWitnessCreateContract(owner, url);
-        return rpcCli.createWitness(contract);
+        return rpcCli.createWitness(contract).getTransaction();
     }
 
     public static Transaction createUpdateWitnessTransaction(byte[] owner, byte[] url) {
         Contract.WitnessUpdateContract contract = createWitnessUpdateContract(owner, url);
-        return rpcCli.updateWitness(contract);
+        return rpcCli.updateWitness(contract).getTransaction();
     }
 
     public static Transaction createVoteWitnessTransaction(byte[] owner,
                                                            HashMap<String, String> witness) {
         Contract.VoteWitnessContract contract = createVoteWitnessContract(owner, witness);
-        return rpcCli.voteWitnessAccount(contract);
+        return rpcCli.voteWitnessAccount(contract).getTransaction();
     }
 
     public static Contract.AssetIssueContract createAssetIssueContract(byte[] owner, String name, String abbr, long totalSupply, int trxNum, int icoNum,
@@ -354,10 +359,10 @@ public class WalletManager {
     }
 
     public static Transaction createAssetIssueTransaction(Contract.AssetIssueContract contract) {
-        return rpcCli.createAssetIssue(contract);
+        return rpcCli.createAssetIssue(contract).getTransaction();
     }
 
-    public static Block getBlock(long blockNum, boolean useSolidity) {
+    public static GrpcAPI.BlockExtention getBlock(long blockNum, boolean useSolidity) {
         return rpcCli.getBlock(blockNum, useSolidity);
     }
 
@@ -405,7 +410,7 @@ public class WalletManager {
     }
 
     public static Transaction createTransaction4Transfer(Contract.TransferContract contract) {
-        Transaction transaction = rpcCli.createTransaction(contract);
+        Transaction transaction = rpcCli.createTransaction(contract).getTransaction();
         return transaction;
     }
 
@@ -656,6 +661,10 @@ public class WalletManager {
         return rpcCli.getAccountNet(address);
     }
 
+    public static GrpcAPI.AccountResourceMessage getAccountRes(byte[] address) {
+        return rpcCli.getAccountRes(address);
+    }
+
     public static AssetIssueContract getAssetIssueByName(String assetName) {
         return rpcCli.getAssetIssueByName(assetName);
     }
@@ -668,11 +677,11 @@ public class WalletManager {
         return rpcCli.getNextMaintenanceTime();
     }
 
-    public static TransactionList getTransactionsFromThis(byte[] address, int offset, int limit) {
+    public static GrpcAPI.TransactionListExtention getTransactionsFromThis(byte[] address, int offset, int limit) {
         return rpcCli.getTransactionsFromThis(address, offset, limit);
     }
 
-    public static TransactionList getTransactionsToThis(byte[] address, int offset, int limit) {
+    public static GrpcAPI.TransactionListExtention getTransactionsToThis(byte[] address, int offset, int limit) {
         return rpcCli.getTransactionsToThis(address, offset, limit);
     }
 
@@ -708,33 +717,35 @@ public class WalletManager {
     }
 
     public static FreezeBalanceContract createFreezeBalanceContract(byte[] owner, long frozen_balance,
-                                                                    long frozen_duration) {
+                                                                    long frozen_duration, Contract.ResourceCode resource) {
         Contract.FreezeBalanceContract.Builder builder = Contract.FreezeBalanceContract.newBuilder();
         ByteString byteAddreess = ByteString.copyFrom(owner);
 
         builder.setOwnerAddress(byteAddreess).setFrozenBalance(frozen_balance)
-                .setFrozenDuration(frozen_duration);
+                .setFrozenDuration(frozen_duration)
+        .setResource(resource);
 
         return builder.build();
     }
 
-    public static Transaction createFreezeBalanceTransaction(byte[] owner, long frozen_balance, long frozen_duration) {
-        FreezeBalanceContract contract = createFreezeBalanceContract(owner, frozen_balance, frozen_duration);
-        return rpcCli.createTransaction(contract);
+    public static Transaction createFreezeBalanceTransaction(byte[] owner, long frozen_balance, long frozen_duration, Contract.ResourceCode resource) {
+        FreezeBalanceContract contract = createFreezeBalanceContract(owner, frozen_balance, frozen_duration, resource);
+        return rpcCli.createTransaction(contract).getTransaction();
     }
 
-    public static Transaction createUnfreezeBalanceTransaction(byte[] owner) {
-        UnfreezeBalanceContract contract = createUnfreezeBalanceContract(owner);
-        return rpcCli.createTransaction(contract);
+    public static Transaction createUnfreezeBalanceTransaction(byte[] owner, Contract.ResourceCode resourceCode) {
+        UnfreezeBalanceContract contract = createUnfreezeBalanceContract(owner, resourceCode);
+        return rpcCli.createTransaction(contract).getTransaction();
     }
 
-    public static UnfreezeBalanceContract createUnfreezeBalanceContract(byte[] owner) {
+    public static UnfreezeBalanceContract createUnfreezeBalanceContract(byte[] owner, Contract.ResourceCode resourceCode) {
 
         Contract.UnfreezeBalanceContract.Builder builder = Contract.UnfreezeBalanceContract
                 .newBuilder();
         ByteString byteAddreess = ByteString.copyFrom(owner);
 
         builder.setOwnerAddress(byteAddreess);
+        builder.setResource(resourceCode);
 
         return builder.build();
     }
@@ -743,11 +754,11 @@ public class WalletManager {
         return rpcCli.getBlockById(blockID);
     }
 
-    public static BlockList getBlockByLimitNext(long start, long end) {
+    public static GrpcAPI.BlockListExtention getBlockByLimitNext(long start, long end) {
         return rpcCli.getBlockByLimitNext(start, end);
     }
 
-    public static BlockList getBlockByLatestNum(long num) {
+    public static GrpcAPI.BlockListExtention getBlockByLatestNum(long num) {
         return rpcCli.getBlockByLatestNum(num);
     }
 

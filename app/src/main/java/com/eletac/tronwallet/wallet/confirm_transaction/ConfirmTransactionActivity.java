@@ -3,6 +3,7 @@ package com.eletac.tronwallet.wallet.confirm_transaction;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
@@ -33,19 +34,24 @@ import com.eletac.tronwallet.wallet.AccountUpdater;
 import com.eletac.tronwallet.wallet.SendReceiveActivity;
 import com.eletac.tronwallet.wallet.SignTransactionActivity;
 import com.eletac.tronwallet.wallet.cold.SignedTransactionActivity;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.yarolegovich.lovelydialog.LovelyInfoDialog;
 import com.yarolegovich.lovelydialog.LovelyProgressDialog;
 import com.yarolegovich.lovelydialog.LovelyStandardDialog;
 
 import org.spongycastle.util.encoders.DecoderException;
+import org.spongycastle.util.encoders.Hex;
 import org.tron.api.GrpcAPI;
+import org.tron.common.crypto.Hash;
 import org.tron.common.utils.TransactionUtils;
 import org.tron.protos.Protocol;
 import org.tron.walletserver.Wallet;
 import org.tron.walletserver.WalletManager;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class ConfirmTransactionActivity extends AppCompatActivity {
@@ -56,6 +62,8 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
     public static final String TRANSACTION_DATA2_EXTRA = "transaction_data2_extra";
 
     public static final int TRANSACTION_FINISHED = 4325;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     private ContractLoaderFragment mContract_Fragment;
     private TextView mCurrentBandwidth_TextView;
@@ -99,6 +107,8 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_transaction);
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         Toolbar toolbar = findViewById(R.id.ConfirmTrans_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -128,6 +138,7 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
         if(mTransactionUnsigned.getRawData().getContractCount() == 0) {
             Toast.makeText(this, R.string.no_valid_contract_check_input, Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, mTransactionUnsigned, Toast.LENGTH_LONG).show();
             finish();
             return;
         }
@@ -265,6 +276,9 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
                 Transaction dbTransaction = new Transaction();
                 dbTransaction.senderAddress = mWallet.getAddress();
                 dbTransaction.transaction = mTransactionSigned;
+
+                logTransactionSent(mTransactionSigned);
+
                 TronWalletApplication.getDatabase().transactionDao().insert(dbTransaction);
             }
             AsyncJob.doOnMainThread(() -> {
@@ -409,5 +423,33 @@ public class ConfirmTransactionActivity extends AppCompatActivity {
 
     public byte[] getExtraBytes() {
         return mExtraBytes;
+    }
+
+    private void logTransactionSent(Protocol.Transaction transaction)
+    {
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
+        if(sharedPreferences.getBoolean("logged_previous_transactions", false))
+        {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            List<Transaction> dbTransactions = TronWalletApplication.getDatabase().transactionDao().getAllTransactions();
+
+            for(Transaction dbTransaction : dbTransactions) {
+                Bundle bundle = new Bundle();
+                bundle.putString("sender_address", dbTransaction.senderAddress);
+                bundle.putString("hash", Hex.toHexString(Hash.sha256(dbTransaction.transaction.getRawData().toByteArray())));
+                bundle.putString("contract", Utils.getContractName(dbTransaction.transaction.getRawData().getContract(0)));
+
+                mFirebaseAnalytics.logEvent("sent_transaction", bundle);
+            }
+            editor.putBoolean("logged_previous_transactions", true);
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putString("hash", Hex.toHexString(Hash.sha256(transaction.getRawData().toByteArray())));
+        bundle.putString("contract", Utils.getContractName(transaction.getRawData().getContract(0)));
+
+        mFirebaseAnalytics.logEvent("sent_transaction", bundle);
     }
 }
