@@ -341,13 +341,13 @@
     <string name="details">Detalhes</string>
     <string name="name">Nome</string>
     <string name="abbreviation">Abreviação</string>
-    <string name="total_supply">Fornecimento Total</string>
+    <string name="total_supply">Forn. Total</string>
     <string name="website_url">Website URL</string>
     <string name="description">Descrição</string>
     <string name="exchange_rate">Taxa de Câmbio</string>
     <string name="trx_amount">Quantidade de TRX</string>
     <string name="_1_token_equals">1 Token =</string>
-    <string name="days">DDias</string>
+    <string name="days">Dias</string>
     <string name="bandwidth_distribution">Distribuição de Banda Larga</string>
     <string name="total_bandwidth">Banda Larga Total</string>
     <string name="bandwidth_per_account">Banda Larga por Conta</string>
@@ -361,5 +361,5 @@
     <string name="timestamp">Timestamp</string>
     <string name="open_in_tronscan">Abrir no Tronscan</string>
     <string name="name_colon">Nome:</string>
-    <string name="confirm_your_password">Confirm your password</string>
+    <string name="confirm_your_password">Confirme sua senha</string>
 </resources>
